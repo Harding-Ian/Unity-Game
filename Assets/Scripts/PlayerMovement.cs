@@ -15,16 +15,22 @@ public class PlayerMovement : MonoBehaviour
 
     public float gravity = -40f;
     public float downwardSpeed = -0.05f;
+    public float dashSpeed = -12f;
 
     public Transform groundCheck;
     public float groundRadius = 0.4f;
     public LayerMask groundMask;
     public float jumpHeight = 3f;
+    public float dashTimer = 0f;
 
     Vector3 velocity;
+    Vector3 dashModifier;
+    Vector3 cameraDirection;
 
     bool isGrounded;
-    bool canJump = true;
+    bool isDashing;
+    bool canDash;
+
 
     // Start is called before the first frame update
     void Start()
@@ -37,22 +43,51 @@ public class PlayerMovement : MonoBehaviour
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
 
-        if (isGrounded)
-        {
-            velocity.y = -2f;
-            canJump = true;
-        }
-
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        velocity.x = move.x * speed;
+        velocity.z = move.z * speed;
 
-        if (Input.GetButton("Jump") && canJump) { 
+        dashTimer += Time.deltaTime;
+
+        if (dashTimer > 0.3)
+        {
+            isDashing = false;
+        }
+        
+        if (dashTimer > 2)
+        {
+            canDash = true;
+        }
+
+        
+        if (Input.GetKey(KeyCode.LeftShift) && canDash) //check for player attempting to dash
+        {
+            isDashing = true;
+            canDash = false;
+            dashTimer = 0f;
+            Transform cameraTransform = Camera.main.transform;
+            dashModifier = cameraTransform.forward * 10f;
+        }
+
+        if (isDashing) //if dashing add speed
+        {
+            velocity += dashModifier;
+            velocity.y = -2f; // reset y vel so u dont fly into the air
+        }
+
+
+        if (isGrounded)
+        {
+            velocity.y = -2f;
+        }
+
+        if (Input.GetButton("Jump") && isGrounded)
+        { 
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            canJump = false;
         }
 
         if (Input.GetKey(KeyCode.LeftControl))
