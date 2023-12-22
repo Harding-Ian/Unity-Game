@@ -5,8 +5,9 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine;
+using Unity.Netcode;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
 
     public CharacterController controller;
@@ -41,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner) return;
         isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
 
         float x = Input.GetAxis("Horizontal");
