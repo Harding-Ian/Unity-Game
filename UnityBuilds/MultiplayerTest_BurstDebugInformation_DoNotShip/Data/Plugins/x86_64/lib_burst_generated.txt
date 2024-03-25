@@ -22,8 +22,8 @@ Library: D:\UNITY\UnitySaves\GitSaves\Unity-Game\Temp\BurstOutput\Data\Plugins\x
 --assembly-defines=Unity.Services.Core.Scheduler;
 --assembly-defines=Unity.Services.Core.Environments;
 --assembly-defines=Unity.Services.Relay;
---assembly-defines=Unity.Multiplayer.Tools.NetStats;
 --assembly-defines=Unity.Services.Core.Configuration;
+--assembly-defines=Unity.Multiplayer.Tools.NetStats;
 --assembly-defines=Unity.Collections;
 --assembly-defines=Unity.Netcode.Runtime;
 --assembly-defines=Unity.ProBuilder.Poly2Tri;
@@ -56,8 +56,8 @@ Library: D:\UNITY\UnitySaves\GitSaves\Unity-Game\Temp\BurstOutput\Data\Plugins\x
 --assembly-defines=Unity.Multiplayer.Tools.MetricTypes;
 --assembly-defines=Unity.Services.Core.Registration;
 --assembly-defines=Unity.VisualScripting.State;
---assembly-defines=IngameDebugConsole.Runtime;
 --assembly-defines=Unity.Multiplayer.Tools.NetStatsReporting;
+--assembly-defines=IngameDebugConsole.Runtime;
 --assembly-defines=Unity.Multiplayer.Tools.MetricEvents;
 --assembly-defines=Unity.Multiplayer.Tools.NetStatsMonitor.Component;
 --assembly-defines=Unity.Collections.LowLevel.ILSupport;
@@ -198,8 +198,8 @@ Library: D:\UNITY\UnitySaves\GitSaves\Unity-Game\Temp\BurstOutput\Data\Plugins\x
 --assembly-defines=Unity.Services.Core.Scheduler;
 --assembly-defines=Unity.Services.Core.Environments;
 --assembly-defines=Unity.Services.Relay;
---assembly-defines=Unity.Multiplayer.Tools.NetStats;
 --assembly-defines=Unity.Services.Core.Configuration;
+--assembly-defines=Unity.Multiplayer.Tools.NetStats;
 --assembly-defines=Unity.Collections;
 --assembly-defines=Unity.Netcode.Runtime;
 --assembly-defines=Unity.ProBuilder.Poly2Tri;
@@ -232,8 +232,8 @@ Library: D:\UNITY\UnitySaves\GitSaves\Unity-Game\Temp\BurstOutput\Data\Plugins\x
 --assembly-defines=Unity.Multiplayer.Tools.MetricTypes;
 --assembly-defines=Unity.Services.Core.Registration;
 --assembly-defines=Unity.VisualScripting.State;
---assembly-defines=IngameDebugConsole.Runtime;
 --assembly-defines=Unity.Multiplayer.Tools.NetStatsReporting;
+--assembly-defines=IngameDebugConsole.Runtime;
 --assembly-defines=Unity.Multiplayer.Tools.MetricEvents;
 --assembly-defines=Unity.Multiplayer.Tools.NetStatsMonitor.Component;
 --assembly-defines=Unity.Collections.LowLevel.ILSupport;

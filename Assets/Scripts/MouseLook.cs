@@ -9,7 +9,7 @@ using Unity.Netcode;
 public class MouseLook : NetworkBehaviour
 {
 
-    public float mouseSensitivity = 500f;
+    public float mouseSensitivity = 400f;
 
     public Transform orientation;
 
