@@ -11,6 +11,10 @@ public class NetworkUI : NetworkBehaviour
     [SerializeField] private Button clientButton;
     [SerializeField] private TextMeshProUGUI playersCountText;
 
+    [SerializeField] private Button onlineHost;
+
+    public TestRelay testRelay;
+
     private NetworkVariable<int> playersNum = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone);
 
     private void Awake()
@@ -23,6 +27,11 @@ public class NetworkUI : NetworkBehaviour
         clientButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartClient();
+        });
+
+        onlineHost.onClick.AddListener(() =>
+        {
+            testRelay.CreateRelay();
         });
     }
 
