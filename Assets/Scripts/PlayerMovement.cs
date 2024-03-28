@@ -11,6 +11,8 @@ using Unity.Collections;
 public class PlayerMovement : NetworkBehaviour
 {
 
+
+    [SerializeField] private Transform spawnedObjectPrefab;
     private NetworkVariable<MyCustomData> randomNumber = new NetworkVariable<MyCustomData>(
         new MyCustomData {
             _int = 56,
@@ -54,9 +56,9 @@ public class PlayerMovement : NetworkBehaviour
     bool canDash;
 
     public override void OnNetworkSpawn() {
-        randomNumber.OnValueChanged += (MyCustomData previousValue, MyCustomData newValue) => {
-            Debug.Log(OwnerClientId + "; " + newValue._int + "; " + newValue._bool + " " + newValue.message);
-        };
+        // randomNumber.OnValueChanged += (MyCustomData previousValue, MyCustomData newValue) => {
+        //     Debug.Log(OwnerClientId + "; " + newValue._int + "; " + newValue._bool + " " + newValue.message);
+        // };
     }
 
 
@@ -71,12 +73,20 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+        // if (Input.GetMouseButtonDown(0)) {
+        //     FireballObjectServerRpc();
+        // }
+
+        if (Input.GetKeyDown(KeyCode.E)) {
+            FireballObjectServerRpc();
+        }
+
         if (Input.GetKeyDown(KeyCode.T)) {
-            randomNumber.Value = new MyCustomData {
-                _int = Random.Range(1, 100),
-                _bool = false,
-                message = "RIP"
-            };
+            TestServerRpc();
+        }
+
+        if (Input.GetKeyDown(KeyCode.C)) {
+            TestClientRpc();
         }
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
@@ -137,5 +147,26 @@ public class PlayerMovement : NetworkBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
+     }
+
+    //only runs on the server
+    //must be in network behaviour class, attached to a game object with a network object
+    //method name must end in ____ServerRpc
+    [ServerRpc]
+     private void TestServerRpc() {
+        Debug.Log("test rpc: " + OwnerClientId);
+     }
+
+
+    //client cannot call client rpc!!
+    [ClientRpc]
+     private void TestClientRpc(){
+        Debug.Log("test client rpc");
+     }
+
+     [ServerRpc]
+     private void FireballObjectServerRpc(){
+        Transform spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
+        spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
      }
 }
