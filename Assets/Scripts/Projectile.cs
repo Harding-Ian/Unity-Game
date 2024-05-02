@@ -4,10 +4,15 @@ using UnityEngine;
 using Unity.Netcode;
 
 
-public class Projectile : MonoBehaviour
+public class Projectile : NetworkBehaviour
 {
     public Camera cam;
 
+    // public struct FirePointData{
+    //     public Vector3 position;
+    //     public Quaternion rotation;
+        
+    // }
     private Vector3 destination;
 
     public GameObject projectile;
@@ -37,6 +42,7 @@ public class Projectile : MonoBehaviour
 
     void ShootProjectile()
     {
+        if (!IsOwner) return;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
@@ -48,11 +54,24 @@ public class Projectile : MonoBehaviour
             destination = ray.GetPoint(1000);
         }
 
-        InstantiateProjectile(RHFirePoint);
+        // FirePointData firePointData= new FirePointData();
+        // firePointData.position = RHFirePoint.position;
+        // firePointData.rotation = RHFirePoint.rotation;
+
+
+        //InstantiateProjectile(RHFirePoint);
+        ProjectileServerRpc();
     }
 
     void InstantiateProjectile(Transform firePoint){
-        var projectileObj = Instantiate(projectile, firePoint.position, Quaternion.identity) as GameObject;
+        GameObject projectileObj = Instantiate(projectile, firePoint.position, Quaternion.identity);
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - firePoint.position).normalized * projectileSpeed;
+    }
+
+    [ServerRpc]
+    private void ProjectileServerRpc(){
+        GameObject projectileObj = Instantiate(projectile, RHFirePoint.position, Quaternion.identity);
+        projectileObj.GetComponent<NetworkObject>().Spawn(true);
+        projectileObj.GetComponent<Rigidbody>().velocity = (destination - RHFirePoint.position).normalized * projectileSpeed;
     }
 }
