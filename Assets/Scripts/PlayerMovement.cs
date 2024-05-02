@@ -91,8 +91,13 @@ public class PlayerMovement : NetworkBehaviour
     private void MovePlayer()
     {
         // calculate movement direction
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        Vector3 moveforward = orientation.forward;
+        moveforward = new Vector3(moveforward.x, 0, moveforward.z);
 
+        Vector3 moveright = orientation.right;
+        moveright = new Vector3(moveright.x, 0, moveright.z);
+
+        moveDirection = moveforward.normalized * verticalInput + moveright.normalized * horizontalInput;
         // on ground
         if(grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
