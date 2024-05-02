@@ -11,9 +11,12 @@ public class PlayerMovement : NetworkBehaviour
     public float moveSpeed;
 
     public float groundDrag;
+    public float airDrag;
 
     public float jumpForce;
+    public float dashForce;
     public float jumpCooldown;
+    public float dashCooldown;
     public float airMultiplier;
     bool readyToJump;
     bool readyToDash;
@@ -23,6 +26,7 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode dashKey = KeyCode.LeftShift;
 
     [Header("Ground Check")]
     public float playerHeight;
@@ -44,6 +48,7 @@ public class PlayerMovement : NetworkBehaviour
         rb.freezeRotation = true;
 
         readyToJump = true;
+        readyToDash = true;
     }
 
     private void Update()
@@ -56,7 +61,7 @@ public class PlayerMovement : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.C)) TestClientRpc();
 
         // ground check
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, whatIsGround);
 
         MyInput();
 
@@ -64,13 +69,13 @@ public class PlayerMovement : NetworkBehaviour
         if (grounded)
             rb.drag = groundDrag;
         else
-            rb.drag = 0;
+            rb.drag = airDrag;
     }
 
     private void FixedUpdate()
     {
         MovePlayer();
-        SpeedControl();
+        //SpeedControl();
     }
 
     private void MyInput()
@@ -82,11 +87,17 @@ public class PlayerMovement : NetworkBehaviour
         if(Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
-
             Jump();
-
             Invoke(nameof(ResetJump), jumpCooldown);
         }
+
+        if(Input.GetKey(dashKey) && readyToDash)
+        {
+            readyToDash = false;
+            Dash();
+            Invoke(nameof(ResetDash), dashCooldown);
+        }
+
     }
 
     private void MovePlayer()
@@ -99,12 +110,14 @@ public class PlayerMovement : NetworkBehaviour
         moveright = new Vector3(moveright.x, 0, moveright.z);
 
         moveDirection = moveforward.normalized * verticalInput + moveright.normalized * horizontalInput;
+
+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         // on ground
-        if(grounded)
+        if(grounded && flatVel.magnitude < moveSpeed)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
 
         // in air
-        else if(!grounded)
+        else if(!grounded && flatVel.magnitude < moveSpeed)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
@@ -127,9 +140,22 @@ public class PlayerMovement : NetworkBehaviour
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
+
+    private void Dash()
+    {
+        // reset  velocity
+        rb.velocity = new Vector3(0f, 0f, 0f);
+
+        rb.AddForce(orientation.forward * dashForce, ForceMode.Impulse);
+    }
     private void ResetJump()
     {
         readyToJump = true;
+    }
+
+    private void ResetDash()
+    {
+        readyToDash = true;
     }
      
 
