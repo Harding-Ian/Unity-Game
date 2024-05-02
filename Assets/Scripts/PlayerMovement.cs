@@ -16,6 +16,7 @@ public class PlayerMovement : NetworkBehaviour
     public float jumpCooldown;
     public float airMultiplier;
     bool readyToJump;
+    bool readyToDash;
 
     [HideInInspector] public float walkSpeed;
     [HideInInspector] public float sprintSpeed;
@@ -58,7 +59,6 @@ public class PlayerMovement : NetworkBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
 
         MyInput();
-        SpeedControl();
 
         // handle drag
         if (grounded)
@@ -70,6 +70,7 @@ public class PlayerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
+        SpeedControl();
     }
 
     private void MyInput()
