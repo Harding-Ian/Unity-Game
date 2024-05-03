@@ -38,7 +38,11 @@ public class PlayerMovement : NetworkBehaviour
     float horizontalInput;
     float verticalInput;
 
+    Vector3 inputDirection;
     Vector3 moveDirection;
+    Vector3 forwardxzDir;
+    Vector3 rightxzDir;
+    Vector3 Velxz;
 
     Rigidbody rb;
 
@@ -75,7 +79,6 @@ public class PlayerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
-        //SpeedControl();
     }
 
     private void MyInput()
@@ -102,35 +105,26 @@ public class PlayerMovement : NetworkBehaviour
 
     private void MovePlayer()
     {
-        // calculate movement direction
-        Vector3 moveforward = orientation.forward;
-        moveforward = new Vector3(moveforward.x, 0, moveforward.z);
 
-        Vector3 moveright = orientation.right;
-        moveright = new Vector3(moveright.x, 0, moveright.z);
+        Velxz = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
-        moveDirection = moveforward.normalized * verticalInput + moveright.normalized * horizontalInput;
+        // calculate input direction
+        forwardxzDir = new Vector3(orientation.forward.x, 0, orientation.forward.z).normalized;
+        rightxzDir   = new Vector3(orientation.right.x,   0, orientation.right.z  ).normalized;
 
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        // on ground
-        if(grounded && flatVel.magnitude < moveSpeed)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
 
-        // in air
-        else if(!grounded && flatVel.magnitude < moveSpeed)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
-    }
+        //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
+        if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)
+            moveDirection = inputDirection - Vector3.Project(inputDirection, Velxz);
+        else
+            moveDirection = inputDirection;
 
-    private void SpeedControl()
-    {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        // limit velocity if needed
-        if(flatVel.magnitude > moveSpeed)
-        {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
-        }
+        // add force
+        if(grounded)
+            rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Force);
+        else
+            rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
     private void Jump()
