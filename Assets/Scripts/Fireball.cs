@@ -15,14 +15,12 @@ public class Fireball : NetworkBehaviour
     }
 
     public void SetPlayerOwner(ulong playerId){
-        Debug.Log("Set id of fireball owner -------------------------------------------------------------------------------------------------------------");
         playerOwnerId = playerId;
     }
 
     // Update is called once per frame
     [ServerRpc]
     private void DestroyFireballServerRpc(){
-        Debug.Log("destorying object");
         Destroy(gameObject);
     }
 
@@ -30,11 +28,8 @@ public class Fireball : NetworkBehaviour
     {
         if (IsServer)
         {
-            Debug.Log("if you make contact, you better finish the job");
             NetworkObject networkObject = collided.GetComponent<NetworkObject>();
             if (networkObject != null){
-                Debug.Log("Object contacted is a player.");
-                Debug.Log(networkObject.OwnerClientId + "This was the id of the player hit");
                 if (playerOwnerId != networkObject.OwnerClientId){
                     DestroyFireballServerRpc();
                 }
@@ -43,7 +38,6 @@ public class Fireball : NetworkBehaviour
                 DestroyFireballServerRpc();
             }
         }
-        //Debug.Log("contact---------------------------------------");
     }
 
 }

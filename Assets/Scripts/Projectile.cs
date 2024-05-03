@@ -28,7 +28,7 @@ public class Projectile : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -40,24 +40,24 @@ public class Projectile : NetworkBehaviour
         }
     }
 
+    private RaycastHit temphit;
+    private Ray tempRay;
     void ShootProjectile()
     {
         if (!IsOwner) return;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        tempRay = ray;
+
         RaycastHit hit;
 
         if(Physics.Raycast(ray, out hit)){
             destination = hit.point;
-            Debug.Log("Hit Object: " + hit.collider.gameObject.name);
-            Debug.Log("Hit Point: " + hit.point);
+            temphit = hit;
+            //Debug.Log("Hit Object: " + hit.collider.gameObject.name);
+            //Debug.Log("Hit Point: " + hit.point);
         }else{
             destination = ray.GetPoint(1000);
         }
-
-        // FirePointData firePointData= new FirePointData();
-        // firePointData.position = RHFirePoint.position;
-        // firePointData.rotation = RHFirePoint.rotation;
-
 
         //InstantiateProjectile(RHFirePoint);
         ProjectileServerRpc();
@@ -73,14 +73,21 @@ public class Projectile : NetworkBehaviour
         GameObject projectileObj = Instantiate(projectile, RHFirePoint.position, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
-        
-        Fireball fireballScript = projectileObj.GetComponent<Fireball>();
-        if (fireballScript == null){
-            Debug.Log("- -  --w-a _-d- - -aw- -d-w -aw- -aw- ");
+        Debug.Log("DESTINATION -----------------------------------------> " + destination);
+        Debug.Log("Ray -----------------------------------------> " + tempRay);
+        Debug.Log("Firepoint -----------------------------------------> " + RHFirePoint.position);
+        Debug.Log("CAM ------------------------------------------> " + cam);
+        if (cam == null){
+            Debug.Log("GRANNNNNNNNNND PRAIRRRRIIEIEIEIEE");
         }
+
+        if (!cam.isActiveAndEnabled){
+            Debug.Log("Theres gonnan a probnlemm bub");
+        }
+
+        Fireball fireballScript = projectileObj.GetComponent<Fireball>();
         fireballScript.SetPlayerOwner(OwnerClientId);
 
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - RHFirePoint.position).normalized * projectileSpeed; //* 0.01f;
-        Debug.Log(OwnerClientId + " THIS IS THE OWNER CLIENT ID");
     }
 }
