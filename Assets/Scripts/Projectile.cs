@@ -72,6 +72,15 @@ public class Projectile : NetworkBehaviour
     private void ProjectileServerRpc(){
         GameObject projectileObj = Instantiate(projectile, RHFirePoint.position, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
-        projectileObj.GetComponent<Rigidbody>().velocity = (destination - RHFirePoint.position).normalized * projectileSpeed;
+
+        
+        Fireball fireballScript = projectileObj.GetComponent<Fireball>();
+        if (fireballScript == null){
+            Debug.Log("- -  --w-a _-d- - -aw- -d-w -aw- -aw- ");
+        }
+        fireballScript.SetPlayerOwner(OwnerClientId);
+
+        projectileObj.GetComponent<Rigidbody>().velocity = (destination - RHFirePoint.position).normalized * projectileSpeed; //* 0.01f;
+        Debug.Log(OwnerClientId + " THIS IS THE OWNER CLIENT ID");
     }
 }
