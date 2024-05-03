@@ -42,6 +42,7 @@ public class Projectile : NetworkBehaviour
 
     private RaycastHit temphit;
     private Ray tempRay;
+    //a
     void ShootProjectile()
     {
         if (!IsOwner) return;
