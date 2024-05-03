@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 using Unity.Collections;
+using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -32,6 +33,10 @@ public class PlayerMovement : NetworkBehaviour
     public float playerHeight;
     public LayerMask whatIsGround;
     bool grounded;
+    bool groundedOverride;
+    public float groundedOverrideTimer;
+    public int jumpcount;
+    public int dashcount;
 
     public Transform orientation;
 
@@ -65,15 +70,22 @@ public class PlayerMovement : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.C)) TestClientRpc();
 
         // ground check
+        
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, whatIsGround);
 
-        MyInput();
+        if(groundedOverride) grounded = false;
 
         // handle drag
         if (grounded)
+        {
             rb.drag = groundDrag;
+            jumpcount = 0;
+            dashcount = 0;
+        }
         else
             rb.drag = airDrag;
+
+        MyInput();
     }
 
     private void FixedUpdate()
@@ -87,18 +99,26 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // when to jump
-        if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        if(Input.GetKey(jumpKey) && readyToJump && jumpcount < 2)
         {
             readyToJump = false;
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
+            jumpcount++;
+
+            groundedOverride = true;
+            Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
-        if(Input.GetKey(dashKey) && readyToDash)
+        if(Input.GetKey(dashKey) && readyToDash && dashcount < 1)
         {
             readyToDash = false;
             Dash();
             Invoke(nameof(ResetDash), dashCooldown);
+            dashcount++;
+
+            groundedOverride = true;
+            Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
     }
@@ -122,7 +142,9 @@ public class PlayerMovement : NetworkBehaviour
 
         // add force
         if(grounded)
+        {
             rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Force);
+        }
         else
             rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
@@ -150,6 +172,11 @@ public class PlayerMovement : NetworkBehaviour
     private void ResetDash()
     {
         readyToDash = true;
+    }
+
+    private void removeGroundedOverride()
+    {
+        groundedOverride = false;
     }
      
 

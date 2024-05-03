@@ -199,7 +199,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5486534364741473120}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: fe73358f9b0caa2459274ad31e786efd, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2987591946
+  GlobalObjectIdHash: 2815123942
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -316,12 +316,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 7
-  groundDrag: 5
+  groundDrag: 10
   airDrag: 1
   jumpForce: 12
   dashForce: 30
   jumpCooldown: 0.25
-  dashCooldown: 0.5
+  dashCooldown: 2
   airMultiplier: 0.4
   walkSpeed: 0
   sprintSpeed: 0
@@ -331,6 +331,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  groundedOverrideTimer: 0.1
+  jumpcount: 2
+  dashcount: 1
   orientation: {fileID: 8477746912704538161}
   spawnedObjectPrefab: {fileID: 8850871379234829835, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
 --- !u!114 &-1777087793297667645
