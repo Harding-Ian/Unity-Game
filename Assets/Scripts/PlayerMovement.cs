@@ -222,9 +222,8 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     public override void OnNetworkSpawn() {
-        // randomNumber.OnValueChanged += (MyCustomData previousValue, MyCustomData newValue) => {
-        //     Debug.Log(OwnerClientId + "; " + newValue._int + "; " + newValue._bool + " " + newValue.message);
-        // };
+        Transform spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
+        spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
     }
 
 }

@@ -163,7 +163,6 @@ GameObject:
   - component: {fileID: -1777087793297667645}
   - component: {fileID: 9020617155506658363}
   - component: {fileID: 6891276897337599854}
-  - component: {fileID: 4636108353082834957}
   - component: {fileID: 836666496353587866}
   - component: {fileID: 803095564381844156}
   m_Layer: 7
@@ -394,26 +393,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 500
   orientation: {fileID: 8477746912704538161}
---- !u!114 &4636108353082834957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5486534364741473120}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdc44875633ee7948ad840cf9e9d6e0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 2384272309610803661}
-  attackPoint: {fileID: 0}
-  objectToThrow: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
-  totalThrows: 0
-  throwCooldown: 0
-  throwKey: 323
-  throwForce: 30
-  throwUpwardForce: 0
 --- !u!114 &836666496353587866
 MonoBehaviour:
   m_ObjectHideFlags: 0
