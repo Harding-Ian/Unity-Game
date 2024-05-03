@@ -45,6 +45,20 @@ public class Projectile : NetworkBehaviour
     void ShootProjectile()
     {
         if (!IsOwner) return;
+
+
+        //InstantiateProjectile(RHFirePoint);
+        ProjectileServerRpc();
+    }
+
+    void InstantiateProjectile(Transform firePoint){
+        GameObject projectileObj = Instantiate(projectile, firePoint.position, Quaternion.identity);
+        projectileObj.GetComponent<Rigidbody>().velocity = (destination - firePoint.position).normalized * projectileSpeed;
+    }
+
+    [ServerRpc]
+    private void ProjectileServerRpc(){
+
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         tempRay = ray;
 
@@ -59,17 +73,7 @@ public class Projectile : NetworkBehaviour
             destination = ray.GetPoint(1000);
         }
 
-        //InstantiateProjectile(RHFirePoint);
-        ProjectileServerRpc();
-    }
 
-    void InstantiateProjectile(Transform firePoint){
-        GameObject projectileObj = Instantiate(projectile, firePoint.position, Quaternion.identity);
-        projectileObj.GetComponent<Rigidbody>().velocity = (destination - firePoint.position).normalized * projectileSpeed;
-    }
-
-    [ServerRpc]
-    private void ProjectileServerRpc(){
         GameObject projectileObj = Instantiate(projectile, RHFirePoint.position, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
@@ -77,6 +81,8 @@ public class Projectile : NetworkBehaviour
         Debug.Log("Ray -----------------------------------------> " + tempRay);
         Debug.Log("Firepoint -----------------------------------------> " + RHFirePoint.position);
         Debug.Log("CAM ------------------------------------------> " + cam);
+        Debug.Log("cam.transform.position ------------------------------------------> " + cam.transform.position);
+        Debug.Log("cam.transform.forward ------------------------------------------> " + cam.transform.forward);
         if (cam == null){
             Debug.Log("GRANNNNNNNNNND PRAIRRRRIIEIEIEIEE");
         }
