@@ -45,6 +45,25 @@ public class Projectile : NetworkBehaviour
     void ShootProjectile()
     {
         if (!IsOwner) return;
+        //a
+
+
+        //Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));//a
+
+
+        //InstantiateProjectile(RHFirePoint);
+        ProjectileServerRpc();
+    }
+
+    void InstantiateProjectile(Transform firePoint){
+        GameObject projectileObj = Instantiate(projectile, firePoint.position, Quaternion.identity);
+        projectileObj.GetComponent<Rigidbody>().velocity = (destination - firePoint.position).normalized * projectileSpeed;
+    }
+
+    [ServerRpc]
+    private void ProjectileServerRpc(){
+
+        if (!IsOwner) return;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         tempRay = ray;
 
@@ -59,17 +78,6 @@ public class Projectile : NetworkBehaviour
             destination = ray.GetPoint(1000);
         }
 
-        //InstantiateProjectile(RHFirePoint);
-        ProjectileServerRpc();
-    }
-
-    void InstantiateProjectile(Transform firePoint){
-        GameObject projectileObj = Instantiate(projectile, firePoint.position, Quaternion.identity);
-        projectileObj.GetComponent<Rigidbody>().velocity = (destination - firePoint.position).normalized * projectileSpeed;
-    }
-
-    [ServerRpc]
-    private void ProjectileServerRpc(){
         GameObject projectileObj = Instantiate(projectile, RHFirePoint.position, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
