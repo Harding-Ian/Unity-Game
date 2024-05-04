@@ -45,13 +45,6 @@ public class Projectile : NetworkBehaviour
     void ShootProjectile()
     {
         if (!IsOwner) return;
-        //a
-
-
-        //Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));//a
-
-
-        //InstantiateProjectile(RHFirePoint);
         ProjectileServerRpc();
     }
 
