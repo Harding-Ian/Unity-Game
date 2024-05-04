@@ -7,6 +7,7 @@ using Unity.Netcode;
 public class Projectile : NetworkBehaviour
 {
     public Camera cam;
+    
 
     // public struct FirePointData{
     //     public Vector3 position;
@@ -23,6 +24,7 @@ public class Projectile : NetworkBehaviour
 
     [Header("ProjectileButton")]
     public KeyCode fireKey = KeyCode.Mouse0;
+    public GameObject cube;
 
 
     // Start is called before the first frame update
@@ -79,6 +81,8 @@ public class Projectile : NetworkBehaviour
         Debug.Log("CAM ------------------------------------------> " + cam);
         Debug.Log("cam.transform.position ------------------------------------------> " + cam.transform.position);
         Debug.Log("cam.transform.forward ------------------------------------------> " + cam.transform.forward);
+        Debug.Log("cam.transform.position ------------------------------------------> " + cube.transform.position);
+        Debug.Log("cam.transform.forward ------------------------------------------> " + cube.transform.forward);
 
         if (cam == null){
             Debug.Log("GRANNNNNNNNNND PRAIRRRRIIEIEIEIEE");
