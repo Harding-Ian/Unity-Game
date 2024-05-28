@@ -10,11 +10,11 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
 using System.Threading.Tasks;
 
-public class TestRelay : MonoBehaviour
+public class NetworkRelay : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public static TestRelay Instance { get; private set; }
+    public static NetworkRelay Instance { get; private set; }
 	    
 	private void Awake() {
         Instance = this;
@@ -39,7 +39,7 @@ public class TestRelay : MonoBehaviour
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(1);
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            Debug.Log("joined code: " + joinCode); 
+            Debug.Log("join code: " + joinCode); 
 
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);

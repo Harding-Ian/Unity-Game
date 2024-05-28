@@ -27,7 +27,7 @@ public class Fireball : NetworkBehaviour
     private void OnTriggerEnter(Collider collided)
     {
         if (IsServer)
-        {
+        {   
             NetworkObject networkObject = collided.GetComponent<NetworkObject>();
             if (networkObject != null){
                 if (playerOwnerId != networkObject.OwnerClientId){
@@ -37,7 +37,9 @@ public class Fireball : NetworkBehaviour
             else{
                 DestroyFireballServerRpc();
             }
+
         }
     }
 
+    
 }

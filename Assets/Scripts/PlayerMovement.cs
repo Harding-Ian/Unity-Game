@@ -21,9 +21,8 @@ public class PlayerMovement : NetworkBehaviour
     public float airMultiplier;
     bool readyToJump;
     bool readyToDash;
-
-    [HideInInspector] public float walkSpeed;
-    [HideInInspector] public float sprintSpeed;
+    public int jumpcount;
+    public int dashcount;
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -35,8 +34,6 @@ public class PlayerMovement : NetworkBehaviour
     bool grounded;
     bool groundedOverride;
     public float groundedOverrideTimer;
-    public int jumpcount;
-    public int dashcount;
 
     public Transform orientation;
 
@@ -59,15 +56,12 @@ public class PlayerMovement : NetworkBehaviour
         readyToJump = true;
         readyToDash = true;
     }
+    
 
     private void Update()
     {
         if (!IsOwner) return;
 
-        //if (Input.GetMouseButtonDown(0)) FireballObjectServerRpc();
-        if (Input.GetKeyDown(KeyCode.E)) FireballObjectServerRpc();
-        if (Input.GetKeyDown(KeyCode.T)) TestServerRpc();
-        if (Input.GetKeyDown(KeyCode.C)) TestClientRpc();
 
         // ground check
         
@@ -177,53 +171,6 @@ public class PlayerMovement : NetworkBehaviour
     private void removeGroundedOverride()
     {
         groundedOverride = false;
-    }
-     
-
-    //only runs on the server
-    //must be in network behaviour class, attached to a game object with a network object
-    //method name must end in ____ServerRpc
-    [ServerRpc]
-     private void TestServerRpc() {
-        Debug.Log("test rpc: " + OwnerClientId);
-     }
-
-
-    [SerializeField] private Transform spawnedObjectPrefab;
-    private NetworkVariable<MyCustomData> randomNumber = new NetworkVariable<MyCustomData>(
-        new MyCustomData {
-            _int = 56,
-            _bool = true,
-        }, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
-    public struct MyCustomData : INetworkSerializable{
-        public int _int;
-        public bool _bool;
-        public FixedString128Bytes message;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref _int);
-            serializer.SerializeValue(ref _bool);
-            serializer.SerializeValue(ref message);
-        }
-    }
-
-    //client cannot call client rpc!!
-    [ClientRpc]
-     private void TestClientRpc(){
-        Debug.Log("test client rpc");
-    }
-
-    [ServerRpc]
-    private void FireballObjectServerRpc(){
-        Transform spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
-        spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
-    }
-
-    public override void OnNetworkSpawn() {
-        Transform spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
-        spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
     }
 
 }

@@ -11,22 +11,28 @@ public class MouseLook : NetworkBehaviour
 
     public float mouseSensitivity = 400f;
 
-    public Transform orientation;
+    public GameObject cameraHolder;
 
     float xRotation = 0f;
     float yRotation = 0f;
 
+    Rigidbody rb;
+
     // Start is called before the first frame update
+    
     void Start()
-    {
+    {   
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (!IsOwner) return;
+        if(!IsLocalPlayer){
+            cameraHolder.SetActive(false);
+        }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ToggleCursorLock();
@@ -38,13 +44,12 @@ public class MouseLook : NetworkBehaviour
         yRotation += mouseX;
 
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        //transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
-        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
-        orientation.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
-
-        //playerBody.Rotate(Vector3.up * mouseX);
         
+        //sets rigid body rotation
+        rb.MoveRotation(Quaternion.Euler(0f, yRotation, 0f));
+        //local rotation moves relative to parent --> rotation moves relative to world
+        cameraHolder.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
     }
     void ToggleCursorLock()
     {
