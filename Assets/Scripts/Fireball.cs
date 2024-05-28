@@ -24,11 +24,27 @@ public class Fireball : NetworkBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider collided)
-    {
+    // private void OnTriggerEnter(Collider collided)
+    // {
+    //     if (IsServer)
+    //     {   
+    //         NetworkObject networkObject = collided.GetComponent<NetworkObject>();
+    //         if (networkObject != null){
+    //             if (playerOwnerId != networkObject.OwnerClientId){
+    //                 DestroyFireballServerRpc();
+    //             }
+    //         }
+    //         else{
+    //             DestroyFireballServerRpc();
+    //         }
+
+    //     }
+    // }
+
+    private void OnCollisionEnter(Collision collision){
         if (IsServer)
         {   
-            NetworkObject networkObject = collided.GetComponent<NetworkObject>();
+            NetworkObject networkObject = collision.gameObject.GetComponent<NetworkObject>();
             if (networkObject != null){
                 if (playerOwnerId != networkObject.OwnerClientId){
                     DestroyFireballServerRpc();

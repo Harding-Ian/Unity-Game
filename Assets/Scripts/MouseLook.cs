@@ -9,7 +9,7 @@ using Unity.Netcode;
 public class MouseLook : NetworkBehaviour
 {
 
-    public float mouseSensitivity = 400f;
+    public float mouseSensitivity;
 
     public GameObject cameraHolder;
 
@@ -37,13 +37,13 @@ public class MouseLook : NetworkBehaviour
         {
             ToggleCursorLock();
         }
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
         xRotation -= mouseY;
         yRotation += mouseX;
 
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        xRotation = Mathf.Clamp(xRotation, -89.99f, 89.99f);
         
         //sets rigid body rotation
         rb.MoveRotation(Quaternion.Euler(0f, yRotation, 0f));

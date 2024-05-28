@@ -361,7 +361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2815123942
+  GlobalObjectIdHash: 2987591946
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -441,7 +441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3dc5c5b3884cb14ca64642e691c8e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 500
+  mouseSensitivity: 2
   cameraHolder: {fileID: 4896379938006929250}
 --- !u!114 &836666496353587866
 MonoBehaviour:
@@ -460,7 +460,6 @@ MonoBehaviour:
   FirePoint: {fileID: 4120642327271369139}
   projectileSpeed: 60
   fireKey: 323
-  cube: {fileID: 0}
 --- !u!54 &803095564381844156
 Rigidbody:
   m_ObjectHideFlags: 0
