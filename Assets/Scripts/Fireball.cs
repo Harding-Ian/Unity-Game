@@ -48,14 +48,32 @@ public class Fireball : NetworkBehaviour
             if (networkObject != null){
                 if (playerOwnerId != networkObject.OwnerClientId){
                     DestroyFireballServerRpc();
+                    Debug.Log("object is networked");
+                    if(collision.gameObject.CompareTag("Player")){
+                        Debug.Log("PLAYER HIT!!!!!!");
+
+                        HealthManager healthManager = collision.gameObject.GetComponent<HealthManager>();
+
+                        if (healthManager != null)
+                        {
+                            // Reduce health via ServerRpc
+                            healthManager.ReduceHealthClientRpc(10);
+                        }
+                        else{
+                            Debug.Log("Uh ohhhhhhh Ewwowwww");
+                        }
+                    }
                 }
             }
             else{
                 DestroyFireballServerRpc();
+                Debug.Log("object is not networked");
             }
 
         }
     }
+
+    
 
     
 }
