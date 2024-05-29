@@ -7,8 +7,6 @@ using Unity.Netcode;
 public class Projectile : NetworkBehaviour
 {
     public Camera cam;
-    
-    private Vector3 destination;
 
     public GameObject projectile;
     public Transform FirePoint;
@@ -38,6 +36,14 @@ public class Projectile : NetworkBehaviour
         if (!IsOwner) return;
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        ProjectileServerRpc(ray);
+    }
+
+
+    [ServerRpc]
+    private void ProjectileServerRpc(Ray ray){
+
+        Vector3 destination;
 
         RaycastHit hit;
 
@@ -47,12 +53,6 @@ public class Projectile : NetworkBehaviour
             destination = ray.GetPoint(1000);
         }
 
-        ProjectileServerRpc(destination);
-    }
-
-
-    [ServerRpc]
-    private void ProjectileServerRpc(Vector3 destinationRPC){
 
         GameObject projectileObj = Instantiate(projectile, FirePoint.position, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
@@ -61,6 +61,6 @@ public class Projectile : NetworkBehaviour
         Fireball fireballScript = projectileObj.GetComponent<Fireball>();
         fireballScript.SetPlayerOwner(OwnerClientId);
 
-        projectileObj.GetComponent<Rigidbody>().velocity = (destinationRPC - FirePoint.position).normalized * projectileSpeed; //* 0.01f;
+        projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * projectileSpeed; //* 0.01f;
     }
 }
