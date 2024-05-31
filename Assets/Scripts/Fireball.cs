@@ -9,8 +9,15 @@ public class Fireball : NetworkBehaviour
 {
     
     private ulong playerOwnerId;
+
+    public GameObject gameManager;
     void Start()
     {
+        gameManager = GameObject.Find("GameManager");
+        if (gameManager == null)
+        {
+            Debug.LogError("--- GameManager GameObject not found. Make sure it exists in the scene. ---");
+        }
         Invoke("DestroyFireballServerRpc", 5);
     }
 
@@ -18,22 +25,17 @@ public class Fireball : NetworkBehaviour
         playerOwnerId = playerId;
     }
 
-    // Update is called once per frame
+    // [Rpc(SendTo.Server)]
+    // private void DestroyFireballRpc(){
+    //     NetworkObject.Despawn();
+    //     Destroy(gameObject);
+    // }
+
     [ServerRpc]
     private void DestroyFireballServerRpc(){
         NetworkObject.Despawn();
         Destroy(gameObject);
     }
-
-    // [ServerRpc]
-    // private void DestroyOtherProjectileServerRpc(ulong networkObjectId){
-    //     NetworkObject networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
-    //     if (networkObject != null)
-    //     {
-    //         networkObject.Despawn();
-    //         Destroy(networkObject.gameObject);
-    //     }
-    // }
 
     private void OnCollisionEnter(Collision collision){
         if (IsServer)
@@ -43,13 +45,13 @@ public class Fireball : NetworkBehaviour
                 if(collision.gameObject.CompareTag("projectile")){
                     Debug.Log("Projectiles Collided");
                     DestroyFireballServerRpc();
-                    //DestroyOtherProjectileServerRpc(networkObject.NetworkObjectId);
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId){
-                    DestroyFireballServerRpc();
                     Debug.Log("object is networked");
+                    DestroyFireballServerRpc();
                     if(collision.gameObject.CompareTag("Player")){
-                        Debug.Log("PLAYER HIT!!!!!!");
+                        gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
+                        Debug.Log("");
                     }
                 }
             }

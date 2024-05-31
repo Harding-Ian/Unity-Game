@@ -5,9 +5,6 @@ using System.Collections.Generic;
 public class HealthManager : NetworkBehaviour
 {
     // Dictionary to store health for each player by clientId
-    private Dictionary<ulong, NetworkVariable<int>> playerHealths = new Dictionary<ulong, NetworkVariable<int>>();
-    private int x = 0;
-
     public override void OnNetworkSpawn()
     {
         // Subscribe to the OnClientConnectedCallback and OnClientDisconnectedCallback events
@@ -26,20 +23,20 @@ public class HealthManager : NetworkBehaviour
         Debug.Log("ID of the client that disconnected: " + clientId);
     }
 
-    void Update(){
-        if(IsServer){
-            x += 1;
-            if (x % 1200 == 0){
-                Debug.Log("Should only be seen by host and server");
-                testServerRpc();
-            }
-        }
+    public void applyFireballDamage(ulong clientId){
+        int fireballDamage = 2; //Base fireball damage * player modifier from player stats
+        updateHealthServerRpc(fireballDamage, clientId);
     }
 
     [ServerRpc]
-    private void testServerRpc(){
-        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[1].PlayerObject;
-            networkObject.GetComponent<PlayerMovement>().tempname.Value += 1;
+    private void updateHealthServerRpc(int damage, ulong clientId){
+        Debug.Log("calling me splurge");
+        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+        networkObject.GetComponent<HealthBar>().health.Value -= damage;
+        if (networkObject.GetComponent<HealthBar>().health.Value <= 0){
+            //apply death
+            Debug.Log("Player " + clientId + " died");
+        }
     }
 
 }

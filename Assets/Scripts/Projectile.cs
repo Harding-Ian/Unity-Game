@@ -36,12 +36,12 @@ public class Projectile : NetworkBehaviour
         if (!IsOwner) return;
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        ProjectileServerRpc(ray);
+        ProjectileRpc(ray);
     }
 
 
-    [ServerRpc]
-    private void ProjectileServerRpc(Ray ray){
+    [Rpc(SendTo.Server)]
+    private void ProjectileRpc(Ray ray){
 
         Vector3 destination;
 

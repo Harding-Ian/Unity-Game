@@ -48,12 +48,6 @@ public class PlayerMovement : NetworkBehaviour
 
     Rigidbody rb;
 
-    public NetworkVariable<int> tempname = new NetworkVariable<int>(
-    42, // Initial value
-    NetworkVariableReadPermission.Everyone,
-    NetworkVariableWritePermission.Server
-);
-
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -101,7 +95,6 @@ public class PlayerMovement : NetworkBehaviour
         // when to jump
         if(Input.GetKey(jumpKey) && readyToJump && jumpcount < 2)
         {
-            Debug.Log("network variable =  " + tempname.Value);
             readyToJump = false;
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);

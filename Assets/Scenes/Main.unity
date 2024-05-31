@@ -1483,6 +1483,7 @@ GameObject:
   m_Component:
   - component: {fileID: 395479462}
   - component: {fileID: 395479463}
+  - component: {fileID: 395479464}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1499,7 +1500,7 @@ Transform:
   m_GameObject: {fileID: 395479461}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 600.7905, y: 334.94092, z: -6.8670654}
+  m_LocalPosition: {x: 0.65, y: 52.63, z: -6.8670654}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1517,6 +1518,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 220691043c5a4154aa7e3612bf40537d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &395479464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395479461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 87196978
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &449547349
 GameObject:
   m_ObjectHideFlags: 0
@@ -2311,7 +2333,7 @@ Transform:
   m_GameObject: {fileID: 768418967}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.83128834, y: 0.5116737, z: -23.780941}
+  m_LocalPosition: {x: 1.96, y: 45.9, z: -23.780941}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -38134,6 +38156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 2031424993
+  InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
