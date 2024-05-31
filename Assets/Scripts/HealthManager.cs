@@ -1,54 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 public class HealthManager : NetworkBehaviour
 {
+    // Dictionary to store health for each player by clientId
+    private Dictionary<ulong, NetworkVariable<int>> playerHealths = new Dictionary<ulong, NetworkVariable<int>>();
+    private int x = 0;
 
-    public int maxHealth = 100;
-    public int currentHealth;
-
-    public HealthBar healthBar;
-    // Start is called before the first frame update
-    void Start()
+    public override void OnNetworkSpawn()
     {
-        if (healthBar == null)
-        {
-            healthBar = FindObjectOfType<HealthBar>();
-        }
-
-
-        currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+        // Subscribe to the OnClientConnectedCallback and OnClientDisconnectedCallback events
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
     }
 
-    // Update is called once per frame
-    void Update()
+
+    private void OnClientConnected(ulong clientId)
     {
-        if (Input.GetKeyDown(KeyCode.H)){
-            currentHealth = maxHealth;
-            healthBar.SetHealth(currentHealth);
+        Debug.Log("ID of the client that connected: " + clientId);
+    }
+
+    private void OnClientDisconnected(ulong clientId)
+    {
+        Debug.Log("ID of the client that disconnected: " + clientId);
+    }
+
+    void Update(){
+        if(IsServer){
+            x += 1;
+            if (x % 1200 == 0){
+                Debug.Log("Should only be seen by host and server");
+                testServerRpc();
+            }
         }
     }
-
-    public void reduceHealth(int damageAmount){
-        currentHealth -= damageAmount;
-        healthBar.SetHealth(currentHealth);
-    }
-
 
     [ServerRpc]
-    public void ReduceHealthServerRpc(int damageAmount){
-        currentHealth -= damageAmount;
-        healthBar.SetHealth(currentHealth);
-    }
-
-    [ClientRpc]
-    public void ReduceHealthClientRpc(int damageAmount){
-        currentHealth -= damageAmount;
-        healthBar.SetHealth(currentHealth);
+    private void testServerRpc(){
+        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[1].PlayerObject;
+            networkObject.GetComponent<PlayerMovement>().tempname.Value += 1;
     }
 
 }
