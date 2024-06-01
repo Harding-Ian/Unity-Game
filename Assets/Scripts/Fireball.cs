@@ -18,10 +18,12 @@ public class Fireball : NetworkBehaviour
         {
             Debug.LogError("--- GameManager GameObject not found. Make sure it exists in the scene. ---");
         }
-        Invoke("DestroyFireballServerRpc", 5);
+        if (IsServer){
+            Invoke("DestroyFireballServerRpc", 5);
+        }
     }
 
-    public void SetPlayerOwner(ulong playerId){
+    public void SetPlayerWhoFired(ulong playerId){
         playerOwnerId = playerId;
     }
 
@@ -40,24 +42,21 @@ public class Fireball : NetworkBehaviour
     private void OnCollisionEnter(Collision collision){
         if (IsServer)
         {   
+            Debug.Log("Collision");
             NetworkObject networkObject = collision.gameObject.GetComponent<NetworkObject>();
             if (networkObject != null){
                 if(collision.gameObject.CompareTag("projectile")){
-                    Debug.Log("Projectiles Collided");
                     DestroyFireballServerRpc();
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId){
-                    Debug.Log("object is networked");
                     DestroyFireballServerRpc();
                     if(collision.gameObject.CompareTag("Player")){
                         gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
-                        Debug.Log("");
                     }
                 }
             }
             else{
                 DestroyFireballServerRpc();
-                Debug.Log("object is not networked");
             }
 
         }

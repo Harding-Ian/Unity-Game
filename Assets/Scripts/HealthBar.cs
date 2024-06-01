@@ -7,8 +7,6 @@ using UnityEngine.UI;
 public class HealthBar : NetworkBehaviour
 {
 
-    int x = 0;
-
     public NetworkVariable<int> health = new NetworkVariable<int>(20, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
    
@@ -31,10 +29,7 @@ public class HealthBar : NetworkBehaviour
         slider.value = health;
     }
 
-    void Update(){
-        x+= 1;
-        if (x % 1200 == 0){
-            Debug.Log("value = " + health.Value);
-        }
+    public void logHealth(ulong id){
+        Debug.Log("health of player " + id + "= " + health.Value);
     }
 }

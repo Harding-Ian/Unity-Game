@@ -59,7 +59,11 @@ public class Projectile : NetworkBehaviour
 
 
         Fireball fireballScript = projectileObj.GetComponent<Fireball>();
-        fireballScript.SetPlayerOwner(OwnerClientId);
+        fireballScript.SetPlayerWhoFired(OwnerClientId);
+
+
+        Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), GetComponent<Collider>(), true);
+
 
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * projectileSpeed; //* 0.01f;
     }
