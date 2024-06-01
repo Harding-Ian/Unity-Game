@@ -13,6 +13,8 @@ public class HealthBar : NetworkBehaviour
 
     public GameObject HealthBarUI;
 
+    public Slider visibleHealthBarSlider;
+
 
     public override void OnNetworkSpawn()
     {
@@ -43,11 +45,13 @@ public class HealthBar : NetworkBehaviour
     public void SetMaxHealth(int health){
         healthBarSlider.maxValue = health;
         healthBarSlider.value = health;
+        visibleHealthBarSlider.maxValue = health;
+        visibleHealthBarSlider.value = health;
     }
 
     public void SetHealth(int health){
         healthBarSlider.value = health;
-        Debug.Log("updated slider health to " + health);
+        visibleHealthBarSlider.value = health;
     }
 
     public void logHealth(ulong id){
