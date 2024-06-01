@@ -57,13 +57,8 @@ public class Projectile : NetworkBehaviour
         GameObject projectileObj = Instantiate(projectile, FirePoint.position, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
-
         Fireball fireballScript = projectileObj.GetComponent<Fireball>();
         fireballScript.SetPlayerWhoFired(OwnerClientId);
-
-
-        Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), GetComponent<Collider>(), true);
-
 
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * projectileSpeed; //* 0.01f;
     }
