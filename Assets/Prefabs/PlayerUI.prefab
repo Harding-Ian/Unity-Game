@@ -273,9 +273,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8934407819810007275}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7efa1cb20525889478527cc0e88857dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 6001188134087410301}
+  health:
+    m_InternalValue: 20
+  healthBarSlider: {fileID: 6001188134087410301}
+  playerUIPrefab: {fileID: 0}

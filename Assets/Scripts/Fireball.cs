@@ -39,26 +39,54 @@ public class Fireball : NetworkBehaviour
         Destroy(gameObject);
     }
 
-    private void OnCollisionEnter(Collision collision){
+    // private void OnCollisionEnter(Collision collision){
+    //     if (IsServer)
+    //     {   
+    //         Debug.Log("Collision");
+    //         NetworkObject networkObject = collision.gameObject.GetComponent<NetworkObject>();
+    //         if (networkObject != null){
+    //             if(collision.gameObject.CompareTag("projectile")){
+    //                 DestroyFireballServerRpc();
+    //             }
+    //             else if (playerOwnerId != networkObject.OwnerClientId){
+    //                 DestroyFireballServerRpc();
+    //                 if(collision.gameObject.CompareTag("Player")){
+    //                     gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
+    //                 }
+    //             }
+    //         }
+    //         else{
+    //             DestroyFireballServerRpc();
+    //         }
+
+    //     }
+    // }
+
+    private void OnTriggerEnter(Collider other)
+    {
         if (IsServer)
-        {   
-            Debug.Log("Collision");
-            NetworkObject networkObject = collision.gameObject.GetComponent<NetworkObject>();
-            if (networkObject != null){
-                if(collision.gameObject.CompareTag("projectile")){
+        {
+            Debug.Log("Trigger Entered");
+            NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
+            if (networkObject != null)
+            {
+                if (other.gameObject.CompareTag("projectile"))
+                {
                     DestroyFireballServerRpc();
                 }
-                else if (playerOwnerId != networkObject.OwnerClientId){
+                else if (playerOwnerId != networkObject.OwnerClientId)
+                {
                     DestroyFireballServerRpc();
-                    if(collision.gameObject.CompareTag("Player")){
+                    if (other.gameObject.CompareTag("Player"))
+                    {
                         gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
                     }
                 }
             }
-            else{
+            else
+            {
                 DestroyFireballServerRpc();
             }
-
         }
     }
 
