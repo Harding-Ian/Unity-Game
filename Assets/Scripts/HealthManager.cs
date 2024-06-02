@@ -33,7 +33,7 @@ public class HealthManager : NetworkBehaviour
         Debug.Log("calling me splurge");
         NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
         networkObject.GetComponent<HealthBar>().health.Value -= damage;
-        networkObject.GetComponent<HealthBar>().logHealth(clientId);
+        //networkObject.GetComponent<HealthBar>().logHealth(clientId);
         if (networkObject.GetComponent<HealthBar>().health.Value <= 0){
             //apply death
             Debug.Log("Player " + clientId + " died");

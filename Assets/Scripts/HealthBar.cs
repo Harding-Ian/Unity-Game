@@ -32,10 +32,9 @@ public class HealthBar : NetworkBehaviour
         if (IsLocalPlayer)
         {
             playerRenderer.enabled = false;
-            health.OnValueChanged += OnHealthChanged;
             HealthBarUI = GameObject.Find("HealthBarUI");
             healthBarSlider = HealthBarUI.GetComponent<Slider>();
-            visibleHealthBarCanvas.enabled = false;
+            //visibleHealthBarCanvas.enabled = false;
             if (health != null){
                 SetMaxHealth(health.Value);
             }
@@ -43,26 +42,34 @@ public class HealthBar : NetworkBehaviour
                 Debug.Log("Bababooey");
             }
         }
+        health.OnValueChanged += OnHealthChanged;
     }
 
 
     public void SetMaxHealth(int health){
-        healthBarSlider.maxValue = health;
-        healthBarSlider.value = health;
+        if (IsLocalPlayer){
+            healthBarSlider.maxValue = health;
+            healthBarSlider.value = health;
+        }
         visibleHealthBarSlider.maxValue = health;
         visibleHealthBarSlider.value = health;
     }
 
     public void SetHealth(int health){
-        healthBarSlider.value = health;
+        if (IsLocalPlayer){
+            healthBarSlider.value = health;
+        }
         visibleHealthBarSlider.value = health;
     }
 
-    public void logHealth(ulong id){
-        Debug.Log("health of player " + id + "= " + health.Value);
-    }
+    // public void logHealth(ulong id){
+    //     Debug.Log("health of player " + id + "= " + health.Value);
+    // }
 
     private void OnHealthChanged(int oldValue, int newValue){
         SetHealth(newValue);
+        Debug.Log("----------------------------- smh --------------------------------------");
     }
+
+
 }
