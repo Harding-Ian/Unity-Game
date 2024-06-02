@@ -93,6 +93,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 437adab3e67dfd949ba8ca9d8f8b6a11, type: 2}
+  - {fileID: 2100000, guid: 89110c1accb35334a84b7d90b4e4820e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -176,6 +177,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -747,6 +749,8 @@ MonoBehaviour:
   healthBarSlider: {fileID: 0}
   HealthBarUI: {fileID: 0}
   visibleHealthBarSlider: {fileID: 2516579072727266765}
+  visibleHealthBarCanvas: {fileID: 0}
+  playerRenderer: {fileID: 6888535937030766508}
 --- !u!54 &803095564381844156
 Rigidbody:
   m_ObjectHideFlags: 0

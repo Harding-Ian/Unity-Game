@@ -25,14 +25,14 @@ public class MouseLook : NetworkBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
+        if(!IsLocalPlayer){
+            cameraHolder.SetActive(false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!IsLocalPlayer){
-            cameraHolder.SetActive(false);
-        }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ToggleCursorLock();
