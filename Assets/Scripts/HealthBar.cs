@@ -15,6 +15,9 @@ public class HealthBar : NetworkBehaviour
 
     public Slider visibleHealthBarSlider;
 
+    public Canvas visibleHealthBarCanvas;
+    
+    public Renderer playerRenderer;
 
     public override void OnNetworkSpawn()
     {
@@ -28,9 +31,11 @@ public class HealthBar : NetworkBehaviour
     {   
         if (IsLocalPlayer)
         {
+            playerRenderer.enabled = false;
             health.OnValueChanged += OnHealthChanged;
             HealthBarUI = GameObject.Find("HealthBarUI");
             healthBarSlider = HealthBarUI.GetComponent<Slider>();
+            visibleHealthBarCanvas.enabled = false;
             if (health != null){
                 SetMaxHealth(health.Value);
             }
@@ -39,7 +44,6 @@ public class HealthBar : NetworkBehaviour
             }
         }
     }
-
 
 
     public void SetMaxHealth(int health){
