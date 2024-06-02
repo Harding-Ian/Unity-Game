@@ -48,7 +48,7 @@ public class MouseLook : NetworkBehaviour
         //sets rigid body rotation
         rb.MoveRotation(Quaternion.Euler(0f, yRotation, 0f));
         //local rotation moves relative to parent --> rotation moves relative to world
-        cameraHolder.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        cameraHolder.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
     }
     void ToggleCursorLock()
