@@ -14,7 +14,7 @@ public class BillBoardRotation : NetworkBehaviour
         {
             if (instance != player.GetComponent<PlayerScript>())
             {
-                transform.rotation = instance.transform.rotation;
+                if(!IsLocalPlayer) transform.rotation = instance.transform.rotation;
             }
 
             //if(!IsLocalPlayer) transform.rotation = quaternion.identity;
