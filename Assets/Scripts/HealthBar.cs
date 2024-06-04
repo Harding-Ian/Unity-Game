@@ -34,13 +34,13 @@ public class HealthBar : NetworkBehaviour
             playerRenderer.enabled = false;
             HealthBarUI = GameObject.Find("HealthBarUI");
             healthBarSlider = HealthBarUI.GetComponent<Slider>();
-            //visibleHealthBarCanvas.enabled = false;
+            visibleHealthBarCanvas.enabled = false;
         }
         if (health != null){
                 SetMaxHealth(health.Value);
             }
         else{
-            Debug.Log("Bababooey");
+            Debug.Log("Error: Health == null");
         }
         health.OnValueChanged += OnHealthChanged;
     }
@@ -62,13 +62,8 @@ public class HealthBar : NetworkBehaviour
         visibleHealthBarSlider.value = health;
     }
 
-    // public void logHealth(ulong id){
-    //     Debug.Log("health of player " + id + "= " + health.Value);
-    // }
-
     private void OnHealthChanged(int oldValue, int newValue){
         SetHealth(newValue);
-        Debug.Log("----------------------------- smh --------------------------------------");
     }
 
 
