@@ -46,15 +46,16 @@ public class Fireball : NetworkBehaviour
     {
         NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
 
-        if(IsClient) Debug.Log("IsLocalPlayer is true");
-        if(networkObject != null) Debug.Log("networkObject != null is true");
-        if(playerOwnerId.Value != networkObject.OwnerClientId) Debug.Log("playerOwnerId != networkObject.OwnerClientId is true");
-        if(other.gameObject.CompareTag("Player")) Debug.Log("other.gameObject.CompareTag is true");
+        // if(IsClient) Debug.Log("IsLocalPlayer is true");
+        // if(networkObject != null) Debug.Log("networkObject != null is true");
+        // if(playerOwnerId.Value != networkObject.OwnerClientId) Debug.Log("playerOwnerId != networkObject.OwnerClientId is true");
+        // if(other.gameObject.CompareTag("Player")) Debug.Log("other.gameObject.CompareTag is true");
         
-
+        Debug.Log("playerOwnerId.Value = " + playerOwnerId.Value);
+        Debug.Log("networkObject.OwnerClientId = " + networkObject.OwnerClientId);
         if(IsClient && networkObject != null && playerOwnerId.Value != networkObject.OwnerClientId && other.gameObject.CompareTag("Player"))
         {
-            Debug.Log("fireballrpc run");
+            //Debug.Log("fireballrpc run");
             Vector3 knockbackdirection;
             knockbackdirection = new Vector3(0,1,0);
             networkObject.GetComponent<PlayerMovement>().ApplyKnockback(knockbackdirection, 5);
