@@ -19,6 +19,8 @@ public class HealthBar : NetworkBehaviour
     
     public Renderer playerRenderer;
 
+    public Renderer eyeCube;
+
     public override void OnNetworkSpawn()
     {
         if (IsServer)
@@ -32,6 +34,7 @@ public class HealthBar : NetworkBehaviour
         if (IsLocalPlayer)
         {
             playerRenderer.enabled = false;
+            eyeCube.enabled = false;
             HealthBarUI = GameObject.Find("HealthBarUI");
             healthBarSlider = HealthBarUI.GetComponent<Slider>();
             visibleHealthBarCanvas.enabled = false;

@@ -143,8 +143,8 @@ Transform:
   m_GameObject: {fileID: 3778772332733114932}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.8, z: 0.4}
-  m_LocalScale: {x: 0.72, y: 0.16, z: 0.17}
+  m_LocalPosition: {x: 0, y: 0.49, z: 0.4}
+  m_LocalScale: {x: 0.72, y: 0.16, z: -0.21}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 873102854293884803}
@@ -766,6 +766,7 @@ MonoBehaviour:
   visibleHealthBarSlider: {fileID: 2516579072727266765}
   visibleHealthBarCanvas: {fileID: 2249020136504082313}
   playerRenderer: {fileID: 6888535937030766508}
+  eyeCube: {fileID: 3053666659993595146}
 --- !u!54 &803095564381844156
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -817,7 +818,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91838d2e57e79f40b8e3b135708093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTransform: {fileID: 873102854293884803}
+  clientId:
+    m_InternalValue: 100000
 --- !u!1 &7833775591222118325
 GameObject:
   m_ObjectHideFlags: 0
