@@ -10,14 +10,15 @@ public class BillBoardRotation : NetworkBehaviour
 
     void LateUpdate()
     {
-        foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
-        {
-            if (instance != player.GetComponent<PlayerScript>())
+        if(!IsLocalPlayer) {
+            foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
             {
-                if(!IsLocalPlayer) transform.rotation = instance.transform.rotation;
+                if (instance.IsLocalPlayer)
+                {
+                    transform.LookAt(instance.transform);
+                    return;
+                }
             }
-
-            //if(!IsLocalPlayer) transform.rotation = quaternion.identity;
         }
     }
 }

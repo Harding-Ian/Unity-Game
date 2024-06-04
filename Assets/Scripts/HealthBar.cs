@@ -35,12 +35,12 @@ public class HealthBar : NetworkBehaviour
             HealthBarUI = GameObject.Find("HealthBarUI");
             healthBarSlider = HealthBarUI.GetComponent<Slider>();
             //visibleHealthBarCanvas.enabled = false;
-            if (health != null){
+        }
+        if (health != null){
                 SetMaxHealth(health.Value);
             }
-            else{
-                Debug.Log("Bababooey");
-            }
+        else{
+            Debug.Log("Bababooey");
         }
         health.OnValueChanged += OnHealthChanged;
     }
