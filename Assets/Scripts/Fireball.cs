@@ -19,7 +19,7 @@ public class Fireball : NetworkBehaviour
             Debug.LogError("GameManager not found within scene");
         }
         if (IsServer){
-            Invoke("DestroyFireballServerRpc", 5);
+            Invoke("DestroyFireball", 5);
         }
     }
 
@@ -27,45 +27,40 @@ public class Fireball : NetworkBehaviour
         playerOwnerId = playerId;
     }
 
-    // [Rpc(SendTo.Server)]
-    // private void DestroyFireballRpc(){
-    //     NetworkObject.Despawn();
-    //     Destroy(gameObject);
-    // }
+    [Rpc(SendTo.Everyone)]
+    private void FireballRpc(ulong clientId){
+        // Debug.Log("fireballrpc run");
+        // Vector3 knockbackdirection;
+        // knockbackdirection = new Vector3(0,1,0);
+        // NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+        // networkObject.GetComponent<PlayerMovement>().ApplyKnockback(knockbackdirection, 10);
+    }
 
-    [ServerRpc]
-    private void DestroyFireballServerRpc(){
+    private void DestroyFireball()
+    {
         NetworkObject.Despawn();
     }
 
-    // private void OnCollisionEnter(Collision collision){
-    //     if (IsServer)
-    //     {   
-    //         Debug.Log("Collision");
-    //         NetworkObject networkObject = collision.gameObject.GetComponent<NetworkObject>();
-    //         if (networkObject != null){
-    //             if(collision.gameObject.CompareTag("projectile")){
-    //                 DestroyFireballServerRpc();
-    //             }
-    //             else if (playerOwnerId != networkObject.OwnerClientId){
-    //                 DestroyFireballServerRpc();
-    //                 if(collision.gameObject.CompareTag("Player")){
-    //                     gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
-    //                 }
-    //             }
-    //         }
-    //         else{
-    //             DestroyFireballServerRpc();
-    //         }
-
-    //     }
-    // }
-
     private void OnTriggerEnter(Collider other)
     {
+        NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
+
+        if(IsClient) Debug.Log("IsLocalPlayer is true");
+        if(networkObject != null) Debug.Log("networkObject != null is true");
+        if(playerOwnerId != networkObject.OwnerClientId) Debug.Log("playerOwnerId != networkObject.OwnerClientId is true");
+        if(other.gameObject.CompareTag("Player")) Debug.Log("other.gameObject.CompareTag is true");
+        
+
+        if(IsClient && networkObject != null && playerOwnerId != networkObject.OwnerClientId && other.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("fireballrpc run");
+            Vector3 knockbackdirection;
+            knockbackdirection = new Vector3(0,1,0);
+            networkObject.GetComponent<PlayerMovement>().ApplyKnockback(knockbackdirection, 100);
+        }
+
         if (IsServer)
         {
-            NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
             if (networkObject != null)
             {
                 if (other.gameObject.CompareTag("projectile"))
@@ -89,6 +84,8 @@ public class Fireball : NetworkBehaviour
                 NetworkObject.Despawn();
             }
         }
+
+
     }
 
     

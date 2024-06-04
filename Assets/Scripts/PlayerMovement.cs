@@ -151,6 +151,11 @@ public class PlayerMovement : NetworkBehaviour
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
+    public void ApplyKnockback(Vector3 dir, int knockback)
+    {
+        rb.AddForce(dir.normalized * knockback, ForceMode.Impulse);
+    }
+
     private void Dash()
     {
         // reset  velocity
