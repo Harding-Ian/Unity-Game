@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class Fireball : NetworkBehaviour
 {
-    
-    private ulong playerOwnerId;
+
+    public NetworkVariable<ulong> playerOwnerId = new NetworkVariable<ulong>(100000, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public GameObject gameManager;
     void Start()
@@ -24,7 +24,8 @@ public class Fireball : NetworkBehaviour
     }
 
     public void SetPlayerWhoFired(ulong playerId){
-        playerOwnerId = playerId;
+        playerOwnerId.Value = playerId;
+        Debug.Log("playerownerid set to" + playerId);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -47,16 +48,16 @@ public class Fireball : NetworkBehaviour
 
         if(IsClient) Debug.Log("IsLocalPlayer is true");
         if(networkObject != null) Debug.Log("networkObject != null is true");
-        if(playerOwnerId != networkObject.OwnerClientId) Debug.Log("playerOwnerId != networkObject.OwnerClientId is true");
+        if(playerOwnerId.Value != networkObject.OwnerClientId) Debug.Log("playerOwnerId != networkObject.OwnerClientId is true");
         if(other.gameObject.CompareTag("Player")) Debug.Log("other.gameObject.CompareTag is true");
         
 
-        if(IsClient && networkObject != null && playerOwnerId != networkObject.OwnerClientId && other.gameObject.CompareTag("Player"))
+        if(IsClient && networkObject != null && playerOwnerId.Value != networkObject.OwnerClientId && other.gameObject.CompareTag("Player"))
         {
             Debug.Log("fireballrpc run");
             Vector3 knockbackdirection;
             knockbackdirection = new Vector3(0,1,0);
-            networkObject.GetComponent<PlayerMovement>().ApplyKnockback(knockbackdirection, 100);
+            networkObject.GetComponent<PlayerMovement>().ApplyKnockback(knockbackdirection, 5);
         }
 
         if (IsServer)
@@ -68,7 +69,7 @@ public class Fireball : NetworkBehaviour
                     //DestroyFireballServerRpc();
                     NetworkObject.Despawn();
                 }
-                else if (playerOwnerId != networkObject.OwnerClientId)
+                else if (playerOwnerId.Value != networkObject.OwnerClientId)
                 {
                     //DestroyFireballServerRpc();
                     NetworkObject.Despawn();
