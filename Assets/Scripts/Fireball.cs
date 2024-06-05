@@ -8,8 +8,6 @@ using UnityEngine;
 public class Fireball : NetworkBehaviour
 {
 
-    //public NetworkVariable<ulong> playerOwnerId = new NetworkVariable<ulong>(100000, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
     private ulong playerOwnerId;
 
     public GameObject gameManager;
@@ -26,9 +24,7 @@ public class Fireball : NetworkBehaviour
     }
 
     public void SetPlayerWhoFired(ulong playerId){
-        //playerOwnerId.Value = playerId;
         playerOwnerId = playerId;
-        Debug.Log("playerownerid set to" + playerId);
     }
 
 
@@ -55,12 +51,10 @@ public class Fireball : NetworkBehaviour
             {
                 if (other.gameObject.CompareTag("projectile"))
                 {
-                    //DestroyFireballServerRpc();
                     NetworkObject.Despawn();
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {
-                    //DestroyFireballServerRpc();
                     if (other.gameObject.CompareTag("Player"))
                     {
                         gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
@@ -72,7 +66,6 @@ public class Fireball : NetworkBehaviour
             }
             else
             {
-                //DestroyFireballServerRpc();
                 NetworkObject.Despawn();
             }
         }
