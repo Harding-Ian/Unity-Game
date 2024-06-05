@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 
 public class Fireball : NetworkBehaviour
@@ -32,7 +33,22 @@ public class Fireball : NetworkBehaviour
     private void ApplyKnockbackRpc(Vector3 knockbackDirection, RpcParams rpcParams)
     {
         NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(knockbackDirection, 75);
+        
+
+        float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
+
+        Debug.Log("Angle === " + angle);
+
+        if (angle < 0) {angle = 0;}
+
+        float adjustedAngle = (angle / 115f) * 30f;
+        Debug.Log("Adjusted angle = " + adjustedAngle);
+        
+        float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
+
+        Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
+        Debug.Log("Adjusted knockback direction" + adjustedknockbackDirection);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 50);
     }
 
     private void DestroyProjectile()
@@ -58,7 +74,6 @@ public class Fireball : NetworkBehaviour
                     if (other.gameObject.CompareTag("Player"))
                     {
                         gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
-                        Debug.Log(GetComponent<Rigidbody>().velocity.normalized);
                         ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized ,RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                     }
                     NetworkObject.Despawn();
