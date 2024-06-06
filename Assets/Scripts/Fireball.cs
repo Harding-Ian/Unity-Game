@@ -10,6 +10,7 @@ public class Fireball : NetworkBehaviour
 {
 
     private ulong playerOwnerId;
+    public GameObject blast;
 
     public GameObject gameManager;
     void Start()
@@ -68,6 +69,8 @@ public class Fireball : NetworkBehaviour
                 if (other.gameObject.CompareTag("projectile"))
                 {
                     NetworkObject.Despawn();
+                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity); // Instantiate the object
+                    blastObj.GetComponent<NetworkObject>().Spawn(true);
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {
@@ -75,14 +78,20 @@ public class Fireball : NetworkBehaviour
                     {
                         gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
                         ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized ,RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        
                     }
                     NetworkObject.Despawn();
+                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity); // Instantiate the object
+                    blastObj.GetComponent<NetworkObject>().Spawn(true);
                 }
             }
             else
             {
                 NetworkObject.Despawn();
+                GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity); // Instantiate the object
+                blastObj.GetComponent<NetworkObject>().Spawn(true);
             }
+            
         }
 
 

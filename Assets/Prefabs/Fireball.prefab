@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2061212873827488745}
   - component: {fileID: -2969628244539104453}
   - component: {fileID: 9168893770620537271}
+  - component: {fileID: 3412653424207083590}
   m_Layer: 0
   m_Name: Fireball
   m_TagString: projectile
@@ -92,6 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dbb24fb11e618b4491f84f5563e0274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blast: {fileID: 325097870823728784, guid: d4927cb448713e04ba9d8c2ccd3f7885, type: 3}
   gameManager: {fileID: 0}
 --- !u!54 &2061212873827488745
 Rigidbody:
@@ -163,6 +165,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!75 &3412653424207083590
+ConstantForce:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900262667132587406}
+  m_Enabled: 1
+  m_Force: {x: 0, y: -30, z: 0}
+  m_RelativeForce: {x: 0, y: 0, z: 0}
+  m_Torque: {x: 0, y: 0, z: 0}
+  m_RelativeTorque: {x: 0, y: 0, z: 0}
 --- !u!1 &5975477709810723135
 GameObject:
   m_ObjectHideFlags: 0

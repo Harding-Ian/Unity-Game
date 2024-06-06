@@ -583,6 +583,7 @@ GameObject:
   - component: {fileID: 803095564381844156}
   - component: {fileID: 3763758321535756859}
   - component: {fileID: -9213184511530500658}
+  - component: {fileID: 1242329627409332268}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -759,14 +760,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7efa1cb20525889478527cc0e88857dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health:
-    m_InternalValue: 0
   healthBarSlider: {fileID: 0}
   HealthBarUI: {fileID: 0}
   visibleHealthBarSlider: {fileID: 2516579072727266765}
   visibleHealthBarCanvas: {fileID: 2249020136504082313}
   playerRenderer: {fileID: 6888535937030766508}
   eyeCube: {fileID: 3053666659993595146}
+  statsManager: {fileID: 1242329627409332268}
 --- !u!54 &803095564381844156
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -820,6 +820,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clientId:
     m_InternalValue: 100000
+--- !u!114 &1242329627409332268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5486534364741473120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cb83ca97c41b14499c14fb437191564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth:
+    m_InternalValue: 20
 --- !u!1 &7833775591222118325
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class HealthBar : NetworkBehaviour
 {
 
-    public NetworkVariable<int> health = new NetworkVariable<int>(20, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    //public NetworkVariable<int> health = new NetworkVariable<int>(20, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public Slider healthBarSlider;
 
@@ -21,13 +21,7 @@ public class HealthBar : NetworkBehaviour
 
     public Renderer eyeCube;
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsServer)
-        {
-            health.Value = 20;
-        }
-    }
+    public PlayerStatsManager statsManager;
 
     private void Start()
     {   
@@ -39,17 +33,13 @@ public class HealthBar : NetworkBehaviour
             healthBarSlider = HealthBarUI.GetComponent<Slider>();
             visibleHealthBarCanvas.enabled = false;
         }
-        if (health != null){
-                SetMaxHealth(health.Value);
-            }
-        else{
-            Debug.Log("Error: Health == null");
-        }
-        health.OnValueChanged += OnHealthChanged;
+
+        SetMaxHealth(statsManager.playerHealth.Value);
+        statsManager.playerHealth.OnValueChanged += OnHealthChanged;
     }
 
 
-    public void SetMaxHealth(int health){
+    public void SetMaxHealth(float health){
         if (IsLocalPlayer){
             healthBarSlider.maxValue = health;
             healthBarSlider.value = health;
@@ -58,14 +48,14 @@ public class HealthBar : NetworkBehaviour
         visibleHealthBarSlider.value = health;
     }
 
-    public void SetHealth(int health){
+    public void SetHealth(float health){
         if (IsLocalPlayer){
             healthBarSlider.value = health;
         }
         visibleHealthBarSlider.value = health;
     }
 
-    private void OnHealthChanged(int oldValue, int newValue){
+    private void OnHealthChanged(float oldValue, float newValue){
         SetHealth(newValue);
     }
 

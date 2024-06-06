@@ -31,8 +31,8 @@ public class HealthManager : NetworkBehaviour
     [ServerRpc]
     private void updateHealthServerRpc(int damage, ulong clientId){
         NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-        networkObject.GetComponent<HealthBar>().health.Value -= damage;
-        if (networkObject.GetComponent<HealthBar>().health.Value <= 0){
+        networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value -= damage;
+        if (networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0){
             //apply death
             Debug.Log("Player " + clientId + " died");
         }
