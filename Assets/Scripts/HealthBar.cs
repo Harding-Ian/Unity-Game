@@ -11,7 +11,7 @@ public class HealthBar : NetworkBehaviour
 
     public Slider healthBarSlider;
 
-    public GameObject HealthBarUI;
+    public GameObject FillSliderHolder;
 
     public Slider visibleHealthBarSlider;
 
@@ -29,8 +29,8 @@ public class HealthBar : NetworkBehaviour
         {
             playerRenderer.enabled = false;
             eyeCube.enabled = false;
-            HealthBarUI = GameObject.Find("HealthBarUI");
-            healthBarSlider = HealthBarUI.GetComponent<Slider>();
+            FillSliderHolder = GameObject.Find("FillSliderHolder");
+            healthBarSlider = FillSliderHolder.GetComponent<Slider>();
             visibleHealthBarCanvas.enabled = false;
         }
 
