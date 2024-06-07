@@ -45,10 +45,24 @@ public class ProjectileBlast : NetworkBehaviour
 
         Debug.Log("Players in range = " + playersInRange.Count);
         int i = 0;
-        foreach (var x in playersInRange) {
-            Debug.Log(i + " = " + x.GetComponent<NetworkObject>().OwnerClientId);
+        foreach (var player in playersInRange) {
+            Debug.Log("--------------------------- Break Line -------------------");
+            Debug.Log(i + " = " + player.GetComponent<NetworkObject>().OwnerClientId);
             i += 1;
+
+            var ray = new Ray(GetComponent<Transform>().position, player.GetComponent<Transform>().position - GetComponent<Transform>().position);
+            RaycastHit hit;
+
+            Debug.Log("Ray = " + ray);
+
+            if (Physics.Raycast(ray, out hit)) {
+            GameObject objectHit = hit.collider.gameObject;
+            Debug.Log("Ray hit object: " + objectHit.name);
+            } else {
+                Debug.Log("No hit");
+            }
         }
+
     }
     
 

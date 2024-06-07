@@ -746,7 +746,7 @@ MonoBehaviour:
   cam: {fileID: 7360464807818155601}
   projectile: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
   FirePoint: {fileID: 4120642327271369139}
-  projectileSpeed: 80
+  projectileSpeed: 2000
   fireKey: 323
 --- !u!114 &1645909117300595920
 MonoBehaviour:
@@ -761,7 +761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBarSlider: {fileID: 0}
-  HealthBarUI: {fileID: 0}
+  FillSliderHolder: {fileID: 0}
   visibleHealthBarSlider: {fileID: 2516579072727266765}
   visibleHealthBarCanvas: {fileID: 2249020136504082313}
   playerRenderer: {fileID: 6888535937030766508}

@@ -13,17 +13,30 @@ public class Fireball : NetworkBehaviour
     public GameObject blast;
 
     public GameObject gameManager;
+
+    public Vector3 currentVelocity;
+    public Vector3 previousVelocity;
     void Start()
-    {
+    {   
         gameManager = GameObject.Find("GameManager");
         if (gameManager == null)
         {
             Debug.LogError("GameManager not found within scene");
         }
         if (IsServer){
+            previousVelocity = GetComponent<Rigidbody>().velocity;
             Invoke("DestroyProjectile", 5);
         }
     }
+
+    void Update(){
+        if (IsServer){
+            previousVelocity = currentVelocity;
+            currentVelocity = GetComponent<Rigidbody>().velocity;
+        }
+
+    }
+
 
     public void SetPlayerWhoFired(ulong playerId){
         playerOwnerId = playerId;
@@ -57,9 +70,50 @@ public class Fireball : NetworkBehaviour
         NetworkObject.Despawn();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
+
+
+    //     if (IsServer)
+    //     {
+    //         if (networkObject != null)
+    //         {
+    //             if (other.gameObject.CompareTag("projectile"))
+    //             {
+    //                 NetworkObject.Despawn();
+    //                 GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+    //                 blastObj.GetComponent<NetworkObject>().Spawn(true);
+    //             }
+    //             else if (playerOwnerId != networkObject.OwnerClientId)
+    //             {
+    //                 if (other.gameObject.CompareTag("Player"))
+    //                 {
+    //                     gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
+    //                     ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        
+    //                 }
+    //                 NetworkObject.Despawn();
+    //                 GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+    //                 blastObj.GetComponent<NetworkObject>().Spawn(true);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             NetworkObject.Despawn();
+    //             GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+    //             blastObj.GetComponent<NetworkObject>().Spawn(true);
+    //         }
+            
+    //     }
+
+
+    // }
+
+
+    private void OnCollisionEnter(Collision other){
         NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
+
 
 
         if (IsServer)
@@ -69,7 +123,8 @@ public class Fireball : NetworkBehaviour
                 if (other.gameObject.CompareTag("projectile"))
                 {
                     NetworkObject.Despawn();
-                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity); // Instantiate the object
+                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+                    //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
                     blastObj.GetComponent<NetworkObject>().Spawn(true);
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
@@ -77,24 +132,25 @@ public class Fireball : NetworkBehaviour
                     if (other.gameObject.CompareTag("Player"))
                     {
                         gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
-                        ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized ,RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        //ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        ApplyKnockbackRpc(previousVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         
                     }
                     NetworkObject.Despawn();
-                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity); // Instantiate the object
+                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+                    //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
                     blastObj.GetComponent<NetworkObject>().Spawn(true);
                 }
             }
             else
             {
                 NetworkObject.Despawn();
-                GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity); // Instantiate the object
+                GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+                //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
                 blastObj.GetComponent<NetworkObject>().Spawn(true);
             }
             
         }
-
-
     }
 
     
