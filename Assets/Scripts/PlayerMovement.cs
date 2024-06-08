@@ -9,9 +9,11 @@ using System;
 public class PlayerMovement : NetworkBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed;
-
+    private float moveSpeed;
+    public float groundedMoveSpeed;
+    public float airMoveSpeed;
     public float groundDrag;
+    public float antislideDrag;
     public float airDrag;
 
     public float jumpForce;
@@ -21,8 +23,11 @@ public class PlayerMovement : NetworkBehaviour
     public float airMultiplier;
     bool readyToJump;
     bool readyToDash;
-    public int jumpcount;
-    public int dashcount;
+    private int jumpcount;
+    private int dashcount;
+    public int maxjumpcount;
+    public int maxdashcount;
+    
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -57,6 +62,12 @@ public class PlayerMovement : NetworkBehaviour
 
         readyToJump = true;
         readyToDash = true;
+        InvokeRepeating("outputvelocity", 1f, 1f);
+    }
+
+    void outputvelocity()
+    {
+        if(IsLocalPlayer) Debug.Log("velocity:" + GetComponent<Rigidbody>().velocity);
     }
     
 
@@ -74,7 +85,9 @@ public class PlayerMovement : NetworkBehaviour
         // handle drag
         if (grounded)
         {
+            
             rb.drag = groundDrag;
+            if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)) rb.drag = antislideDrag;
             jumpcount = 0;
             dashcount = 0;
         }
@@ -95,7 +108,7 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // when to jump
-        if(Input.GetKey(jumpKey) && readyToJump && jumpcount < 2)
+        if(Input.GetKey(jumpKey) && readyToJump && jumpcount < maxjumpcount)
         {
             readyToJump = false;
             Jump();
@@ -106,7 +119,7 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
-        if(Input.GetKey(dashKey) && readyToDash && dashcount < 1)
+        if(Input.GetKey(dashKey) && readyToDash && dashcount < maxdashcount)
         {
             readyToDash = false;
             Dash();
@@ -129,6 +142,10 @@ public class PlayerMovement : NetworkBehaviour
         rightxzDir   = new Vector3(orientation.right.x,   0, orientation.right.z  ).normalized;
 
         inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
+
+        //chech which max speed to apply
+        if(grounded) moveSpeed = groundedMoveSpeed;//
+        else moveSpeed = airMoveSpeed;
 
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
         if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)

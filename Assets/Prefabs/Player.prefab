@@ -584,6 +584,7 @@ GameObject:
   - component: {fileID: 3763758321535756859}
   - component: {fileID: -9213184511530500658}
   - component: {fileID: 1242329627409332268}
+  - component: {fileID: 2558519288129156580}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -668,16 +669,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 276c4aa3e1f8d2c448eabd79409d2fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
-  groundDrag: 10
-  airDrag: 1
-  jumpForce: 12
-  dashForce: 30
-  jumpCooldown: 0.25
-  dashCooldown: 2
-  airMultiplier: 0.4
-  jumpcount: 2
-  dashcount: 1
+  groundedMoveSpeed: 9
+  airMoveSpeed: 11
+  groundDrag: 6
+  antislideDrag: 15
+  airDrag: 0.3
+  jumpForce: 15
+  dashForce: 20
+  jumpCooldown: 0.5
+  dashCooldown: 1
+  airMultiplier: 1.25
+  maxjumpcount: 2
+  maxdashcount: 3
   jumpKey: 32
   dashKey: 304
   playerHeight: 2
@@ -769,6 +772,7 @@ MonoBehaviour:
   playerRenderer: {fileID: 6888535937030766508}
   eyeCube: {fileID: 3053666659993595146}
   statsManager: {fileID: 1242329627409332268}
+  knockbackPercentObject: {fileID: 0}
 --- !u!54 &803095564381844156
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -791,7 +795,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
@@ -840,6 +844,18 @@ MonoBehaviour:
     m_InternalValue: 2
   knockbackBuildUp:
     m_InternalValue: 0
+--- !u!75 &2558519288129156580
+ConstantForce:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5486534364741473120}
+  m_Enabled: 1
+  m_Force: {x: 0, y: -20, z: 0}
+  m_RelativeForce: {x: 0, y: 0, z: 0}
+  m_Torque: {x: 0, y: 0, z: 0}
+  m_RelativeTorque: {x: 0, y: 0, z: 0}
 --- !u!1 &7833775591222118325
 GameObject:
   m_ObjectHideFlags: 0
