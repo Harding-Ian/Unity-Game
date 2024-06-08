@@ -15,7 +15,6 @@ public class Fireball : NetworkBehaviour
     public GameObject gameManager;
 
     public Vector3 currentVelocity;
-    public Vector3 previousVelocity;
     void Start()
     {   
         gameManager = GameObject.Find("GameManager");
@@ -24,14 +23,12 @@ public class Fireball : NetworkBehaviour
             Debug.LogError("GameManager not found within scene");
         }
         if (IsServer){
-            previousVelocity = GetComponent<Rigidbody>().velocity;
             Invoke("DestroyProjectile", 5);
         }
     }
 
     void Update(){
         if (IsServer){
-            previousVelocity = currentVelocity;
             currentVelocity = GetComponent<Rigidbody>().velocity;
         }
 
@@ -129,9 +126,9 @@ public class Fireball : NetworkBehaviour
                 {
                     if (other.gameObject.CompareTag("Player"))
                     {   
-                        ApplyKnockbackRpc(-1 * other.relativeVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        //ApplyKnockbackRpc(-1 * other.relativeVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         gameManager.GetComponent<HealthManager>().applyDamage(networkObject.OwnerClientId);
-                        //ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         
                     }
                     NetworkObject.Despawn();
