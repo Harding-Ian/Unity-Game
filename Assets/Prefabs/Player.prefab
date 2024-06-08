@@ -670,15 +670,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundedMoveSpeed: 9
-  airMoveSpeed: 7
+  airMoveSpeed: 6
   groundDrag: 6
   antislideDrag: 15
   airDrag: 0.3
-  jumpForce: 15
+  jumpForce: 12
   dashForce: 20
   jumpCooldown: 0.5
   dashCooldown: 1
-  airMultiplier: 1.25
+  airMultiplier: 1.5
   maxjumpcount: 2
   maxdashcount: 3
   jumpKey: 32
@@ -750,7 +750,7 @@ MonoBehaviour:
   cam: {fileID: 7360464807818155601}
   projectile: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
   FirePoint: {fileID: 4120642327271369139}
-  projectileSpeed: 65
+  projectileSpeed: 75
   fireKey: 323
   statsManager: {fileID: 1242329627409332268}
 --- !u!114 &1645909117300595920
@@ -841,7 +841,7 @@ MonoBehaviour:
   playerHealth:
     m_InternalValue: 20
   projectileCooldown:
-    m_InternalValue: 2
+    m_InternalValue: 1.3
   knockbackBuildUp:
     m_InternalValue: 0
 --- !u!75 &2558519288129156580
@@ -852,7 +852,7 @@ ConstantForce:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5486534364741473120}
   m_Enabled: 1
-  m_Force: {x: 0, y: -20, z: 0}
+  m_Force: {x: 0, y: -15, z: 0}
   m_RelativeForce: {x: 0, y: 0, z: 0}
   m_Torque: {x: 0, y: 0, z: 0}
   m_RelativeTorque: {x: 0, y: 0, z: 0}
