@@ -670,7 +670,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundedMoveSpeed: 9
-  airMoveSpeed: 11
+  airMoveSpeed: 7
   groundDrag: 6
   antislideDrag: 15
   airDrag: 0.3

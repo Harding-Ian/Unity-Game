@@ -48,17 +48,13 @@ public class Fireball : NetworkBehaviour
 
         float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
 
-        Debug.Log("Angle === " + angle);
-
         if (angle < 0) {angle = 0;}
 
         float adjustedAngle = (angle / 115f) * 30f;
-        Debug.Log("Adjusted angle = " + adjustedAngle);
         
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        Debug.Log("Adjusted knockback direction" + adjustedknockbackDirection);
         playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 50);
     }
 
@@ -67,45 +63,6 @@ public class Fireball : NetworkBehaviour
         NetworkObject.Despawn();
     }
 
-    // private void OnTriggerEnter(Collider other)
-    // {
-    //     NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
-
-
-    //     if (IsServer)
-    //     {
-    //         if (networkObject != null)
-    //         {
-    //             if (other.gameObject.CompareTag("projectile"))
-    //             {
-    //                 NetworkObject.Despawn();
-    //                 GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-    //                 blastObj.GetComponent<NetworkObject>().Spawn(true);
-    //             }
-    //             else if (playerOwnerId != networkObject.OwnerClientId)
-    //             {
-    //                 if (other.gameObject.CompareTag("Player"))
-    //                 {
-    //                     gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
-    //                     ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
-                        
-    //                 }
-    //                 NetworkObject.Despawn();
-    //                 GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-    //                 blastObj.GetComponent<NetworkObject>().Spawn(true);
-    //             }
-    //         }
-    //         else
-    //         {
-    //             NetworkObject.Despawn();
-    //             GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-    //             blastObj.GetComponent<NetworkObject>().Spawn(true);
-    //         }
-            
-    //     }
-
-
-    // }
 
 
     private void OnCollisionEnter(Collision other){
@@ -127,8 +84,9 @@ public class Fireball : NetworkBehaviour
                     if (other.gameObject.CompareTag("Player"))
                     {   
                         //ApplyKnockbackRpc(-1 * other.relativeVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
-                        gameManager.GetComponent<HealthManager>().applyDamage(networkObject.OwnerClientId);
+                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId);
                         ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, 0.25f);
                         
                     }
                     NetworkObject.Despawn();

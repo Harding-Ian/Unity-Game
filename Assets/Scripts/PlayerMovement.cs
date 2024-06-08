@@ -62,7 +62,6 @@ public class PlayerMovement : NetworkBehaviour
 
         readyToJump = true;
         readyToDash = true;
-        InvokeRepeating("outputvelocity", 1f, 1f);
     }
 
     void outputvelocity()
