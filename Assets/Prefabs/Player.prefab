@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1404790979967146716}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.237, z: 0.729}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -647,7 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2815123942
+  GlobalObjectIdHash: 2987591946
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -686,6 +686,7 @@ MonoBehaviour:
     m_Bits: 64
   groundedOverrideTimer: 0.1
   orientation: {fileID: 8477746912704538161}
+  statsManager: {fileID: 1242329627409332268}
 --- !u!114 &-1777087793297667645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -746,8 +747,9 @@ MonoBehaviour:
   cam: {fileID: 7360464807818155601}
   projectile: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
   FirePoint: {fileID: 4120642327271369139}
-  projectileSpeed: 10
+  projectileSpeed: 65
   fireKey: 323
+  statsManager: {fileID: 1242329627409332268}
 --- !u!114 &1645909117300595920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -834,6 +836,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth:
     m_InternalValue: 20
+  projectileCooldown:
+    m_InternalValue: 2
+  knockbackBuildUp:
+    m_InternalValue: 0
 --- !u!1 &7833775591222118325
 GameObject:
   m_ObjectHideFlags: 0

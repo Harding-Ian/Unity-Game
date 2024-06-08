@@ -8,13 +8,21 @@ public class ProjectileBlast : NetworkBehaviour
 
     public float radius = 4f;
     public string playerTag = "Player";
+
+    public GameObject gameManager;
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager");
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found within scene");
+        }
         if (IsServer){
-            Invoke("DestroyProjectile", 5);
+            Invoke("DestroyProjectile", 0.3f);
             FindPlayers();
         }
+        
     }
 
     // // Update is called once per frame
@@ -58,6 +66,9 @@ public class ProjectileBlast : NetworkBehaviour
             if (Physics.Raycast(ray, out hit)) {
             GameObject objectHit = hit.collider.gameObject;
             Debug.Log("Ray hit object: " + objectHit.name);
+                if (objectHit.CompareTag("Player")){
+                    gameManager.GetComponent<HealthManager>().applyDamage(player.GetComponent<NetworkObject>().OwnerClientId);
+                }
             } else {
                 Debug.Log("No hit");
             }

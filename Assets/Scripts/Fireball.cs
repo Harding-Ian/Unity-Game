@@ -114,8 +114,6 @@ public class Fireball : NetworkBehaviour
     private void OnCollisionEnter(Collision other){
         NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
 
-
-
         if (IsServer)
         {
             if (networkObject != null)
@@ -130,10 +128,10 @@ public class Fireball : NetworkBehaviour
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {
                     if (other.gameObject.CompareTag("Player"))
-                    {
-                        gameManager.GetComponent<HealthManager>().applyFireballDamage(networkObject.OwnerClientId);
-                        //ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                    {   
                         ApplyKnockbackRpc(-1 * other.relativeVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        gameManager.GetComponent<HealthManager>().applyDamage(networkObject.OwnerClientId);
+                        //ApplyKnockbackRpc(GetComponent<Rigidbody>().velocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         
                     }
                     NetworkObject.Despawn();

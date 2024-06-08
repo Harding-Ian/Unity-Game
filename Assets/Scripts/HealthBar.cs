@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,8 @@ public class HealthBar : NetworkBehaviour
 
     public PlayerStatsManager statsManager;
 
+    public GameObject knockbackPercentObject;
+
     private void Start()
     {   
         if (IsLocalPlayer)
@@ -32,8 +35,11 @@ public class HealthBar : NetworkBehaviour
             FillSliderHolder = GameObject.Find("FillSliderHolder");
             healthBarSlider = FillSliderHolder.GetComponent<Slider>();
             visibleHealthBarCanvas.enabled = false;
+            knockbackPercentObject = GameObject.Find("KnockbackPercent");
+            knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = statsManager.knockbackBuildUp.Value.ToString();
         }
-
+        statsManager.knockbackBuildUp.OnValueChanged += OnKnockbackChanged;
+        SetKnockback(statsManager.knockbackBuildUp.Value);
         SetMaxHealth(statsManager.playerHealth.Value);
         statsManager.playerHealth.OnValueChanged += OnHealthChanged;
     }
@@ -55,9 +61,18 @@ public class HealthBar : NetworkBehaviour
         visibleHealthBarSlider.value = health;
     }
 
+    private void SetKnockback(float value){
+        if (IsLocalPlayer){
+            knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = value.ToString();
+        }
+    }
+
     private void OnHealthChanged(float oldValue, float newValue){
         SetHealth(newValue);
     }
 
+    private void OnKnockbackChanged(float oldValue, float newValue){
+        SetKnockback(newValue);
+    }
 
 }

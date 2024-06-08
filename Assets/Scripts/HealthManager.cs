@@ -23,7 +23,7 @@ public class HealthManager : NetworkBehaviour
         Debug.Log("ID of the client that disconnected: " + clientId);
     }
 
-    public void applyFireballDamage(ulong clientId){
+    public void applyDamage(ulong clientId){
         int fireballDamage = 2; //Base fireball damage * player modifier from player stats
         updateHealthServerRpc(fireballDamage, clientId);
     }
@@ -32,9 +32,12 @@ public class HealthManager : NetworkBehaviour
     private void updateHealthServerRpc(int damage, ulong clientId){
         NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
         networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value -= damage;
+        networkObject.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value += 0.1f;
         if (networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0){
             //apply death
             Debug.Log("Player " + clientId + " died");
+            
+            // networkObject.GetComponent<MouseLook>().ToggleSpectateOn();
         }
     }
 

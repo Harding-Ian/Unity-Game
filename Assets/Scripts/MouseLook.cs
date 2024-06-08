@@ -59,4 +59,13 @@ public class MouseLook : NetworkBehaviour
 
         Cursor.visible = (Cursor.lockState == CursorLockMode.Locked) ? false : true;
     }
+
+    // public void ToggleSpectateOn(){
+    //     if(IsLocalPlayer){
+    //         cameraHolder.SetActive(false);
+    //     }
+    //     else{
+    //         cameraHolder.SetActive(true);
+    //     }
+    // }
 }

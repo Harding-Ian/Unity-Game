@@ -40,6 +40,8 @@ public class PlayerMovement : NetworkBehaviour
     float horizontalInput;
     float verticalInput;
 
+    public PlayerStatsManager statsManager;
+
     Vector3 inputDirection;
     Vector3 moveDirection;
     Vector3 forwardxzDir;
@@ -153,7 +155,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void ApplyKnockback(Vector3 dir, int knockback)
     {
-        rb.AddForce(dir.normalized * knockback, ForceMode.Impulse);
+        rb.AddForce(dir.normalized * knockback * statsManager.knockbackBuildUp.Value, ForceMode.Impulse);
     }
 
     private void Dash()
