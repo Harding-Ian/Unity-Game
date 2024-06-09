@@ -27,6 +27,7 @@ public class PlayerMovement : NetworkBehaviour
     private int dashcount;
     public int maxjumpcount;
     public int maxdashcount;
+    public float maxDownwardsJumpCancel;
     
 
     [Header("Keybinds")]
@@ -155,31 +156,54 @@ public class PlayerMovement : NetworkBehaviour
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Acceleration);
         }
         else
-            rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Acceleration);
     }
 
     private void Jump()
     {
-        // reset y velocity
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        if(rb.velocity.y < maxDownwardsJumpCancel)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - maxDownwardsJumpCancel, rb.velocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
+        else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
+        else
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
     }
 
     public void ApplyKnockback(Vector3 dir, int knockback)
     {
-        rb.AddForce(dir.normalized * knockback * statsManager.knockbackBuildUp.Value, ForceMode.Impulse);
+        rb.AddForce(dir.normalized * knockback * statsManager.knockbackBuildUp.Value, ForceMode.VelocityChange);
     }
 
     private void Dash()
     {
-        // reset  velocity
-        rb.velocity = new Vector3(0f, 0f, 0f);
 
-        rb.AddForce(orientation.forward * dashForce, ForceMode.Impulse);
+        if(rb.velocity.magnitude <= airMoveSpeed) rb.velocity = new Vector3(0f, 0f, 0f);
+        else rb.velocity -= rb.velocity.normalized*airMoveSpeed;
+
+        
+        if(Vector3.Dot(orientation.forward, rb.velocity) > 0)
+        {
+            Vector3 forwardCorrection;
+            float alignedForwardness = 0.5f * Vector3.Dot(orientation.forward.normalized, rb.velocity.normalized) + 0.5f;
+            Vector3 maxForwardCorrection = orientation.forward*alignedForwardness*airMoveSpeed;
+            Vector3 dashDirComponentOfVelocity = Vector3.Project(rb.velocity, orientation.forward);
+            if(dashDirComponentOfVelocity.magnitude > maxForwardCorrection.magnitude) forwardCorrection = maxForwardCorrection;
+            else forwardCorrection = dashDirComponentOfVelocity;
+            rb.velocity += forwardCorrection;
+        }
+        rb.velocity += orientation.forward * dashForce;
+
     }
     private void ResetJump()
     {

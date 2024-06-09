@@ -649,7 +649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2815123942
+  GlobalObjectIdHash: 2987591946
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -674,7 +674,7 @@ MonoBehaviour:
   airMoveSpeed: 6
   groundDrag: 6
   antislideDrag: 15
-  airDrag: 0.3
+  airDrag: 1
   jumpForce: 12
   dashForce: 20
   jumpCooldown: 0.5
@@ -682,6 +682,7 @@ MonoBehaviour:
   airMultiplier: 1.5
   maxjumpcount: 2
   maxdashcount: 3
+  maxDownwardsJumpCancel: -100
   jumpKey: 32
   dashKey: 304
   playerHeight: 2
