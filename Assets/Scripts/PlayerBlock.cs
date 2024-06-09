@@ -3,50 +3,63 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class ProjectileBlast : NetworkBehaviour
+public class PlayerBlock : NetworkBehaviour
 {
 
-    public float radius = 4f;
-    public string playerTag = "Player";
 
-    public GameObject gameManager;
+    [Header("BlockButton")]
+    public KeyCode blockKey = KeyCode.Mouse1;
+
+    private bool readyToBlock = true;
+
+    public PlayerStatsManager statsManager;
+
+    public GameObject blockWave;
+    
     // Start is called before the first frame update
-    void Start()
-    {
-        if (IsServer){
-            gameManager = GameObject.Find("GameManager");
-            if (gameManager == null)
-            {
-                Debug.LogError("GameManager not found within scene");
-            }
-
-            Invoke("DestroyProjectile", 0.3f);
-            FindPlayers();
-        }
-        
-    }
-
-    // // Update is called once per frame
-    // void Update()
+    // void Start()
     // {
         
     // }
 
-    private void DestroyProjectile()
+    // Update is called once per frame
+    void Update()
     {
-        NetworkObject.Despawn();
+        if (!IsOwner) return;
+        if(Input.GetKeyDown(blockKey))
+        {
+            if (readyToBlock == true){
+                readyToBlock = false;
+                block();
+                Invoke(nameof(ResetBlock), statsManager.blockCooldown.Value);
+            }
+        }
     }
 
-    private void FindPlayers(){
-        Vector3 blastCenter = transform.position;
+    private void ResetBlock(){
+        readyToBlock = true;
+    }
 
-        Collider[] hitColliders = Physics.OverlapSphere(blastCenter, radius);
+    private void block(){
+        BlockRpc(OwnerClientId, GetComponent<Transform>().position, 4f);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void BlockRpc(ulong id, Vector3 blockOrigin, float radius){
+        Debug.Log("Block detected");
+        //GameObject blockObject = Instantiate(blockWave, GetComponent<Transform>().position, Quaternion.identity);
+        SpawnBlockWaveRpc(blockOrigin);
+        //blockObject.GetComponent<NetworkObject>().Spawn(true);
+
+        GameObject gameManager = GameObject.Find("GameManager");
+
+        Collider[] hitColliders = Physics.OverlapSphere(blockOrigin, radius);
 
         List<GameObject> playersInRange = new List<GameObject>();
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag(playerTag))
+            if (hitCollider.CompareTag("Player"))
             {
                 playersInRange.Add(hitCollider.gameObject);
             }
@@ -59,19 +72,15 @@ public class ProjectileBlast : NetworkBehaviour
             // Debug.Log(i + " = " + player.GetComponent<NetworkObject>().OwnerClientId);
             i += 1;
 
+            if (player.GetComponent<NetworkObject>().OwnerClientId == id) {continue;}
+
             var ray = new Ray(GetComponent<Transform>().position, player.GetComponent<Transform>().position - GetComponent<Transform>().position);
             RaycastHit hit;
             
-            Collider playerCollider = player.GetComponent<Collider>();
-            if (playerCollider.bounds.Contains(ray.origin)) {
-                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f);
-                ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
-                gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
-            }
-            else if (Physics.Raycast(ray, out hit)) {
-            GameObject objectHit = hit.collider.gameObject;
+            if (Physics.Raycast(ray, out hit)) {
+                GameObject objectHit = hit.collider.gameObject;
                 if (objectHit.CompareTag("Player")){
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f);
+                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 0.5f);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
                 }
@@ -79,9 +88,13 @@ public class ProjectileBlast : NetworkBehaviour
             }
 
         }
+        
     }
 
-
+    [Rpc(SendTo.Everyone)]
+    private void SpawnBlockWaveRpc(Vector3 blockOrigin){
+        GameObject blockObject = Instantiate(blockWave, blockOrigin, Quaternion.identity);
+    }
 
     [Rpc(SendTo.SpecifiedInParams)]
     private void ApplyKnockbackRpc(Vector3 knockbackDirection, RpcParams rpcParams)
@@ -100,6 +113,5 @@ public class ProjectileBlast : NetworkBehaviour
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
         playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12);
     }
-    
 
 }

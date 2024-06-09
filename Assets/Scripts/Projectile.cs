@@ -21,14 +21,15 @@ public class Projectile : NetworkBehaviour
     private bool readyToFire = true;
 
     // Start is called before the first frame update
-    void Start()
-    {  
+    // void Start()
+    // {  
 
-    }
+    // }
 
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner) return;
         if(Input.GetKeyDown(fireKey))
         {
             if (readyToFire == true){
@@ -41,9 +42,6 @@ public class Projectile : NetworkBehaviour
 
     void ShootProjectile()
     {
-        if (!IsOwner) return;
-
-
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         ProjectileRpc(ray, OwnerClientId);
     }

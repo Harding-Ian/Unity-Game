@@ -583,6 +583,7 @@ GameObject:
   - component: {fileID: 803095564381844156}
   - component: {fileID: 3763758321535756859}
   - component: {fileID: -9213184511530500658}
+  - component: {fileID: 1699247220030846899}
   - component: {fileID: 1242329627409332268}
   - component: {fileID: 2558519288129156580}
   m_Layer: 7
@@ -648,7 +649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2987591946
+  GlobalObjectIdHash: 2815123942
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -826,6 +827,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clientId:
     m_InternalValue: 100000
+--- !u!114 &1699247220030846899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5486534364741473120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 415f48627bd41414fa30ec3c1f70e5fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockKey: 324
+  statsManager: {fileID: 1242329627409332268}
+  blockWave: {fileID: 9200342920303657814, guid: e51b02e8c300a2e4ab87ece75d0adc58, type: 3}
 --- !u!114 &1242329627409332268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -843,7 +859,9 @@ MonoBehaviour:
   projectileCooldown:
     m_InternalValue: 1.3
   knockbackBuildUp:
-    m_InternalValue: 0
+    m_InternalValue: 1
+  blockCooldown:
+    m_InternalValue: 3.5
 --- !u!75 &2558519288129156580
 ConstantForce:
   m_ObjectHideFlags: 0
