@@ -15,7 +15,10 @@ public class WorldBorder : NetworkBehaviour
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    private void WorldBoxCollidedRpc(ulong id){
-        Debug.Log("Player " + id + " died");
+    private void WorldBoxCollidedRpc(ulong clientId)
+    {
+        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+        networkObject.GetComponent<PlayerDeath>().initiateDeathRpc(1, RpcTarget.Single(clientId, RpcTargetUse.Temp));
+        Debug.Log("Player " + clientId + " died");
     }
 }

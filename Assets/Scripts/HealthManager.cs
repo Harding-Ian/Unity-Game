@@ -38,8 +38,8 @@ public class StatsManager : NetworkBehaviour
         if (networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0){
             //apply death
             Debug.Log("Player " + clientId + " died");
+            networkObject.GetComponent<PlayerDeath>().initiateDeathRpc(1, RpcTarget.Single(clientId, RpcTargetUse.Temp));
             
-            // networkObject.GetComponent<MouseLook>().ToggleSpectateOn();
         }
     }
 

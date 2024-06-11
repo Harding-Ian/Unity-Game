@@ -5,12 +5,14 @@ using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.VisualScripting;
 
 public class MouseLook : NetworkBehaviour
 {
 
     public float mouseSensitivity;
 
+    public GameObject playerCamera;
     public GameObject cameraHolder;
 
     float xRotation = 0f;
@@ -25,14 +27,17 @@ public class MouseLook : NetworkBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
-        if(!IsLocalPlayer){
-            cameraHolder.SetActive(false);
+        if(!IsLocalPlayer)
+        {
+            playerCamera.GetComponent<Camera>().enabled = false;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!IsLocalPlayer) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ToggleCursorLock();
@@ -46,11 +51,14 @@ public class MouseLook : NetworkBehaviour
         xRotation = Mathf.Clamp(xRotation, -89.99f, 89.99f);
         
         //sets rigid body rotation
+        cameraHolder.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         rb.MoveRotation(Quaternion.Euler(0f, yRotation, 0f));
         //local rotation moves relative to parent --> rotation moves relative to world
-        cameraHolder.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
+        
 
     }
+
+
     void ToggleCursorLock()
     {
         
