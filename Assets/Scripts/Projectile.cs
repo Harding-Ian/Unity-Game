@@ -11,8 +11,6 @@ public class Projectile : NetworkBehaviour
     public GameObject projectile;
     public Transform FirePoint;
 
-    public float projectileSpeed;
-
     [Header("ProjectileButton")]
     public KeyCode fireKey = KeyCode.Mouse0;
 
@@ -20,43 +18,83 @@ public class Projectile : NetworkBehaviour
 
     private bool readyToFire = true;
 
+    private float accumulatedTime = 0f;
+
+    private bool fireTest = true;
+    
+    public float maxChargeTime = 1f;
+
     // Start is called before the first frame update
     // void Start()
-    // {  
-
+    // {
     // }
 
     // Update is called once per frame
     void Update()
     {
+        if(fireTest == true){
+            Debug.Log("------ NOW ------");
+            fireTest = false;
+        }
+
         if (!IsOwner) return;
-        if(Input.GetKeyDown(fireKey))
-        {
-            if (readyToFire == true){
+
+        if (readyToFire == true){
+            if (Input.GetKey(fireKey))
+            {
+                accumulatedTime += Time.deltaTime;
+            }
+
+            if(Input.GetKeyUp(fireKey))
+            { 
+                Debug.Log("keyDown time = " + accumulatedTime);
                 readyToFire = false;
-                ShootProjectile();
+                ShootProjectile(accumulatedTime);
                 Invoke(nameof(ResetFire), statsManager.projectileCooldown.Value);
+                accumulatedTime = 0f;
             }
         }
     }
 
-    void ShootProjectile()
+
+    void ShootProjectile(float pressTime)
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        ProjectileRpc(ray, OwnerClientId);
+        ProjectileRpc(ray, OwnerClientId, pressTime);
     }
 
     private void ResetFire(){
         readyToFire = true;
+        fireTest = true;
+    }
+
+    private float calculateChargeBonus(float pressTime, out float dropMod){
+        float range = statsManager.maxProjectileSpeed.Value - statsManager.minProjectileSpeed.Value;
+        Debug.Log("range = " + range);
+        if (statsManager.projectileChargeTime.Value < pressTime){
+            dropMod = 0.5f;
+            return statsManager.maxProjectileSpeed.Value;
+        }
+        else{
+            dropMod = 1f - 0.5f * (pressTime / statsManager.projectileChargeTime.Value);
+            return statsManager.minProjectileSpeed.Value + range * (pressTime / statsManager.projectileChargeTime.Value);
+        }
     }
 
 
     [Rpc(SendTo.Server)]
-    private void ProjectileRpc(Ray ray, ulong id){
-
+    private void ProjectileRpc(Ray ray, ulong id, float pressTime){
+        
         Vector3 destination;
 
         RaycastHit hit;
+
+
+        float dropMod = 1f;
+        float speedMod = calculateChargeBonus(pressTime, out dropMod);
+
+        Debug.Log("speed mod = " + speedMod);
+        Debug.Log("drop mod = " + dropMod);
 
         if(Physics.Raycast(ray, out hit)){
             destination = hit.point;
@@ -75,11 +113,16 @@ public class Projectile : NetworkBehaviour
 
         fireballScript.SetPlayerWhoFired(OwnerClientId);
 
-        projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * projectileSpeed; //* 0.01f;
+        projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * speedMod; //* 0.01f;
 
+        ConstantForce constantForce = projectileObj.GetComponent<ConstantForce>();
+
+
+        projectileObj.GetComponent<ConstantForce>().force = new Vector3(constantForce.force.x, constantForce.force.y * dropMod, constantForce.force.z);
 
         NetworkObject playerNetworkObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject;
         Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.GetComponent<Collider>());
+
 
     }
 
