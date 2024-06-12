@@ -9,9 +9,11 @@ using System;
 public class PlayerMovement : NetworkBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed;
-
+    private float moveSpeed;
+    public float groundedMoveSpeed;
+    public float airMoveSpeed;
     public float groundDrag;
+    public float antislideDrag;
     public float airDrag;
 
     public float jumpForce;
@@ -21,9 +23,12 @@ public class PlayerMovement : NetworkBehaviour
     public float airMultiplier;
     bool readyToJump;
     bool readyToDash;
-
-    [HideInInspector] public float walkSpeed;
-    [HideInInspector] public float sprintSpeed;
+    private int jumpcount;
+    private int dashcount;
+    public int maxjumpcount;
+    public int maxdashcount;
+    public float maxDownwardsJumpCancel;
+    
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -35,13 +40,13 @@ public class PlayerMovement : NetworkBehaviour
     bool grounded;
     bool groundedOverride;
     public float groundedOverrideTimer;
-    public int jumpcount;
-    public int dashcount;
 
     public Transform orientation;
 
     float horizontalInput;
     float verticalInput;
+
+    public PlayerStatsManager statsManager;
 
     Vector3 inputDirection;
     Vector3 moveDirection;
@@ -60,14 +65,16 @@ public class PlayerMovement : NetworkBehaviour
         readyToDash = true;
     }
 
+    void outputvelocity()
+    {
+        if(IsLocalPlayer) Debug.Log("velocity:" + GetComponent<Rigidbody>().velocity);
+    }
+    
+
     private void Update()
     {
         if (!IsOwner) return;
 
-        //if (Input.GetMouseButtonDown(0)) FireballObjectServerRpc();
-        if (Input.GetKeyDown(KeyCode.E)) FireballObjectServerRpc();
-        if (Input.GetKeyDown(KeyCode.T)) TestServerRpc();
-        if (Input.GetKeyDown(KeyCode.C)) TestClientRpc();
 
         // ground check
         
@@ -78,7 +85,9 @@ public class PlayerMovement : NetworkBehaviour
         // handle drag
         if (grounded)
         {
+            
             rb.drag = groundDrag;
+            if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)) rb.drag = antislideDrag;
             jumpcount = 0;
             dashcount = 0;
         }
@@ -99,7 +108,7 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // when to jump
-        if(Input.GetKey(jumpKey) && readyToJump && jumpcount < 2)
+        if(Input.GetKey(jumpKey) && readyToJump && jumpcount < maxjumpcount)
         {
             readyToJump = false;
             Jump();
@@ -110,7 +119,7 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
-        if(Input.GetKey(dashKey) && readyToDash && dashcount < 1)
+        if(Input.GetKey(dashKey) && readyToDash && dashcount < maxdashcount)
         {
             readyToDash = false;
             Dash();
@@ -134,6 +143,10 @@ public class PlayerMovement : NetworkBehaviour
 
         inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
 
+        //chech which max speed to apply
+        if(grounded) moveSpeed = groundedMoveSpeed;//
+        else moveSpeed = airMoveSpeed;
+
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
         if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)
             moveDirection = inputDirection - Vector3.Project(inputDirection, Velxz);
@@ -143,26 +156,54 @@ public class PlayerMovement : NetworkBehaviour
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Acceleration);
         }
         else
-            rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Acceleration);
     }
 
     private void Jump()
     {
-        // reset y velocity
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        if(rb.velocity.y < maxDownwardsJumpCancel)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - maxDownwardsJumpCancel, rb.velocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
+        else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
+        else
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
+    }
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    public void ApplyKnockback(Vector3 dir, int knockback)
+    {
+        rb.AddForce(dir.normalized * knockback * statsManager.knockbackBuildUp.Value, ForceMode.VelocityChange);
     }
 
     private void Dash()
     {
-        // reset  velocity
-        rb.velocity = new Vector3(0f, 0f, 0f);
 
-        rb.AddForce(orientation.forward * dashForce, ForceMode.Impulse);
+        if(rb.velocity.magnitude <= airMoveSpeed) rb.velocity = new Vector3(0f, 0f, 0f);
+        else rb.velocity -= rb.velocity.normalized*airMoveSpeed;
+
+        
+        if(Vector3.Dot(orientation.forward, rb.velocity) > 0)
+        {
+            Vector3 forwardCorrection;
+            float alignedForwardness = 0.5f * Vector3.Dot(orientation.forward.normalized, rb.velocity.normalized) + 0.5f;
+            Vector3 maxForwardCorrection = orientation.forward*alignedForwardness*airMoveSpeed;
+            Vector3 dashDirComponentOfVelocity = Vector3.Project(rb.velocity, orientation.forward);
+            if(dashDirComponentOfVelocity.magnitude > maxForwardCorrection.magnitude) forwardCorrection = maxForwardCorrection;
+            else forwardCorrection = dashDirComponentOfVelocity;
+            rb.velocity += forwardCorrection;
+        }
+        rb.velocity += orientation.forward * dashForce;
+
     }
     private void ResetJump()
     {
@@ -177,53 +218,6 @@ public class PlayerMovement : NetworkBehaviour
     private void removeGroundedOverride()
     {
         groundedOverride = false;
-    }
-     
-
-    //only runs on the server
-    //must be in network behaviour class, attached to a game object with a network object
-    //method name must end in ____ServerRpc
-    [ServerRpc]
-     private void TestServerRpc() {
-        Debug.Log("test rpc: " + OwnerClientId);
-     }
-
-
-    [SerializeField] private Transform spawnedObjectPrefab;
-    private NetworkVariable<MyCustomData> randomNumber = new NetworkVariable<MyCustomData>(
-        new MyCustomData {
-            _int = 56,
-            _bool = true,
-        }, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
-    public struct MyCustomData : INetworkSerializable{
-        public int _int;
-        public bool _bool;
-        public FixedString128Bytes message;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref _int);
-            serializer.SerializeValue(ref _bool);
-            serializer.SerializeValue(ref message);
-        }
-    }
-
-    //client cannot call client rpc!!
-    [ClientRpc]
-     private void TestClientRpc(){
-        Debug.Log("test client rpc");
-    }
-
-    [ServerRpc]
-    private void FireballObjectServerRpc(){
-        Transform spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
-        spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
-    }
-
-    public override void OnNetworkSpawn() {
-        Transform spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
-        spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
     }
 
 }

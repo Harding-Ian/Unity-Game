@@ -5,7 +5,7 @@ using UnityEngine;
 public class ReadCodeInput : MonoBehaviour
 {
 
-    public TestRelay testRelay;
+    public NetworkRelay networkRelay;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +20,6 @@ public class ReadCodeInput : MonoBehaviour
 
     public void ReadStringInput(string str){
         Debug.Log("input --> " + str);
-        testRelay.JoinRelay(str);
+        networkRelay.JoinRelay(str);
     }
 }

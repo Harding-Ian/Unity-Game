@@ -5,47 +5,60 @@ using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.VisualScripting;
 
 public class MouseLook : NetworkBehaviour
 {
 
-    public float mouseSensitivity = 400f;
+    public float mouseSensitivity;
 
-    public Transform orientation;
+    public GameObject playerCamera;
+    public GameObject cameraHolder;
 
     float xRotation = 0f;
     float yRotation = 0f;
 
+    Rigidbody rb;
+
     // Start is called before the first frame update
+    
     void Start()
-    {
+    {   
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        rb = GetComponent<Rigidbody>();
+        if(!IsLocalPlayer)
+        {
+            playerCamera.GetComponent<Camera>().enabled = false;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (!IsOwner) return;
+        if(!IsLocalPlayer) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ToggleCursorLock();
         }
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
         xRotation -= mouseY;
         yRotation += mouseX;
 
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        //transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
-        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
-        orientation.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
-
-        //playerBody.Rotate(Vector3.up * mouseX);
+        xRotation = Mathf.Clamp(xRotation, -89.99f, 89.99f);
         
+        //sets rigid body rotation
+        cameraHolder.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        rb.MoveRotation(Quaternion.Euler(0f, yRotation, 0f));
+        //local rotation moves relative to parent --> rotation moves relative to world
+        
+
     }
+
+
     void ToggleCursorLock()
     {
         
@@ -54,4 +67,13 @@ public class MouseLook : NetworkBehaviour
 
         Cursor.visible = (Cursor.lockState == CursorLockMode.Locked) ? false : true;
     }
+
+    // public void ToggleSpectateOn(){
+    //     if(IsLocalPlayer){
+    //         cameraHolder.SetActive(false);
+    //     }
+    //     else{
+    //         cameraHolder.SetActive(true);
+    //     }
+    // }
 }
