@@ -76,22 +76,20 @@ public class Fireball : NetworkBehaviour
                 {
                     NetworkObject.Despawn();
                     GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                    //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
                     blastObj.GetComponent<NetworkObject>().Spawn(true);
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {
                     if (other.gameObject.CompareTag("Player"))
                     {   
-                        //ApplyKnockbackRpc(-1 * other.relativeVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2);
                         ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, 0.25f);
+                        GetComponent<SoundEffectPlayer>().onDirectHit();
                         
                     }
                     NetworkObject.Despawn();
                     GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                    //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
                     blastObj.GetComponent<NetworkObject>().Spawn(true);
                 }
             }
@@ -99,8 +97,8 @@ public class Fireball : NetworkBehaviour
             {
                 NetworkObject.Despawn();
                 GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
                 blastObj.GetComponent<NetworkObject>().Spawn(true);
+
             }
             
         }

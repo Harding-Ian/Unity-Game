@@ -33,7 +33,6 @@ public class Projectile : NetworkBehaviour
     void Update()
     {
         if(fireTest == true){
-            Debug.Log("------ NOW ------");
             fireTest = false;
         }
 
@@ -47,7 +46,6 @@ public class Projectile : NetworkBehaviour
 
             if(Input.GetKeyUp(fireKey))
             { 
-                Debug.Log("keyDown time = " + accumulatedTime);
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
                 Invoke(nameof(ResetFire), statsManager.projectileCooldown.Value);
@@ -70,7 +68,7 @@ public class Projectile : NetworkBehaviour
 
     private float calculateChargeBonus(float pressTime, out float dropMod){
         float range = statsManager.maxProjectileSpeed.Value - statsManager.minProjectileSpeed.Value;
-        Debug.Log("range = " + range);
+
         if (statsManager.projectileChargeTime.Value < pressTime){
             dropMod = 0.5f;
             return statsManager.maxProjectileSpeed.Value;
@@ -93,8 +91,6 @@ public class Projectile : NetworkBehaviour
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);
 
-        Debug.Log("speed mod = " + speedMod);
-        Debug.Log("drop mod = " + dropMod);
 
         if(Physics.Raycast(ray, out hit)){
             destination = hit.point;

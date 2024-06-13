@@ -71,6 +71,7 @@ public class ProjectileBlast : NetworkBehaviour
             else if (Physics.Raycast(ray, out hit)) {
             GameObject objectHit = hit.collider.gameObject;
                 if (objectHit.CompareTag("Player")){
+                    GetComponent<SoundEffectPlayer>().onIndirectHit();
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);

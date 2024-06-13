@@ -437,9 +437,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -754,9 +754,9 @@ MonoBehaviour:
   cam: {fileID: 7360464807818155601}
   projectile: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
   FirePoint: {fileID: 4120642327271369139}
-  projectileSpeed: 75
   fireKey: 323
   statsManager: {fileID: 1242329627409332268}
+  maxChargeTime: 1
 --- !u!114 &1645909117300595920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -865,6 +865,12 @@ MonoBehaviour:
     m_InternalValue: 1
   blockCooldown:
     m_InternalValue: 3.5
+  maxProjectileSpeed:
+    m_InternalValue: 100
+  minProjectileSpeed:
+    m_InternalValue: 50
+  projectileChargeTime:
+    m_InternalValue: 1.2
 --- !u!75 &2558519288129156580
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -932,6 +938,7 @@ GameObject:
   - component: {fileID: 2384272309610803661}
   - component: {fileID: 7360464807818155601}
   - component: {fileID: 6870560923530565757}
+  - component: {fileID: 4850934465495914848}
   m_Layer: 7
   m_Name: Camera
   m_TagString: Untagged
@@ -1013,3 +1020,15 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8110159177730106917}
   m_Enabled: 0
+--- !u!114 &4850934465495914848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8110159177730106917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3230fb9a5d40d474da524ea732b06267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
