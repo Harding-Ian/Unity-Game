@@ -85,8 +85,7 @@ public class Fireball : NetworkBehaviour
                         gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2);
                         ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, 0.25f);
-                        GetComponent<SoundEffectPlayer>().onDirectHit();
-                        
+                        GetComponent<SoundEffectPlayer>().onDirectHit(playerOwnerId, networkObject.OwnerClientId);
                     }
                     NetworkObject.Despawn();
                     GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);

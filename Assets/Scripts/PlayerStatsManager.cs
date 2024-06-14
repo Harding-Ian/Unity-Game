@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerStatsManager : NetworkBehaviour
 {
 
-    public NetworkVariable<float> playerHealth = new NetworkVariable<float>(20f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> playerHealth = new NetworkVariable<float>(4f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public NetworkVariable<float> projectileCooldown = new NetworkVariable<float>(1.4f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
