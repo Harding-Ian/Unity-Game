@@ -18,25 +18,6 @@ public class PlayerStatsManager : NetworkBehaviour
 
     public NetworkVariable<float> minProjectileSpeed = new NetworkVariable<float>(50f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);   
     public NetworkVariable<float> projectileChargeTime = new NetworkVariable<float>(1.2f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);     
-    // public float startingHealth = 20f;
 
-    // public override void OnNetworkSpawn()
-    // {
-    //     if (IsServer)
-    //     {
-    //         playerHealth.Value = startingHealth;
-    //     }
-    // }
-
-
-    // Start is called before the first frame update
-    // void Start()
-    // {
-    // }
-
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
+    
 }

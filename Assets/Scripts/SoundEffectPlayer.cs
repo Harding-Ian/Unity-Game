@@ -59,7 +59,6 @@ public class SoundEffectPlayer : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     private void inDirectHitRpc(RpcParams rpcParams)
     {
-        Debug.Log("recieving on this computer");
         src.clip = indirectHitSound;
         src.Play();
     }

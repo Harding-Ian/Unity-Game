@@ -64,17 +64,11 @@ public class PlayerMovement : NetworkBehaviour
         readyToJump = true;
         readyToDash = true;
     }
-
-    void outputvelocity()
-    {
-        if(IsLocalPlayer) Debug.Log("velocity:" + GetComponent<Rigidbody>().velocity);
-    }
     
 
     private void Update()
     {
-        if (!IsOwner) return;
-
+        if (!IsLocalPlayer) return;
 
         // ground check
         

@@ -36,7 +36,7 @@ public class Projectile : NetworkBehaviour
             fireTest = false;
         }
 
-        if (!IsOwner) return;
+        if (!IsLocalPlayer) return;
 
         if (readyToFire == true){
             if (Input.GetKey(fireKey))
@@ -81,7 +81,8 @@ public class Projectile : NetworkBehaviour
 
 
     [Rpc(SendTo.Server)]
-    private void ProjectileRpc(Ray ray, ulong id, float pressTime){
+    private void ProjectileRpc(Ray ray, ulong id, float pressTime)
+    {
         
         Vector3 destination;
 
@@ -104,11 +105,7 @@ public class Projectile : NetworkBehaviour
         
         IgnorePhysicsRpc(projectileObj.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(id, RpcTargetUse.Temp));
         
-        Fireball fireballScript = projectileObj.GetComponent<Fireball>();
-
-
-        fireballScript.SetPlayerWhoFired(OwnerClientId);
-
+        projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * speedMod; //* 0.01f;
 
         ConstantForce constantForce = projectileObj.GetComponent<ConstantForce>();

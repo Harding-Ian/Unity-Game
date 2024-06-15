@@ -7,10 +7,16 @@ using UnityEngine;
 public class PlayerScript : NetworkBehaviour
 {
     public NetworkVariable<ulong> clientId = new NetworkVariable<ulong>(100000, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<ulong> lastDamagingPlayerId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> dead = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    private void Start(){
-        if (IsServer){
+    private void Start()
+    {
+        if (IsServer)
+        {
             clientId.Value = OwnerClientId;
+            lastDamagingPlayerId.Value = NetworkManager.ServerClientId;
+            if (clientId.Value == lastDamagingPlayerId.Value) lastDamagingPlayerId.Value += 1;
         }
     }
 }

@@ -74,36 +74,37 @@ public class Fireball : NetworkBehaviour
             {
                 if (other.gameObject.CompareTag("projectile"))
                 {
-                    NetworkObject.Despawn();
-                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                    blastObj.GetComponent<NetworkObject>().Spawn(true);
+                    CreateBlast();
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {
                     if (other.gameObject.CompareTag("Player"))
                     {   
-                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2);
+                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2, playerOwnerId);
                         ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, 0.25f);
                         GetComponent<SoundEffectPlayer>().onDirectHit(playerOwnerId, networkObject.OwnerClientId);
                     }
-                    NetworkObject.Despawn();
-                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                    blastObj.GetComponent<NetworkObject>().Spawn(true);
+
+                    CreateBlast();
                 }
             }
             else
             {
-                NetworkObject.Despawn();
-                GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                blastObj.GetComponent<NetworkObject>().Spawn(true);
-
+                CreateBlast();
             }
-            
         }
     }
 
-    
+
+    private void CreateBlast()
+    {
+        NetworkObject.Despawn();
+        GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+        blastObj.GetComponent<NetworkObject>().Spawn(true);
+        blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
+    }
+
 
     
 }

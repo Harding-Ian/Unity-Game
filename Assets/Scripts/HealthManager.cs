@@ -23,24 +23,32 @@ public class StatsManager : NetworkBehaviour
         Debug.Log("ID of the client that disconnected: " + clientId);
     }
 
-    public void ApplyDamage(ulong clientId, float damage){
-        UpdateHealthServerRpc(damage, clientId);
+    public void ApplyDamage(ulong damagedPlayerId, float damage, ulong damagingPlayerId){
+        UpdateHealthServerRpc(damage, damagedPlayerId, damagingPlayerId);
     }
 
-    public void UpdateKnockback(ulong clientId, float knockback){
+    public void UpdateKnockback(ulong clientId, float knockback)
+    {
         UpdateKnockbackServerRpc(clientId, knockback);
     }
 
     [ServerRpc]
-    private void UpdateHealthServerRpc(float damage, ulong clientId){
-        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-        networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value -= damage;
-        if (networkObject.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0){
-            //apply death
-            Debug.Log("Player " + clientId + " died");
-            networkObject.GetComponent<PlayerDeath>().initiateDeathRpc(1, RpcTarget.Single(clientId, RpcTargetUse.Temp));
-            
+    private void UpdateHealthServerRpc(float damage, ulong damagedPlayerId, ulong damagingPlayerId)
+    {
+        NetworkObject damagedPlayer = NetworkManager.Singleton.ConnectedClients[damagedPlayerId].PlayerObject;
+
+        damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value -= damage;
+
+        if(damagingPlayerId != damagedPlayerId) 
+        {
+            damagedPlayer.GetComponent<PlayerScript>().lastDamagingPlayerId.Value = damagingPlayerId;
         }
+
+        if (damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0)
+        {
+            damagedPlayer.GetComponent<PlayerDeath>().ServerSideDeathRpc(damagedPlayerId);
+        }
+        
     }
 
     [ServerRpc]

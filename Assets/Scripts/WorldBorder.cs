@@ -6,19 +6,35 @@ using UnityEngine;
 
 public class WorldBorder : NetworkBehaviour
 {
-    private void OnTriggerEnter(Collider collider){
-        if (IsServer){
-            if (collider.gameObject.CompareTag("Player")){
-                WorldBoxCollidedRpc(collider.GetComponent<PlayerScript>().OwnerClientId); 
+    // private void OnTriggerEnter(Collider collider){
+    //     if (IsServer){
+    //         if (collider.gameObject.CompareTag("Player")){
+    //             WorldBoxCollidedRpc(collider.GetComponent<PlayerScript>().OwnerClientId); 
+    //         }
+    //     }
+    // }
+
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (IsServer)
+        {
+            if (collider.gameObject.CompareTag("Player"))
+            {
+                NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[collider.GetComponent<PlayerScript>().OwnerClientId].PlayerObject;
+                networkObject.GetComponent<PlayerDeath>().ServerSideDeathRpc(collider.GetComponent<PlayerScript>().OwnerClientId);
             }
         }
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    private void WorldBoxCollidedRpc(ulong clientId)
+    private void WorldBoxCollidedRpc(ulong PlayertoDieId)
     {
-        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-        networkObject.GetComponent<PlayerDeath>().initiateDeathRpc(1, RpcTarget.Single(clientId, RpcTargetUse.Temp));
-        Debug.Log("Player " + clientId + " died");
+        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[PlayertoDieId].PlayerObject;
+        networkObject.GetComponent<PlayerDeath>().ServerSideDeathRpc(PlayertoDieId);
     }
 }
+
+
+
+

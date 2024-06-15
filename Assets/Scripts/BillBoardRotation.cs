@@ -7,6 +7,7 @@ using UnityEngine;
 public class BillBoardRotation : NetworkBehaviour
 {
     public GameObject player;
+    private ulong instanceID;
 
     void LateUpdate()
     {
@@ -15,10 +16,19 @@ public class BillBoardRotation : NetworkBehaviour
             {
                 if (instance.IsLocalPlayer)
                 {
-                    transform.LookAt(instance.transform);
+                    instanceID = instance.GetComponent<PlayerDeath>().playerSpectatingId;
                     return;
                 }
             }
+            
+            foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+            {
+                if (instance.GetComponent<PlayerScript>().clientId.Value == instanceID) 
+                {
+                    transform.LookAt(instance.transform);
+                }
+            }
+            
         }
     }
 }
