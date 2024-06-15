@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 2972134555428684860}
   - component: {fileID: 8048374347803751405}
   - component: {fileID: 1383507142079995365}
-  - component: {fileID: 3949353471901486608}
   m_Layer: 0
   m_Name: BlastObject
   m_TagString: Untagged
@@ -122,6 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 5
   playerTag: Player
+  audioSrcPrefab: {fileID: 6405057538832502360, guid: 37bac31d82a3ee145afaf00864897142, type: 3}
   gameManager: {fileID: 0}
 --- !u!135 &1383507142079995365
 SphereCollider:
@@ -144,18 +144,3 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3949353471901486608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 325097870823728784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 246eb1ee3dd85c64dbea479af868787a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  src: {fileID: 0}
-  directHitSound: {fileID: 8300000, guid: 1c4ec3f9a9e7d5c4683d2be085765795, type: 3}
-  indirectHitSound: {fileID: 8300000, guid: 4603da27e1d131e42bfe974c852313e8, type: 3}

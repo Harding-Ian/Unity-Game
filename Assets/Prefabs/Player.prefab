@@ -446,7 +446,7 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  Interpolate: 0
+  Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &5391420323662499327
 GameObject:
@@ -830,6 +830,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clientId:
     m_InternalValue: 100000
+  lastDamagingPlayerId:
+    m_InternalValue: 0
+  dead:
+    m_InternalValue: 0
 --- !u!114 &1699247220030846899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -895,6 +899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b657aa13b0fcd4d9cee2f8b4b83f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerSpectatingId: 0
   playerCamera: {fileID: 8110159177730106917}
 --- !u!1 &7833775591222118325
 GameObject:

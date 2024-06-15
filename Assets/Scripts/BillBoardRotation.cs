@@ -16,18 +16,19 @@ public class BillBoardRotation : NetworkBehaviour
             {
                 if (instance.IsLocalPlayer)
                 {
-                    instanceID = instance.GetComponent<PlayerDeath>().playerSpectatingId;
+                    //instanceID = instance.GetComponent<PlayerDeath>().playerSpectatingId;
+                    transform.LookAt(instance.transform);
                     return;
                 }
             }
             
-            foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
-            {
-                if (instance.GetComponent<PlayerScript>().clientId.Value == instanceID) 
-                {
-                    transform.LookAt(instance.transform);
-                }
-            }
+            // foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+            // {
+            //     if (instance.GetComponent<PlayerScript>().clientId.Value == instanceID) 
+            //     {
+            //         transform.LookAt(instance.transform);
+            //     }
+            // }
             
         }
     }
