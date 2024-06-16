@@ -46,7 +46,7 @@ public class StatsManager : NetworkBehaviour
 
         if (damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0)
         {
-            damagedPlayer.GetComponent<PlayerDeath>().ServerSideDeathRpc(damagedPlayerId);
+            damagedPlayer.GetComponent<PlayerDeath>().InitiatePlayerDeath();
         }
         
     }

@@ -6,33 +6,15 @@ using UnityEngine;
 
 public class WorldBorder : NetworkBehaviour
 {
-    // private void OnTriggerEnter(Collider collider){
-    //     if (IsServer){
-    //         if (collider.gameObject.CompareTag("Player")){
-    //             WorldBoxCollidedRpc(collider.GetComponent<PlayerScript>().OwnerClientId); 
-    //         }
-    //     }
-    // }
 
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (IsServer)
-        {
-            if (collider.gameObject.CompareTag("Player"))
-            {
-                NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[collider.GetComponent<PlayerScript>().OwnerClientId].PlayerObject;
-                networkObject.GetComponent<PlayerDeath>().ServerSideDeathRpc(collider.GetComponent<PlayerScript>().OwnerClientId);
-            }
-        }
+        if (IsServer && collider.gameObject.CompareTag("Player")) collider.gameObject.GetComponent<PlayerDeath>().InitiatePlayerDeath();
     }
 
-    [Rpc(SendTo.ClientsAndHost)]
-    private void WorldBoxCollidedRpc(ulong PlayertoDieId)
-    {
-        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[PlayertoDieId].PlayerObject;
-        networkObject.GetComponent<PlayerDeath>().ServerSideDeathRpc(PlayertoDieId);
-    }
+
+    
 }
 
 

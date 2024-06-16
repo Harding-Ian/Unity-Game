@@ -1,126 +1,98 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class PlayerDeath : NetworkBehaviour
 {
-    public ulong playerSpectatingId;
-
+    public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public GameObject playerCamera;
 
 
     private void Start()
     {
-        playerSpectatingId = OwnerClientId;
+        if(IsLocalPlayer)
+        {
+            ChangeplayerSpectatingIdRpc(OwnerClientId);
+            playerSpectatingId.OnValueChanged += playerSpectatingIdObserver;
+        }
     }
 
-    [Rpc(SendTo.Server)]
-    public void ServerSideDeathRpc(ulong playerToDieId)
+
+    public void playerSpectatingIdObserver(ulong oldValue, ulong newValue)
     {
+        ChangeSpectator(newValue, oldValue);
+    }
+
+
+    public void InitiatePlayerDeath()
+    {
+        ulong playerToDieId = OwnerClientId;
         GetComponent<PlayerScript>().dead.Value = true;
-        DisablePlayer(playerToDieId);
+        DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));
 
-        List<ulong> PlayersToSwitchIds = new List<ulong>();
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
-            if (instance.GetComponent<PlayerDeath>().playerSpectatingId == playerToDieId) PlayersToSwitchIds.Add(playerSpectatingId);
+            if (instance.GetComponent<PlayerDeath>().playerSpectatingId.Value == playerToDieId)
+            {
+                instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = NetworkManager.Singleton.ConnectedClients[playerToDieId].PlayerObject.GetComponent<PlayerScript>().lastDamagingPlayerId.Value;
+            }
         }
-        ClientSideSwitchSpectatorRpc(GetComponent<PlayerScript>().lastDamagingPlayerId.Value, RpcTarget.Group(PlayersToSwitchIds, RpcTargetUse.Temp));
     }
 
-    [Rpc(SendTo.SpecifiedInParams)]
-    public void ClientSideSwitchSpectatorRpc(ulong killerId, RpcParams RpcParams)
-    {
-        ChangeSpectator(killerId);
-    }
 
-    public void SwitchSpectatorRight()
+    public ulong FindPlayerToSpectateId(int dir)
     {
-
         List<ulong> AlivePlayerIds = new List<ulong>();
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
             if (instance.GetComponent<PlayerScript>().dead.Value == false) AlivePlayerIds.Add(instance.GetComponent<PlayerScript>().clientId.Value);
         }
-        if(AlivePlayerIds.Count == 0) return;
 
         AlivePlayerIds.Sort();
-        if (playerSpectatingId == AlivePlayerIds[AlivePlayerIds.Count - 1])
-        {
-            ChangeSpectator(AlivePlayerIds[0]);
-            ChangeplayerSpectatingIdRpc(AlivePlayerIds[0]);
-            playerSpectatingId = AlivePlayerIds[0];
-        }
-        else 
-        {
-            ChangeSpectator(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) + 1]);
-            ChangeplayerSpectatingIdRpc(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) + 1]);
-            playerSpectatingId = AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) + 1];
-        }
+        ulong lastplayerId = AlivePlayerIds[AlivePlayerIds.Count - 1];
+        ulong firstplayerId = AlivePlayerIds[0];
+
+        if (playerSpectatingId.Value == firstplayerId && dir < 0) return lastplayerId;
+        else if (playerSpectatingId.Value == lastplayerId && dir > 0) return firstplayerId;
+        else return AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId.Value) + dir];
     }
 
 
-
-    public void SwitchSpectatorLeft()
+    public void ChangeSpectator(ulong playerToSpectateId, ulong playerWasSpectatingId)
     {
+        if(playerToSpectateId == playerWasSpectatingId) return;
 
-        List<ulong> AlivePlayerIds = new List<ulong>();
-        foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
-        {
-            if (instance.GetComponent<PlayerScript>().dead.Value == false) AlivePlayerIds.Add(instance.GetComponent<PlayerScript>().clientId.Value);
-        }
-        if(AlivePlayerIds.Count == 0) return;
-
-        AlivePlayerIds.Sort();
-        if (playerSpectatingId == AlivePlayerIds[0]) 
-        {
-            ChangeSpectator(AlivePlayerIds[AlivePlayerIds.Count - 1]);
-            ChangeplayerSpectatingIdRpc(AlivePlayerIds[AlivePlayerIds.Count - 1]);
-            playerSpectatingId = AlivePlayerIds[AlivePlayerIds.Count - 1];
-        }
-        else 
-        {
-            ChangeSpectator(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) - 1]);
-            ChangeplayerSpectatingIdRpc(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) - 1]);
-            playerSpectatingId = AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) - 1];
-        }
-        
-    }
-
-    public void ChangeSpectator(ulong playerToSpectateId)
-    {
         NetworkObject playerToSpectate = null;
-        NetworkObject playerSpectating = null;
+        NetworkObject playerWasSpectating = null;
 
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
             if (instance.GetComponent<PlayerScript>().clientId.Value == playerToSpectateId) playerToSpectate = instance.gameObject.GetComponent<NetworkObject>();
-            if (instance.GetComponent<PlayerScript>().clientId.Value == playerSpectatingId) playerSpectating = instance.gameObject.GetComponent<NetworkObject>();
+            if (instance.GetComponent<PlayerScript>().clientId.Value == playerWasSpectatingId) playerWasSpectating = instance.gameObject.GetComponent<NetworkObject>();
         }
 
-        playerSpectating.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = false;
+        playerWasSpectating.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = false;
         playerToSpectate.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = true;
 
-        SetVisibility(playerSpectating, true);
+        SetVisibility(playerWasSpectating, true);
         SetVisibility(playerToSpectate, false);
-
-        playerSpectatingId = playerToSpectateId;
-        Debug.Log("set playerSpectatingId to " + playerSpectatingId);
     }
 
 
     public void SetVisibility(NetworkObject PlayerToChangeVisibility, bool visibility)
     {
-        Debug.Log("setting visibility of " + PlayerToChangeVisibility + " to " + visibility);
         PlayerToChangeVisibility.transform.Find("Capsule").GetComponent<MeshRenderer>().enabled = visibility;
         PlayerToChangeVisibility.transform.Find("Visor").GetComponent<MeshRenderer>().enabled = visibility;
         PlayerToChangeVisibility.transform.Find("VisibleHealthBarCanvas").GetComponent<Canvas>().enabled = visibility;
     }
 
-    public void DisablePlayer(ulong playerToDisableId)
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void DisablePlayerRpc(RpcParams rpcParams)
     {
-        NetworkObject playerToDisable = NetworkManager.Singleton.ConnectedClients[playerToDisableId].PlayerObject;
+        NetworkObject playerToDisable = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
 
         playerToDisable.GetComponent<PlayerMovement>().enabled = false;
         playerToDisable.GetComponent<MouseLook>().enabled = false;
@@ -134,24 +106,30 @@ public class PlayerDeath : NetworkBehaviour
     {
         if(!IsLocalPlayer) return;
 
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("playerspectatingId ==== " + playerSpectatingId.Value);
+            Debug.Log("lastdamagingplayerId ===" + GetComponent<PlayerScript>().lastDamagingPlayerId.Value);
+        }
+
+        if(GetComponent<PlayerScript>().dead.Value == false) return;
+        
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            SwitchSpectatorLeft();
-            //Debug.Log("last damaging player client id ==== " + GetComponent<PlayerScript>().lastDamagingPlayerId.Value);
+            ChangeplayerSpectatingIdRpc(FindPlayerToSpectateId(-1));
         }
         
         if(Input.GetKeyDown(KeyCode.E))
         {
-            SwitchSpectatorRight();
-            //Debug.Log("playerspectatingId ==== " + GetComponent<PlayerDeath>().playerSpectatingId);
+            ChangeplayerSpectatingIdRpc(FindPlayerToSpectateId(1));
         }
     }
+
 
     [Rpc(SendTo.Server)]
     public void ChangeplayerSpectatingIdRpc(ulong newId)
     {
-        playerSpectatingId = newId;
-        Debug.Log("playerSpectatingId set to " + newId);
+        playerSpectatingId.Value = newId;
     }
 
 }
