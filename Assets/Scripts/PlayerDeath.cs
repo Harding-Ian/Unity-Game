@@ -26,7 +26,6 @@ public class PlayerDeath : NetworkBehaviour
         {
             if (instance.GetComponent<PlayerDeath>().playerSpectatingId == playerToDieId) PlayersToSwitchIds.Add(playerSpectatingId);
         }
-
         ClientSideSwitchSpectatorRpc(GetComponent<PlayerScript>().lastDamagingPlayerId.Value, RpcTarget.Group(PlayersToSwitchIds, RpcTargetUse.Temp));
     }
 
@@ -51,11 +50,13 @@ public class PlayerDeath : NetworkBehaviour
         {
             ChangeSpectator(AlivePlayerIds[0]);
             ChangeplayerSpectatingIdRpc(AlivePlayerIds[0]);
+            playerSpectatingId = AlivePlayerIds[0];
         }
         else 
         {
             ChangeSpectator(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) + 1]);
             ChangeplayerSpectatingIdRpc(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) + 1]);
+            playerSpectatingId = AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) + 1];
         }
     }
 
@@ -76,11 +77,13 @@ public class PlayerDeath : NetworkBehaviour
         {
             ChangeSpectator(AlivePlayerIds[AlivePlayerIds.Count - 1]);
             ChangeplayerSpectatingIdRpc(AlivePlayerIds[AlivePlayerIds.Count - 1]);
+            playerSpectatingId = AlivePlayerIds[AlivePlayerIds.Count - 1];
         }
         else 
         {
             ChangeSpectator(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) - 1]);
             ChangeplayerSpectatingIdRpc(AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) - 1]);
+            playerSpectatingId = AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId) - 1];
         }
         
     }

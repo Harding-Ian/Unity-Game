@@ -58,7 +58,20 @@ public class Projectile : NetworkBehaviour
     void ShootProjectile(float pressTime)
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        ProjectileRpc(ray, OwnerClientId, pressTime);
+
+        Vector3 destination;
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit)){
+            destination = hit.point;
+
+            Debug.Log("Ray hit object: " + hit.collider.gameObject.name);
+            Debug.Log("Positon: " + destination);
+        }else{
+            destination = ray.GetPoint(1000);
+        }
+
+        ProjectileRpc(OwnerClientId, pressTime, destination);
     }
 
     private void ResetFire(){
@@ -81,23 +94,12 @@ public class Projectile : NetworkBehaviour
 
 
     [Rpc(SendTo.Server)]
-    private void ProjectileRpc(Ray ray, ulong id, float pressTime)
+    private void ProjectileRpc(ulong id, float pressTime, Vector3 destination)
     {
         
-        Vector3 destination;
-
-        RaycastHit hit;
-
 
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);
-
-
-        if(Physics.Raycast(ray, out hit)){
-            destination = hit.point;
-        }else{
-            destination = ray.GetPoint(1000);
-        }
 
 
         GameObject projectileObj = Instantiate(projectile, FirePoint.position, Quaternion.identity);
