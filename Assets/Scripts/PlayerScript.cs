@@ -17,6 +17,16 @@ public class PlayerScript : NetworkBehaviour
             clientId.Value = OwnerClientId;
             lastDamagingPlayerId.Value = NetworkManager.ServerClientId;
             if (clientId.Value == lastDamagingPlayerId.Value) lastDamagingPlayerId.Value += 1;
+
+            
+        }
+        Renderer renderer = GetComponentInChildren<Renderer>();
+
+        Color randomColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+
+        if (renderer != null)
+        {
+            renderer.material.color = randomColor;
         }
     }
 }
