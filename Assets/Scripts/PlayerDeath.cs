@@ -7,7 +7,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 public class PlayerDeath : NetworkBehaviour
 {
-    public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(1000003, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public GameObject playerCamera;
 
 
@@ -23,6 +23,7 @@ public class PlayerDeath : NetworkBehaviour
 
     public void playerSpectatingIdObserver(ulong oldValue, ulong newValue)
     {
+        if(oldValue == 1000003) return;
         ChangeSpectator(newValue, oldValue);
     }
 
