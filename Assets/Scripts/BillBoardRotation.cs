@@ -7,29 +7,23 @@ using UnityEngine;
 public class BillBoardRotation : NetworkBehaviour
 {
     public GameObject player;
-    private ulong instanceID;
+    private ulong instanceId;
+    private ulong playerToLookAtId;
 
     void LateUpdate()
     {
-        if(!IsLocalPlayer) {
-            foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+        if(IsLocalPlayer) return;
+
+        playerToLookAtId = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().GetComponent<PlayerDeath>().playerSpectatingId.Value;
+
+        foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+        {
+            instanceId = instance.GetComponent<PlayerScript>().clientId.Value;
+            if (instanceId == playerToLookAtId)
             {
-                if (instance.IsLocalPlayer)
-                {
-                    //instanceID = instance.GetComponent<PlayerDeath>().playerSpectatingId;
-                    transform.LookAt(instance.transform);
-                    return;
-                }
+                transform.LookAt(instance.transform);
+                return;
             }
-            
-            // foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
-            // {
-            //     if (instance.GetComponent<PlayerScript>().clientId.Value == instanceID) 
-            //     {
-            //         transform.LookAt(instance.transform);
-            //     }
-            // }
-            
         }
     }
 }
