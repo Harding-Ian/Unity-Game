@@ -8,7 +8,7 @@ public class TempChangeScene : NetworkBehaviour
 {
     // Start is called before the first frame update
 
-    private Scene scene;
+    List<Scene> scene = new List<Scene>();
     void Start()
     {
 
@@ -25,8 +25,13 @@ public class TempChangeScene : NetworkBehaviour
                 NetworkManager.SceneManager.OnSceneEvent += SceneManager_OnSceneEvent;
                 var progressStatus = NetworkManager.SceneManager.LoadScene("SampleScene", LoadSceneMode.Additive);
             }
+            else if(Input.GetKeyDown(KeyCode.O)){
+                NetworkManager.SceneManager.OnSceneEvent += SceneManager_OnSceneEvent;
+                var progressStatus = NetworkManager.SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+            }
             else if(Input.GetKeyDown(KeyCode.M)){
-                NetworkManager.SceneManager.UnloadScene(scene);
+                NetworkManager.SceneManager.UnloadScene(scene[scene.Count-1]);
+                scene.RemoveAt(scene.Count-1);
             }
         }
         
@@ -37,9 +42,8 @@ public class TempChangeScene : NetworkBehaviour
         Debug.Log("============================================" + sceneEvent.SceneEventType);
         if (sceneEvent.SceneEventType == SceneEventType.LoadComplete)
         {
-            Debug.Log("scene");
-            scene = sceneEvent.Scene;
+            scene.Add(sceneEvent.Scene);
             NetworkManager.SceneManager.OnSceneEvent -= SceneManager_OnSceneEvent;
-        }           
+        }
     }
 }
