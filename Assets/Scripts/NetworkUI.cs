@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class NetworkUI : NetworkBehaviour
 {
@@ -11,22 +12,24 @@ public class NetworkUI : NetworkBehaviour
 
     [SerializeField] private Button host;
 
-    public NetworkRelay networkRelay;
-
     private NetworkVariable<int> playersNum = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone);
 
-    private void Awake()
+    private NetworkRelay networkRelay;
+    private UISceneManager uISceneManager;
+    void Start()
     {
-        host.onClick.AddListener(() =>
-        {
-            networkRelay.CreateRelay();
-        });
+        networkRelay = NetworkManager.Singleton.GetComponent<NetworkRelay>();
+        uISceneManager = GameObject.Find("UISceneManager").GetComponent<UISceneManager>();
     }
 
-    private void Update()
+    public void ReadStringInput(string str)
     {
-        playersCountText.text = "Players: " + playersNum.Value.ToString();
-        if (!IsServer) return;
-        playersNum.Value = NetworkManager.Singleton.ConnectedClients.Count;
+    Debug.Log("input --> " + str);
+    networkRelay.JoinRelay(str);
+    }
+
+    public void BackButtonPressed()
+    {
+        uISceneManager.UnloadNetworkMenu();
     }
 }
