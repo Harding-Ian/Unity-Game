@@ -25,7 +25,7 @@ public class NetworkUI : NetworkBehaviour
     public void ReadStringInput(string str)
     {
     Debug.Log("input --> " + str);
-    networkRelay.JoinRelay(str);
+    networkRelay.JoinRelay(str, uISceneManager);
     }
 
     public void BackButtonPressed()

@@ -29,6 +29,8 @@ public class UISceneManager : NetworkBehaviour
     {
         networkRelay.CreateRelayAndGameMenu(GetComponent<UISceneManager>());
     }
+
+    
     public void LoadGameMenu()
     {
         NetworkManager.SceneManager.LoadScene("GameMenu", LoadSceneMode.Single);

@@ -51,7 +51,7 @@ public class NetworkRelay : MonoBehaviour
         }
     }
 
-        public async void CreateRelayAndGameMenu(UISceneManager uISceneManager) {
+    public async void CreateRelayAndGameMenu(UISceneManager uISceneManager) {
         try {
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
 
@@ -69,7 +69,7 @@ public class NetworkRelay : MonoBehaviour
         uISceneManager.LoadGameMenu();
     }
 
-    public async void JoinRelay(string joinCode){
+    public async void JoinRelay(string joinCode, UISceneManager uISceneManager){
         Debug.Log("-------------------------------------------------------------------------------------------------------------------------------");
         Debug.Log("code received: " + joinCode);
         // return;
@@ -81,9 +81,13 @@ public class NetworkRelay : MonoBehaviour
 
             NetworkManager.Singleton.StartClient();
 
+            uISceneManager.UnloadNetworkMenu();
+
         } catch (RelayServiceException e){
             Debug.Log(e);
         }
     }
+
+    
 
 }
