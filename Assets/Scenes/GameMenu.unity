@@ -689,6 +689,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 5486534364741473120, guid: 1e6fcf10df679384b925ab9dd6a9f76d, type: 3}
+  capsule: {fileID: 0}
+  playersSpawned: 0
 --- !u!4 &2062347356
 Transform:
   m_ObjectHideFlags: 0

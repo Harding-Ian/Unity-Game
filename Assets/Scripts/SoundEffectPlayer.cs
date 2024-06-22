@@ -34,6 +34,7 @@ public class SoundEffectPlayer : NetworkBehaviour
         //Hearing hit: Heard by all others nearby, distinct, volume based on range
         ulong[] clientIds = new ulong[] { attackerId, receiverId };
         DirectHitRpc(RpcTarget.Group(clientIds, RpcTargetUse.Temp));
+        StartCoroutine(DestroyAfterSound(directHitSound));
     }
 
 
@@ -44,12 +45,9 @@ public class SoundEffectPlayer : NetworkBehaviour
             Debug.Log("Darth Vader Nooooooooooo");
             return;
         }
-        Debug.Log("recieving on this computer");
+        Debug.Log("receiving on this computer");
         src.clip = directHitSound;
         src.Play();
-        if (IsServer){
-            StartCoroutine(DestroyAfterSound(blastSound));
-        }
     }
 
     public void OnIndirectHit(List<ulong> receiverIdsList, ulong attackerId){
@@ -58,6 +56,7 @@ public class SoundEffectPlayer : NetworkBehaviour
         // }
         InDirectHitReceiveRpc(RpcTarget.Group(receiverIdsList, RpcTargetUse.Temp));
         //inDirectHitOriginatorRpc(RpcTarget.Single(attackerId, RpcTargetUse.Temp));
+        StartCoroutine(DestroyAfterSound(indirectHitSound));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
@@ -65,9 +64,6 @@ public class SoundEffectPlayer : NetworkBehaviour
     {
         src.clip = indirectHitSound;
         src.Play();
-        if (IsServer){
-            StartCoroutine(DestroyAfterSound(blastSound));
-        }
     }
 
     private void InDirectHitOriginatorRpc(RpcParams rpcParams)
@@ -79,6 +75,7 @@ public class SoundEffectPlayer : NetworkBehaviour
     public void PlayBlastSound()
     {
         PlayBlastSoundRpc();
+        StartCoroutine(DestroyAfterSound(blastSound));
     }
 
 
@@ -91,9 +88,6 @@ public class SoundEffectPlayer : NetworkBehaviour
         src.maxDistance = 2f;
         src.rolloffMode = AudioRolloffMode.Logarithmic;
         src.Play();
-        if (IsServer){
-            StartCoroutine(DestroyAfterSound(blastSound));
-        }
     }
 
     private IEnumerator DestroyAfterSound(AudioClip audio)
