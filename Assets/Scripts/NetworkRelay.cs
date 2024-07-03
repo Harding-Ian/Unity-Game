@@ -56,7 +56,7 @@ public class NetworkRelay : MonoBehaviour
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            Debug.Log("join code: " + joinCode); 
+            Debug.Log("join code: " + joinCode);
 
             RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
@@ -65,8 +65,10 @@ public class NetworkRelay : MonoBehaviour
 
         } catch (RelayServiceException e){
             Debug.Log(e);
+            uISceneManager.hostButtonClickable = true;
         }
         uISceneManager.LoadGameMenu();
+
     }
 
     public async void JoinRelay(string joinCode, UISceneManager uISceneManager){

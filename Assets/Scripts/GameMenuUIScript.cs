@@ -6,8 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class GameMenuUIScript : NetworkBehaviour
 {
-    public void CallMain()
+    public void CallPlayerScene()
     {
-        if(NetworkManager.IsHost) NetworkManager.SceneManager.LoadScene("Main", LoadSceneMode.Single);
+        if(NetworkManager.IsHost) 
+        {
+            NetworkManager.SceneManager.LoadScene("PlayerScene", LoadSceneMode.Single);
+        }
     }
 }

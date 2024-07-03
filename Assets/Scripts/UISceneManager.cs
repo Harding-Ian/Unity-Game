@@ -15,6 +15,7 @@ public class UISceneManager : NetworkBehaviour
 
     public NetworkRelay networkRelay;
     public bool networkMenuSpawned = false;
+    public bool hostButtonClickable = true;
 
     public void LoadNetworkMenu()
     {
@@ -27,7 +28,8 @@ public class UISceneManager : NetworkBehaviour
     }
     public void Host()
     {
-        networkRelay.CreateRelayAndGameMenu(GetComponent<UISceneManager>());
+        if(hostButtonClickable) networkRelay.CreateRelayAndGameMenu(GetComponent<UISceneManager>());
+        hostButtonClickable = false;
     }
 
     
@@ -35,6 +37,7 @@ public class UISceneManager : NetworkBehaviour
     {
         NetworkManager.SceneManager.LoadScene("GameMenu", LoadSceneMode.Single);
     }
+
     public void UnloadNetworkMenu()
     {
         SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("NetworkMenu"));

@@ -30,12 +30,13 @@ public class PlayerSpawner : NetworkBehaviour
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
-        if(playersSpawned == false)
+        if(playersSpawned == false && sceneName == "PlayerScene")
         {
             int j = 0;
             foreach(ulong id in clientsCompleted)
             {
                 GameObject player = Instantiate(playerPrefab);
+                
                 player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
                 j++;
             }
@@ -70,11 +71,18 @@ public class PlayerSpawner : NetworkBehaviour
     public void MovePlayerRpc(Vector3 position, RpcParams rpcParams)
     {
         Debug.Log("MovePlayerRpc || moving to " + position);
-        Transform playerTransform = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject().transform;
-        Debug.Log(playerTransform);
-        Debug.Log(playerTransform.position);
-        playerTransform.position = position;
-        Debug.Log(playerTransform.position);
+        NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        Debug.Log("player.IsOwner ==== " + player.IsOwner);
+        Debug.Log("player.IsOwnedByServer ==== " + player.IsOwnedByServer);
+        Debug.Log(player.transform);
+        Debug.Log(player.transform.position);
+        player.transform.position = position;
+        Debug.Log(player.transform.position);
+
+        player.GetComponent<PlayerMovement>().enabled = false;
+        player.GetComponent<Projectile>().enabled = false;
+        player.GetComponent<PlayerBlock>().enabled = false;
+
     }
 
 
