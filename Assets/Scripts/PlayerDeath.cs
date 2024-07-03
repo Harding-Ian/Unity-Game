@@ -1,30 +1,136 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class PlayerDeath : NetworkBehaviour
 {
+    public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(1000003, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public GameObject playerCamera;
 
-[Rpc(SendTo.SpecifiedInParams)]
-    public void initiateDeathRpc(ulong killerId, RpcParams rpcParams)
+
+    private void Start()
     {
-        Debug.Log("initiate death");
-        playerCamera.GetComponent<Camera>().enabled = false;
-        NetworkObject firstSpectatedPlayer = null;
+        if(IsLocalPlayer)
+        {
+            ChangeplayerSpectatingIdRpc(OwnerClientId);
+            playerSpectatingId.OnValueChanged += playerSpectatingIdObserver;
+        }
+    }
+
+
+    public void playerSpectatingIdObserver(ulong oldValue, ulong newValue)
+    {
+        if(oldValue == 1000003) return;
+        ChangeSpectator(newValue, oldValue);
+    }
+
+
+    public void InitiatePlayerDeath()
+    {
+        ulong playerToDieId = OwnerClientId;
+        GetComponent<PlayerScript>().dead.Value = true;
+        DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));
 
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
-            if (instance.GetComponent<PlayerScript>().clientId.Value == killerId) firstSpectatedPlayer = instance.gameObject.GetComponent<NetworkObject>();
+            if (instance.GetComponent<PlayerDeath>().playerSpectatingId.Value == playerToDieId)
+            {
+                instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = NetworkManager.Singleton.ConnectedClients[playerToDieId].PlayerObject.GetComponent<PlayerScript>().lastDamagingPlayerId.Value;
+            }
         }
-        if(firstSpectatedPlayer == null) return;
-
-        Debug.Log("firstSpectatedPlayer.Id ==== " + firstSpectatedPlayer.OwnerClientId);
-        firstSpectatedPlayer.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = true;
-        Debug.Log("firstSpectatedPlayer.transform.Find(CameraHolder).transform.Find(Camera) === " + firstSpectatedPlayer.transform.Find("CameraHolder").transform.Find("Camera"));
-        
-        firstSpectatedPlayer.transform.Find("Capsule").GetComponent<MeshRenderer>().enabled = false;
-        //Debug.Log("firstSpectatedPlayer.cameraholder.activeself ==== " + firstSpectatedPlayer.GetComponent<PlayerDeath>().cameraHolder.activeSelf);
     }
+
+
+    public ulong FindPlayerToSpectateId(int dir)
+    {
+        List<ulong> AlivePlayerIds = new List<ulong>();
+        foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+        {
+            if (instance.GetComponent<PlayerScript>().dead.Value == false) AlivePlayerIds.Add(instance.GetComponent<PlayerScript>().clientId.Value);
+        }
+
+        AlivePlayerIds.Sort();
+        ulong lastplayerId = AlivePlayerIds[AlivePlayerIds.Count - 1];
+        ulong firstplayerId = AlivePlayerIds[0];
+
+        if (playerSpectatingId.Value == firstplayerId && dir < 0) return lastplayerId;
+        else if (playerSpectatingId.Value == lastplayerId && dir > 0) return firstplayerId;
+        else return AlivePlayerIds[AlivePlayerIds.IndexOf(playerSpectatingId.Value) + dir];
+    }
+
+
+    public void ChangeSpectator(ulong playerToSpectateId, ulong playerWasSpectatingId)
+    {
+        if(playerToSpectateId == playerWasSpectatingId) return;
+
+        NetworkObject playerToSpectate = null;
+        NetworkObject playerWasSpectating = null;
+
+        foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+        {
+            if (instance.GetComponent<PlayerScript>().clientId.Value == playerToSpectateId) playerToSpectate = instance.gameObject.GetComponent<NetworkObject>();
+            if (instance.GetComponent<PlayerScript>().clientId.Value == playerWasSpectatingId) playerWasSpectating = instance.gameObject.GetComponent<NetworkObject>();
+        }
+
+        playerWasSpectating.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = false;
+        playerToSpectate.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = true;
+
+        SetVisibility(playerWasSpectating, true);
+        SetVisibility(playerToSpectate, false);
+    }
+
+
+    public void SetVisibility(NetworkObject PlayerToChangeVisibility, bool visibility)
+    {
+        PlayerToChangeVisibility.transform.Find("Capsule").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Visor").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("VisibleHealthBarCanvas").GetComponent<Canvas>().enabled = visibility;
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    public void DisablePlayerRpc(RpcParams rpcParams)
+    {
+        NetworkObject playerToDisable = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+
+        playerToDisable.GetComponent<PlayerMovement>().enabled = false;
+        playerToDisable.GetComponent<MouseLook>().enabled = false;
+        playerToDisable.GetComponent<Projectile>().enabled = false;
+        playerToDisable.GetComponent<PlayerBlock>().enabled = false;
+
+    }
+
+
+    void Update()
+    {
+        if(!IsLocalPlayer) return;
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("playerspectatingId ==== " + playerSpectatingId.Value);
+            Debug.Log("lastdamagingplayerId ===" + GetComponent<PlayerScript>().lastDamagingPlayerId.Value);
+        }
+
+        if(GetComponent<PlayerScript>().dead.Value == false) return;
+        
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            ChangeplayerSpectatingIdRpc(FindPlayerToSpectateId(-1));
+        }
+        
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            ChangeplayerSpectatingIdRpc(FindPlayerToSpectateId(1));
+        }
+    }
+
+
+    [Rpc(SendTo.Server)]
+    public void ChangeplayerSpectatingIdRpc(ulong newId)
+    {
+        playerSpectatingId.Value = newId;
+    }
+
 }

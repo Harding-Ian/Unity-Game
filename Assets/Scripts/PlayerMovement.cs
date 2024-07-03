@@ -64,17 +64,11 @@ public class PlayerMovement : NetworkBehaviour
         readyToJump = true;
         readyToDash = true;
     }
-
-    void outputvelocity()
-    {
-        if(IsLocalPlayer) Debug.Log("velocity:" + GetComponent<Rigidbody>().velocity);
-    }
     
 
     private void Update()
     {
-        if (!IsOwner) return;
-
+        if (!IsLocalPlayer) return;
 
         // ground check
         
@@ -108,7 +102,7 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // when to jump
-        if(Input.GetKey(jumpKey) && readyToJump && jumpcount < maxjumpcount)
+        if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < maxjumpcount)
         {
             readyToJump = false;
             Jump();
@@ -119,7 +113,7 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
-        if(Input.GetKey(dashKey) && readyToDash && dashcount < maxdashcount)
+        if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < maxdashcount)
         {
             readyToDash = false;
             Dash();

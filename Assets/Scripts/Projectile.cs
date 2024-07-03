@@ -33,11 +33,10 @@ public class Projectile : NetworkBehaviour
     void Update()
     {
         if(fireTest == true){
-            Debug.Log("------ NOW ------");
             fireTest = false;
         }
 
-        if (!IsOwner) return;
+        if (!IsLocalPlayer) return;
 
         if (readyToFire == true){
             if (Input.GetKey(fireKey))
@@ -47,7 +46,6 @@ public class Projectile : NetworkBehaviour
 
             if(Input.GetKeyUp(fireKey))
             { 
-                Debug.Log("keyDown time = " + accumulatedTime);
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
                 Invoke(nameof(ResetFire), statsManager.projectileCooldown.Value);
@@ -60,7 +58,20 @@ public class Projectile : NetworkBehaviour
     void ShootProjectile(float pressTime)
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        ProjectileRpc(ray, OwnerClientId, pressTime);
+
+        Vector3 destination;
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit)){
+            destination = hit.point;
+
+            Debug.Log("Ray hit object: " + hit.collider.gameObject.name);
+            Debug.Log("Positon: " + destination);
+        }else{
+            destination = ray.GetPoint(1000);
+        }
+
+        ProjectileRpc(OwnerClientId, pressTime, destination);
     }
 
     private void ResetFire(){
@@ -70,7 +81,7 @@ public class Projectile : NetworkBehaviour
 
     private float calculateChargeBonus(float pressTime, out float dropMod){
         float range = statsManager.maxProjectileSpeed.Value - statsManager.minProjectileSpeed.Value;
-        Debug.Log("range = " + range);
+
         if (statsManager.projectileChargeTime.Value < pressTime){
             dropMod = 0.5f;
             return statsManager.maxProjectileSpeed.Value;
@@ -83,24 +94,12 @@ public class Projectile : NetworkBehaviour
 
 
     [Rpc(SendTo.Server)]
-    private void ProjectileRpc(Ray ray, ulong id, float pressTime){
+    private void ProjectileRpc(ulong id, float pressTime, Vector3 destination)
+    {
         
-        Vector3 destination;
-
-        RaycastHit hit;
-
 
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);
-
-        Debug.Log("speed mod = " + speedMod);
-        Debug.Log("drop mod = " + dropMod);
-
-        if(Physics.Raycast(ray, out hit)){
-            destination = hit.point;
-        }else{
-            destination = ray.GetPoint(1000);
-        }
 
 
         GameObject projectileObj = Instantiate(projectile, FirePoint.position, Quaternion.identity);
@@ -108,11 +107,7 @@ public class Projectile : NetworkBehaviour
         
         IgnorePhysicsRpc(projectileObj.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(id, RpcTargetUse.Temp));
         
-        Fireball fireballScript = projectileObj.GetComponent<Fireball>();
-
-
-        fireballScript.SetPlayerWhoFired(OwnerClientId);
-
+        projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - FirePoint.position).normalized * speedMod; //* 0.01f;
 
         ConstantForce constantForce = projectileObj.GetComponent<ConstantForce>();

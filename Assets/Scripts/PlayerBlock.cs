@@ -25,10 +25,11 @@ public class PlayerBlock : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsOwner) return;
+        if (!IsLocalPlayer) return;
         if(Input.GetKeyDown(blockKey))
         {
-            if (readyToBlock == true){
+            if (readyToBlock == true)
+            {
                 readyToBlock = false;
                 block();
                 Invoke(nameof(ResetBlock), statsManager.blockCooldown.Value);
@@ -46,7 +47,6 @@ public class PlayerBlock : NetworkBehaviour
 
     [Rpc(SendTo.Server)]
     private void BlockRpc(ulong id, Vector3 blockOrigin, float radius){
-        Debug.Log("Block detected");
         //GameObject blockObject = Instantiate(blockWave, GetComponent<Transform>().position, Quaternion.identity);
         SpawnBlockWaveRpc(blockOrigin);
         //blockObject.GetComponent<NetworkObject>().Spawn(true);
@@ -65,11 +65,8 @@ public class PlayerBlock : NetworkBehaviour
             }
         }
 
-        Debug.Log("Players in range = " + playersInRange.Count);
         int i = 0;
         foreach (var player in playersInRange) {
-            // Debug.Log("--------------------------- Break Line -------------------");
-            // Debug.Log(i + " = " + player.GetComponent<NetworkObject>().OwnerClientId);
             i += 1;
 
             if (player.GetComponent<NetworkObject>().OwnerClientId == id) {continue;}
@@ -80,11 +77,10 @@ public class PlayerBlock : NetworkBehaviour
             if (Physics.Raycast(ray, out hit)) {
                 GameObject objectHit = hit.collider.gameObject;
                 if (objectHit.CompareTag("Player")){
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 0.5f);
+                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 0.5f, id);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
                 }
-                Debug.Log("objhect hit == " + hit.collider.gameObject.name);
             }
 
         }

@@ -72,7 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2363486080
+  GlobalObjectIdHash: 1484042822
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -96,6 +96,7 @@ MonoBehaviour:
   blast: {fileID: 325097870823728784, guid: d4927cb448713e04ba9d8c2ccd3f7885, type: 3}
   gameManager: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
+  audioSrcPrefab: {fileID: 6405057538832502360, guid: 37bac31d82a3ee145afaf00864897142, type: 3}
 --- !u!54 &2061212873827488745
 Rigidbody:
   m_ObjectHideFlags: 0

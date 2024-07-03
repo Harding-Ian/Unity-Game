@@ -15,6 +15,8 @@ public class Fireball : NetworkBehaviour
     public GameObject gameManager;
 
     public Vector3 currentVelocity;
+
+    public GameObject audioSrcPrefab;
     void Start()
     {   
         gameManager = GameObject.Find("GameManager");
@@ -75,38 +77,70 @@ public class Fireball : NetworkBehaviour
                 if (other.gameObject.CompareTag("projectile"))
                 {
                     NetworkObject.Despawn();
-                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                    //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
-                    blastObj.GetComponent<NetworkObject>().Spawn(true);
+                    CreateBlast();
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {
                     if (other.gameObject.CompareTag("Player"))
                     {   
-                        //ApplyKnockbackRpc(-1 * other.relativeVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
-                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2);
+                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2, playerOwnerId);
                         ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
                         gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, 0.25f);
-                        
+                        PlayHitSound(playerOwnerId, networkObject.OwnerClientId);
                     }
+
                     NetworkObject.Despawn();
-                    GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                    //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
-                    blastObj.GetComponent<NetworkObject>().Spawn(true);
+                    CreateBlast();
                 }
             }
             else
             {
                 NetworkObject.Despawn();
-                GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-                //GameObject blastObj = Instantiate(blast, other.contacts[0].point, Quaternion.identity);
-                blastObj.GetComponent<NetworkObject>().Spawn(true);
+                CreateBlast();
             }
-            
         }
     }
 
-    
+
+    private void CreateBlast(){
+        GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+        blastObj.GetComponent<NetworkObject>().Spawn(true);
+        blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
+
+        PlayBlastSound();
+    }
+
+    private void PlayBlastSound(){
+        GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
+        audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
+
+        SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
+        if (soundPlayer != null)
+        {
+            soundPlayer.PlayBlastSound();
+        }
+        else
+        {
+            Debug.LogError("SoundEffectPlayer component not found on audioSrcInstance.");
+        }
+    }
+
+    private void PlayHitSound(ulong id1, ulong id2){
+        GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
+        audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
+
+        SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
+        if (soundPlayer != null)
+        {
+            soundPlayer.OnDirectHit(id1, id2);
+        }
+        else
+        {
+            Debug.LogError("SoundEffectPlayer component not found on audioSrcInstance.");
+        }
+    }
+
+
 
     
 }

@@ -6,8 +6,12 @@ using UnityEngine;
 public class ProjectileBlast : NetworkBehaviour
 {
 
+
+    private ulong playerOwnerId;
     public float radius = 4f;
     public string playerTag = "Player";
+
+    public GameObject audioSrcPrefab;
 
     public GameObject gameManager;
     // Start is called before the first frame update
@@ -24,6 +28,10 @@ public class ProjectileBlast : NetworkBehaviour
             FindPlayers();
         }
         
+    }
+
+    public void SetPlayerWhoFired(ulong playerId){
+        playerOwnerId = playerId;
     }
 
     // // Update is called once per frame
@@ -52,11 +60,10 @@ public class ProjectileBlast : NetworkBehaviour
             }
         }
 
-        Debug.Log("Players in range = " + playersInRange.Count);
         int i = 0;
+        List<ulong> clientIdsList = new List<ulong>();
+        
         foreach (var player in playersInRange) {
-            // Debug.Log("--------------------------- Break Line -------------------");
-            // Debug.Log(i + " = " + player.GetComponent<NetworkObject>().OwnerClientId);
             i += 1;
 
             var ray = new Ray(GetComponent<Transform>().position, player.GetComponent<Transform>().position - GetComponent<Transform>().position);
@@ -64,20 +71,37 @@ public class ProjectileBlast : NetworkBehaviour
             
             Collider playerCollider = player.GetComponent<Collider>();
             if (playerCollider.bounds.Contains(ray.origin)) {
-                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f);
+                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f, playerOwnerId);
                 ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                 gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
             }
             else if (Physics.Raycast(ray, out hit)) {
             GameObject objectHit = hit.collider.gameObject;
                 if (objectHit.CompareTag("Player")){
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f);
+                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f, playerOwnerId);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
-                }
-                Debug.Log("objhect hit == " + hit.collider.gameObject.name);
-            }
 
+                    if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId){
+                        clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
+
+                    }
+                }
+            }
+        }
+        if (clientIdsList.Count > 0){
+            GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
+            audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
+        
+            SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
+            if (soundPlayer != null)
+            {
+                soundPlayer.OnIndirectHit(clientIdsList, playerOwnerId);
+            }
+            else
+            {
+                Debug.LogError("SoundEffectPlayer component not found on audioSrcInstance.");
+            }
         }
     }
 
