@@ -9,10 +9,12 @@ public class PlayerDeath : NetworkBehaviour
 {
     public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(1000003, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public GameObject playerCamera;
+    public GameObject GameManager;
 
 
     private void Start()
     {
+        GameManager = GameObject.Find("GameManager");
         if(IsLocalPlayer)
         {
             ChangeplayerSpectatingIdRpc(OwnerClientId);
@@ -34,13 +36,25 @@ public class PlayerDeath : NetworkBehaviour
         GetComponent<PlayerScript>().dead.Value = true;
         DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));
 
+        List<PlayerScript> AlivePlayersList = new List<PlayerScript>();
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
             if (instance.GetComponent<PlayerDeath>().playerSpectatingId.Value == playerToDieId)
             {
                 instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = NetworkManager.Singleton.ConnectedClients[playerToDieId].PlayerObject.GetComponent<PlayerScript>().lastDamagingPlayerId.Value;
             }
+
+            if (instance.GetComponent<PlayerScript>().dead.Value == false)
+            {
+                AlivePlayersList.Add(instance);
+            }
         }
+
+        if(AlivePlayersList.Count < 2)
+        {
+            GameManager.GetComponent<GameSceneManager>().RoundCompleted(AlivePlayersList[0].clientId.Value.ToString());
+        }
+        
     }
 
 

@@ -5,12 +5,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Linq;
+using TMPro;
 
 public class GameSceneManager : NetworkBehaviour
 {
     public GameObject CountDownUI;
+    public TextMeshProUGUI countdownTMPGUI;
     public string[] maps;
-    public int startCountdown;
 
     void Start()
     {
@@ -42,9 +43,20 @@ public class GameSceneManager : NetworkBehaviour
         }
     }
 
+    public void debugninja()
+    {
+        Debug.Log("ninja");
+    }
+
+    public void RoundCompleted(string winner)
+    {
+        Debug.Log("winner === " + winner);
+    }
+
     public IEnumerator StartCountdown(int countdown)
     {
-        
+        Debug.Log("countdown === " + countdown);
+        countdownTMPGUI.text = countdown.ToString();
         if(countdown < 1)
         {
             CountdownFinishedRpc();
@@ -52,9 +64,7 @@ public class GameSceneManager : NetworkBehaviour
         else
         {
             yield return new WaitForSeconds(1);
-            StartCountdown(countdown-1);
+            StartCoroutine(StartCountdown(countdown-1));
         }
-        
-
     }
 }
