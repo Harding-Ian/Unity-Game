@@ -31,17 +31,13 @@ public class PlayerSpawner : NetworkBehaviour
     {
         if (sceneName == "PlayerScene") return;
         
-        Debug.Log("SceneLoaded Running with scenename ===" + sceneName);
-        Debug.Log("SceneLoaded Running with loadscenemode ===" + loadSceneMode);
         if(playersSpawned == false)
         {
-            int j = 0;
             foreach(ulong id in clientsCompleted)
             {
                 GameObject player = Instantiate(playerPrefab);
                 
                 player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
-                j++;
             }
             playersSpawned = true;
         }
@@ -51,7 +47,7 @@ public class PlayerSpawner : NetworkBehaviour
 
     public void teleportPlayers(List<ulong> playerList)
     {
-        Debug.Log("teleportPlayers running");
+        if (!IsHost) return;
         GameObject SpawnPointHolder = GameObject.Find("SpawnPointHolder");
         List<Transform> SpawnPoints = new List<Transform>();
         for (int i = 0; i < SpawnPointHolder.transform.childCount; i++) SpawnPoints.Add(SpawnPointHolder.transform.GetChild(i));
@@ -67,16 +63,14 @@ public class PlayerSpawner : NetworkBehaviour
             //Debug.Log(shuffledSpawnPoints[j % shuffledSpawnPoints.Count]);
             //Debug.Log(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position);
 
-            Debug.Log("Calling MovePlayerRpc with id === " + id);
             MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void MovePlayerRpc(Vector3 position, RpcParams rpcParams)
+    private void MovePlayerRpc(Vector3 position, RpcParams rpcParams)
     {
-        Debug.Log("running MovePlayerRpc");
         //Debug.Log("MovePlayerRpc || moving to " + position);
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
         // Debug.Log("player.IsOwner ==== " + player.IsOwner);
