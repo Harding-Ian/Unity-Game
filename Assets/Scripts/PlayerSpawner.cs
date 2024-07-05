@@ -49,7 +49,7 @@ public class PlayerSpawner : NetworkBehaviour
 
         if(UpgradeMap)
         {
-            Debug.Log("lastplayetowinId ===== " + lastPlayerToWinId);
+            Debug.Log("lastplayertowinId ===== " + lastPlayerToWinId);
             playerList.Remove(lastPlayerToWinId);
             GameObject SpawnPointWinner = GameObject.Find("SpawnPointWinner");
             MovePlayerRpc(SpawnPointWinner.transform.position, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
@@ -65,7 +65,6 @@ public class PlayerSpawner : NetworkBehaviour
         int j = 0;
         foreach(ulong id in playerList)
         {
-            Debug.Log("Running MovePlayerRpc with " + shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position + " " + UpgradeMap + " " + id);
             MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
@@ -75,10 +74,8 @@ public class PlayerSpawner : NetworkBehaviour
     private void MovePlayerRpc(Vector3 position, bool UpgradeMap, RpcParams rpcParams)
     {
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        Debug.Log("Setting player.transform.position to " + position);
         player.GetComponent<Rigidbody>().position = position;
-        Debug.Log("player.transform.position is " + player.transform.position);
-
+        
         if(!UpgradeMap)
         {
             player.GetComponent<PlayerMovement>().enabled = false;

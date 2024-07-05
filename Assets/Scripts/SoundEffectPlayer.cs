@@ -42,10 +42,8 @@ public class SoundEffectPlayer : NetworkBehaviour
     private void DirectHitRpc(RpcParams rpcParams)
     {
         if (src == null){
-            Debug.Log("Darth Vader Nooooooooooo");
             return;
         }
-        Debug.Log("receiving on this computer");
         src.clip = directHitSound;
         src.Play();
     }

@@ -44,7 +44,7 @@ public class StatsManager : NetworkBehaviour
             damagedPlayer.GetComponent<PlayerScript>().lastDamagingPlayerId.Value = damagingPlayerId;
         }
 
-        if (damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0)
+        if (damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0 && damagedPlayer.GetComponent<PlayerScript>().dead.Value == false)
         {
             damagedPlayer.GetComponent<PlayerDeath>().InitiatePlayerDeath();
         }

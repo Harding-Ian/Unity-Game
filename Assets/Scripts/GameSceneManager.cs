@@ -105,6 +105,7 @@ public class GameSceneManager : NetworkBehaviour
     {
         if (IsHost)
         {
+            Debug.Log("number of wins = " + winner.GetComponent<PlayerScript>().wins);
             GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
             winner.GetComponent<PlayerScript>().wins.Value++;
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)

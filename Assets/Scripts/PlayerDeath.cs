@@ -33,6 +33,7 @@ public class PlayerDeath : NetworkBehaviour
 
     public void InitiatePlayerDeath()
     {
+        Debug.Log("Running InitiatePlayerDeath for player" + OwnerClientId);
         ulong playerToDieId = OwnerClientId;
         GetComponent<PlayerScript>().dead.Value = true;
         DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));

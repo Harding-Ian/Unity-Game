@@ -65,8 +65,6 @@ public class Projectile : NetworkBehaviour
         if(Physics.Raycast(ray, out hit)){
             destination = hit.point;
 
-            Debug.Log("Ray hit object: " + hit.collider.gameObject.name);
-            Debug.Log("Positon: " + destination);
         }else{
             destination = ray.GetPoint(1000);
         }
