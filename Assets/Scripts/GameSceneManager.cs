@@ -27,7 +27,19 @@ public class GameSceneManager : NetworkBehaviour
     private string[] maps;
 
     [SerializeField]
-    private int winCondition = 5;
+    private int winCondition = 3;
+
+    [SerializeField]
+    private string[] victoryString;
+
+    [SerializeField]
+    private GameObject victoryUI;
+
+    [SerializeField]
+    private TextMeshProUGUI victoryText;
+    
+    [SerializeField]
+    private TextMeshProUGUI victoryName;
 
    // private Scene mapScene;
 
@@ -69,6 +81,8 @@ public class GameSceneManager : NetworkBehaviour
         {
             instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = instance.GetComponent<PlayerScript>().clientId.Value;
             instance.GetComponent<PlayerScript>().dead.Value = false;
+            instance.GetComponent<PlayerStatsManager>().playerHealth.Value = instance.GetComponent<PlayerStatsManager>().maxPlayerHealth.Value;
+            instance.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value = 1f;
             //PlayerList.Add(instance.clientId.Value);
         }
         //GetComponent<PlayerSpawner>().teleportPlayers(PlayerList);
@@ -83,16 +97,19 @@ public class GameSceneManager : NetworkBehaviour
         player.GetComponent<MouseLook>().enabled = true;
         player.GetComponent<Projectile>().enabled = false;
         player.GetComponent<PlayerBlock>().enabled = false;
+        
+        
     }
 
     public void RoundCompleted(GameObject winner)
     {
         if (IsHost)
         {
+            GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
             winner.GetComponent<PlayerScript>().wins.Value++;
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
             {
-                //win!
+                GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString());
             }
             else
             {
@@ -101,6 +118,14 @@ public class GameSceneManager : NetworkBehaviour
         }
     }
 
+    [Rpc(SendTo.Everyone)]
+    private void GameCompletedRpc(string winner)
+    {
+        victoryText.text = victoryString[Random.Range(0, victoryString.Length)];
+        victoryName.text = winner + " Wins";
+        victoryUI.SetActive(true);
+    }
+    
     [Rpc(SendTo.Everyone)]
     private void RoundCompletedRpc(string winner)
     {

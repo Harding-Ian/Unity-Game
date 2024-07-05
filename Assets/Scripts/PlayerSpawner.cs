@@ -13,6 +13,8 @@ public class PlayerSpawner : NetworkBehaviour
 
     public GameObject playerPrefab;
     public bool playersSpawned = false;
+    
+    public ulong lastPlayerToWinId;
 
 
     public void Start()
@@ -31,20 +33,28 @@ public class PlayerSpawner : NetworkBehaviour
             foreach(ulong id in clientsCompleted)
             {
                 GameObject player = Instantiate(playerPrefab);
-                
                 player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
             }
             playersSpawned = true;
         }
 
-        if (sceneName == "UpgradeMap") teleportPlayers(clientsCompleted, false);
-        else teleportPlayers(clientsCompleted, true);
+        if (sceneName == "UpgradeMap") teleportPlayers(clientsCompleted, true);
+        else teleportPlayers(clientsCompleted, false);
     }
 
 
-    public void teleportPlayers(List<ulong> playerList, bool countdown)
+    public void teleportPlayers(List<ulong> playerList, bool UpgradeMap)
     {
         if (!IsHost) return;
+
+        if(UpgradeMap)
+        {
+            Debug.Log("lastplayetowinId ===== " + lastPlayerToWinId);
+            playerList.Remove(lastPlayerToWinId);
+            GameObject SpawnPointWinner = GameObject.Find("SpawnPointWinner");
+            MovePlayerRpc(SpawnPointWinner.transform.position, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
+        }
+        
         GameObject SpawnPointHolder = GameObject.Find("SpawnPointHolder");
         List<Transform> SpawnPoints = new List<Transform>();
         for (int i = 0; i < SpawnPointHolder.transform.childCount; i++) SpawnPoints.Add(SpawnPointHolder.transform.GetChild(i));
@@ -55,21 +65,21 @@ public class PlayerSpawner : NetworkBehaviour
         int j = 0;
         foreach(ulong id in playerList)
         {
-            Debug.Log("Running MovePlayerRpc with " + shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position + " " + countdown + " " + id);
-            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, countdown, RpcTarget.Single(id, RpcTargetUse.Temp));
+            Debug.Log("Running MovePlayerRpc with " + shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position + " " + UpgradeMap + " " + id);
+            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void MovePlayerRpc(Vector3 position, bool countdown, RpcParams rpcParams)
+    private void MovePlayerRpc(Vector3 position, bool UpgradeMap, RpcParams rpcParams)
     {
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
         Debug.Log("Setting player.transform.position to " + position);
         player.GetComponent<Rigidbody>().position = position;
         Debug.Log("player.transform.position is " + player.transform.position);
 
-        if(countdown)
+        if(!UpgradeMap)
         {
             player.GetComponent<PlayerMovement>().enabled = false;
             player.GetComponent<Projectile>().enabled = false;
