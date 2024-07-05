@@ -26,33 +26,25 @@ public class GameSceneManager : NetworkBehaviour
     [SerializeField]
     private string[] maps;
 
+    [SerializeField]
+    private int winCondition = 5;
+
    // private Scene mapScene;
 
     void Start()
     {
         if(NetworkManager.IsHost)
         {
-           // NetworkManager.SceneManager.OnSceneEvent += SceneManager_OnSceneEvent;
+            //NetworkManager.SceneManager.OnSceneEvent += SceneManager_OnSceneEvent;
             NetworkManager.SceneManager.LoadScene(maps[Random.Range(0, maps.Length)], LoadSceneMode.Additive);
         }
     }
 
-    // private void SceneManager_OnSceneEvent(SceneEvent sceneEvent)
-    // {
-    //     Debug.Log("Scene Event Triggered: " + sceneEvent.SceneEventType + " for scene: " + sceneEvent.Scene.name);
-    //     if (sceneEvent.Scene.name == "PlayerScene" || sceneEvent.Scene.name == "") return;
-
-    //     Debug.Log("============================================" + sceneEvent.SceneEventType);
-    //     if (sceneEvent.SceneEventType == SceneEventType.LoadComplete)
-    //     {
-    //         Debug.Log("da da da dadada dad ada");
-    //         if (sceneEvent.Scene != null){
-    //             mapScene = sceneEvent.Scene;
-    //         }
-    //         Debug.Log(mapScene.name);
-    //         //NetworkManager.SceneManager.OnSceneEvent -= SceneManager_OnSceneEvent;
-    //     }
-    // }
+    private IEnumerator NextMap()
+    {
+        yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
+        NetworkManager.SceneManager.LoadScene(maps[Random.Range(0, maps.Length)], LoadSceneMode.Additive);
+    }
 
     [Rpc(SendTo.Everyone)]
     public void CountdownFinishedRpc()
@@ -65,26 +57,47 @@ public class GameSceneManager : NetworkBehaviour
         player.GetComponent<PlayerBlock>().enabled = true;
     }
 
-    void Update()
+    public void EnableCountDownUI()
     {
-        if(!IsHost) return;
+        CountDownUI.SetActive(true);
+    }
 
-        if(Input.GetKeyDown(KeyCode.L))
+    private void ResetPlayers()
+    {
+        //List<ulong> PlayerList = new List<ulong>();
+        foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
-            CountdownFinishedRpc();
+            instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = instance.GetComponent<PlayerScript>().clientId.Value;
+            instance.GetComponent<PlayerScript>().dead.Value = false;
+            //PlayerList.Add(instance.clientId.Value);
         }
+        //GetComponent<PlayerSpawner>().teleportPlayers(PlayerList);
+        UpgradeMapPlayerStateRpc();
     }
 
-    public void debugninja()
+    [Rpc(SendTo.Everyone)]
+    private void UpgradeMapPlayerStateRpc()
     {
-        Debug.Log("ninja");
+        NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        player.GetComponent<PlayerMovement>().enabled = true;
+        player.GetComponent<MouseLook>().enabled = true;
+        player.GetComponent<Projectile>().enabled = false;
+        player.GetComponent<PlayerBlock>().enabled = false;
     }
 
-    public void RoundCompleted(string winner)
+    public void RoundCompleted(GameObject winner)
     {
         if (IsHost)
         {
-            RoundCompletedRpc(winner);
+            winner.GetComponent<PlayerScript>().wins.Value++;
+            if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
+            {
+                //win!
+            }
+            else
+            {
+                RoundCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString());
+            }
         }
     }
 
@@ -104,13 +117,12 @@ public class GameSceneManager : NetworkBehaviour
         if (IsHost)
         {
             //check for game winner here if enough points
-        //if not go to upgrades
+            //if not go to upgrades
             NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
-            NetworkManager.SceneManager.LoadScene("UpgradeMap", LoadSceneMode.Additive);
 
             StartCoroutine(LoadUpgradeScene());
-            // Debug.Log(SceneManager.GetSceneAt(SceneManager.sceneCount - 1).name);
             EndRoundRpc();
+            ResetPlayers();
         }
     }
 
@@ -118,8 +130,6 @@ public class GameSceneManager : NetworkBehaviour
     {
         // Ensure the unload has completed
         yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
-
-        Debug.Log("Loading UpgradeMap scene.");
         NetworkManager.SceneManager.LoadScene("UpgradeMap", LoadSceneMode.Additive);
     }
 
@@ -131,7 +141,6 @@ public class GameSceneManager : NetworkBehaviour
 
     public IEnumerator StartCountdown(int countdown)
     {
-        Debug.Log("countdown === " + countdown);
         countdownTMPGUI.text = countdown.ToString();
         if(countdown < 1)
         {
@@ -141,6 +150,17 @@ public class GameSceneManager : NetworkBehaviour
         {
             yield return new WaitForSeconds(1);
             StartCoroutine(StartCountdown(countdown-1));
+        }
+    }
+
+    void Update()
+    {
+        if(!IsHost) return;
+
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+            StartCoroutine(NextMap());
         }
     }
 }

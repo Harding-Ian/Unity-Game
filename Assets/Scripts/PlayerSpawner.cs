@@ -20,16 +20,11 @@ public class PlayerSpawner : NetworkBehaviour
         if(NetworkManager.Singleton.IsHost) NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
     }
 
-    // public override void OnNetworkSpawn()
-    // {
-    //     Debug.Log("subscribed to OnLoadEventCompleted");
-    //     NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
-    // }
-
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         if (sceneName == "PlayerScene") return;
+        
         
         if(playersSpawned == false)
         {
@@ -41,11 +36,13 @@ public class PlayerSpawner : NetworkBehaviour
             }
             playersSpawned = true;
         }
-        teleportPlayers(clientsCompleted);
+
+        if (sceneName == "UpgradeMap") teleportPlayers(clientsCompleted, false);
+        else teleportPlayers(clientsCompleted, true);
     }
 
 
-    public void teleportPlayers(List<ulong> playerList)
+    public void teleportPlayers(List<ulong> playerList, bool countdown)
     {
         if (!IsHost) return;
         GameObject SpawnPointHolder = GameObject.Find("SpawnPointHolder");
@@ -58,33 +55,29 @@ public class PlayerSpawner : NetworkBehaviour
         int j = 0;
         foreach(ulong id in playerList)
         {
-            
-            //Debug.Log(j % shuffledSpawnPoints.Count + " " + id);
-            //Debug.Log(shuffledSpawnPoints[j % shuffledSpawnPoints.Count]);
-            //Debug.Log(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position);
-
-            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, RpcTarget.Single(id, RpcTargetUse.Temp));
+            Debug.Log("Running MovePlayerRpc with " + shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position + " " + countdown + " " + id);
+            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, countdown, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void MovePlayerRpc(Vector3 position, RpcParams rpcParams)
+    private void MovePlayerRpc(Vector3 position, bool countdown, RpcParams rpcParams)
     {
-        //Debug.Log("MovePlayerRpc || moving to " + position);
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        // Debug.Log("player.IsOwner ==== " + player.IsOwner);
-        // Debug.Log("player.IsOwnedByServer ==== " + player.IsOwnedByServer);
-        // Debug.Log(player.transform);
-        // Debug.Log(player.transform.position);
-        player.transform.position = position;
-        //Debug.Log(player.transform.position);
+        Debug.Log("Setting player.transform.position to " + position);
+        player.GetComponent<Rigidbody>().position = position;
+        Debug.Log("player.transform.position is " + player.transform.position);
 
-        player.GetComponent<PlayerMovement>().enabled = false;
-        player.GetComponent<Projectile>().enabled = false;
-        player.GetComponent<PlayerBlock>().enabled = false;
-
-        StartCoroutine(GetComponent<GameSceneManager>().StartCountdown(3));
+        if(countdown)
+        {
+            player.GetComponent<PlayerMovement>().enabled = false;
+            player.GetComponent<Projectile>().enabled = false;
+            player.GetComponent<PlayerBlock>().enabled = false;
+            
+            StartCoroutine(GetComponent<GameSceneManager>().StartCountdown(3));
+            GetComponent<GameSceneManager>().EnableCountDownUI();
+        }
     }
 
 
@@ -92,9 +85,13 @@ public class PlayerSpawner : NetworkBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Y))
         {
-            NetworkManager.SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+            Debug.Log("==================================================");
+            List<ulong> PlayerList = new List<ulong>();
+            foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+            {
+                PlayerList.Add(instance.clientId.Value);
+            }
+            teleportPlayers(PlayerList, false);
         }
     }
-
-
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -52,7 +53,7 @@ public class PlayerDeath : NetworkBehaviour
 
         if(AlivePlayersList.Count < 2)
         {
-            GameManager.GetComponent<GameSceneManager>().RoundCompleted(AlivePlayersList[0].clientId.Value.ToString());
+            GameManager.GetComponent<GameSceneManager>().RoundCompleted(AlivePlayersList[0].GameObject());
         }
         
     }
