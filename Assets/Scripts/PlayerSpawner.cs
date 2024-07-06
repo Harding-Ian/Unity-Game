@@ -74,7 +74,8 @@ public class PlayerSpawner : NetworkBehaviour
     private void MovePlayerRpc(Vector3 position, bool UpgradeMap, RpcParams rpcParams)
     {
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        player.GetComponent<Rigidbody>().position = position;
+        player.GetComponent<ClientNetworkTransform>().Teleport(position, quaternion.identity, new Vector3(1,1,1));
+        //player.GetComponent<Rigidbody>().position = position;
         
         if(!UpgradeMap)
         {

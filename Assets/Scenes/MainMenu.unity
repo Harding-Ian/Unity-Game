@@ -1330,6 +1330,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkRelay: {fileID: 1564367854}
   networkMenuSpawned: 0
+  hostButtonClickable: 1
 --- !u!114 &1542240562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1397,7 +1398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 1
-  m_MaxPacketQueueSize: 128
+  m_MaxPacketQueueSize: 256
   m_MaxPayloadSize: 6144
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
@@ -1430,7 +1431,7 @@ MonoBehaviour:
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 170d02f2394bd634091ead45cf9b3682, type: 2}
-    TickRate: 30
+    TickRate: 120
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
     ConnectionData: 
