@@ -27,6 +27,7 @@ public class Fireball : NetworkBehaviour
         if (IsServer){
             Invoke(nameof(DestroyProjectile), 5);
         }
+        Debug.Log("position of fireball when spawned" + transform.position);
     }
 
     void Update(){
