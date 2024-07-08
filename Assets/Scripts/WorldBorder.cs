@@ -13,7 +13,7 @@ public class WorldBorder : NetworkBehaviour
         if (IsServer && collider.gameObject.CompareTag("Player") && collider.gameObject.GetComponent<PlayerScript>().dead.Value == false) 
         {
             Debug.Log("worldborder killing player " + collider.gameObject.GetComponent<PlayerScript>().clientId.Value);
-            collider.gameObject.GetComponent<PlayerDeath>().InitiatePlayerDeath();
+            //collider.gameObject.GetComponent<PlayerDeath>().InitiatePlayerDeath();
         }
     }
 
