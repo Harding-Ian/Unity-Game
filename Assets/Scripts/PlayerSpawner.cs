@@ -52,6 +52,7 @@ public class PlayerSpawner : NetworkBehaviour
             Debug.Log("lastplayertowinId ===== " + lastPlayerToWinId);
             playerList.Remove(lastPlayerToWinId);
             GameObject SpawnPointWinner = GameObject.Find("SpawnPointWinner");
+            //MovePlayerRpc(SpawnPointWinner.transform.position, SpawnPointWinner.transform.rotation, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
             MovePlayerRpc(SpawnPointWinner.transform.position, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
         }
         
@@ -66,6 +67,7 @@ public class PlayerSpawner : NetworkBehaviour
         foreach(ulong id in playerList)
         {
             MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
+            //MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, shuffledSpawnPoints[j % shuffledSpawnPoints.Count].rotation, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
     }
@@ -73,9 +75,11 @@ public class PlayerSpawner : NetworkBehaviour
     [Rpc(SendTo.SpecifiedInParams)]
     private void MovePlayerRpc(Vector3 position, bool UpgradeMap, RpcParams rpcParams)
     {
+        //asdasd
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
         //player.GetComponent<ClientNetworkTransform>().Teleport(position, quaternion.identity, new Vector3(1,1,1));
         player.GetComponent<Rigidbody>().position = position;
+        //player.GetComponent<Rigidbody>().rotation = rotation;
         
         if(!UpgradeMap)
         {
@@ -93,7 +97,6 @@ public class PlayerSpawner : NetworkBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Y))
         {
-            Debug.Log("==================================================");
             List<ulong> PlayerList = new List<ulong>();
             foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
             {

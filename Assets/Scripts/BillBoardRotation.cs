@@ -9,6 +9,8 @@ public class BillBoardRotation : NetworkBehaviour
     public GameObject player;
     private ulong instanceId;
     private ulong playerToLookAtId;
+    [SerializeField]
+    private bool card = false;
 
     void LateUpdate()
     {
@@ -21,7 +23,16 @@ public class BillBoardRotation : NetworkBehaviour
             instanceId = instance.GetComponent<PlayerScript>().clientId.Value;
             if (instanceId == playerToLookAtId)
             {
-                transform.LookAt(instance.transform);
+                if(card) 
+                {
+                    //transform.LookAt(instance.transform);
+                    transform.rotation = instance.transform.rotation;
+                }
+                else 
+                {
+                    //transform.LookAt(instance.transform);
+                    transform.rotation = instance.transform.Find("CameraHolder").rotation;
+                }
                 return;
             }
         }
