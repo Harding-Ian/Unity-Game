@@ -49,7 +49,6 @@ public class PlayerSpawner : NetworkBehaviour
 
         if(UpgradeMap)
         {
-            Debug.Log("lastplayertowinId ===== " + lastPlayerToWinId);
             playerList.Remove(lastPlayerToWinId);
             GameObject SpawnPointWinner = GameObject.Find("SpawnPointWinner");
             //MovePlayerRpc(SpawnPointWinner.transform.position, SpawnPointWinner.transform.rotation, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));

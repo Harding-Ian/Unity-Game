@@ -12,6 +12,7 @@ public class SoundEffectPlayer : NetworkBehaviour
     public AudioClip indirectHitSound;
 
     public AudioClip blastSound;
+
     // Start is called before the first frame update
     void Awake()
     {

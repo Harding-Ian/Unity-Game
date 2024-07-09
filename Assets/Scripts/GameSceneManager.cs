@@ -83,6 +83,12 @@ public class GameSceneManager : NetworkBehaviour
             instance.GetComponent<PlayerScript>().dead.Value = false;
             instance.GetComponent<PlayerStatsManager>().playerHealth.Value = instance.GetComponent<PlayerStatsManager>().maxPlayerHealth.Value;
             instance.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value = 1f;
+            if (instance.GetComponent<PlayerScript>().clientId.Value == GetComponent<PlayerSpawner>().lastPlayerToWinId){
+                instance.GetComponent<PlayerScript>().upgraded.Value = true;
+            }
+            else{
+                instance.GetComponent<PlayerScript>().upgraded.Value = false;
+            }
             //PlayerList.Add(instance.clientId.Value);
         }
         //GetComponent<PlayerSpawner>().teleportPlayers(PlayerList);
@@ -105,12 +111,12 @@ public class GameSceneManager : NetworkBehaviour
     {
         if (IsHost)
         {
-            Debug.Log("number of wins = " + winner.GetComponent<PlayerScript>().wins);
             GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
             winner.GetComponent<PlayerScript>().wins.Value++;
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
             {
-                GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString());
+                string bm1 = victoryString[Random.Range(0, victoryString.Length)];
+                GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString(), bm1);
             }
             else
             {
@@ -120,9 +126,9 @@ public class GameSceneManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    private void GameCompletedRpc(string winner)
+    private void GameCompletedRpc(string winner, string bm)
     {
-        victoryText.text = victoryString[Random.Range(0, victoryString.Length)];
+        victoryText.text = bm;
         victoryName.text = winner + " Wins";
         victoryUI.SetActive(true);
     }

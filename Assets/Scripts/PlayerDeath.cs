@@ -33,7 +33,6 @@ public class PlayerDeath : NetworkBehaviour
 
     public void InitiatePlayerDeath()
     {
-        Debug.Log("Running InitiatePlayerDeath for player" + OwnerClientId);
         ulong playerToDieId = OwnerClientId;
         GetComponent<PlayerScript>().dead.Value = true;
         DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));
@@ -122,12 +121,6 @@ public class PlayerDeath : NetworkBehaviour
     void Update()
     {
         if(!IsLocalPlayer) return;
-
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            Debug.Log("playerspectatingId ==== " + playerSpectatingId.Value);
-            Debug.Log("lastdamagingplayerId ===" + GetComponent<PlayerScript>().lastDamagingPlayerId.Value);
-        }
 
         if(GetComponent<PlayerScript>().dead.Value == false) return;
         

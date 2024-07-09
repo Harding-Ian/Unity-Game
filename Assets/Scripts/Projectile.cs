@@ -46,7 +46,6 @@ public class Projectile : NetworkBehaviour
 
             if(Input.GetKeyUp(fireKey))
             {
-                Debug.Log("position of firepoint when firing" + transform.GetChild(3).position);
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
                 Invoke(nameof(ResetFire), statsManager.projectileCooldown.Value);
@@ -95,7 +94,6 @@ public class Projectile : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void ProjectileRpc(ulong id, float pressTime, Vector3 destination)
     {
-        
 
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);
