@@ -10,11 +10,12 @@ public class WorldBorder : NetworkBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (IsServer && collider.gameObject.CompareTag("Player")) collider.gameObject.GetComponent<PlayerDeath>().InitiatePlayerDeath();
+        if (IsServer && collider.gameObject.CompareTag("Player") && collider.gameObject.GetComponent<PlayerScript>().dead.Value == false) 
+        {
+            collider.gameObject.GetComponent<PlayerDeath>().InitiatePlayerDeath();
+        }
     }
 
-
-    
 }
 
 

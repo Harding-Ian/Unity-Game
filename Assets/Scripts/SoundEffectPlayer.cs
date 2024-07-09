@@ -12,6 +12,7 @@ public class SoundEffectPlayer : NetworkBehaviour
     public AudioClip indirectHitSound;
 
     public AudioClip blastSound;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -42,10 +43,8 @@ public class SoundEffectPlayer : NetworkBehaviour
     private void DirectHitRpc(RpcParams rpcParams)
     {
         if (src == null){
-            Debug.Log("Darth Vader Nooooooooooo");
             return;
         }
-        Debug.Log("receiving on this computer");
         src.clip = directHitSound;
         src.Play();
     }

@@ -45,7 +45,7 @@ public class Projectile : NetworkBehaviour
             }
 
             if(Input.GetKeyUp(fireKey))
-            { 
+            {
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
                 Invoke(nameof(ResetFire), statsManager.projectileCooldown.Value);
@@ -65,8 +65,6 @@ public class Projectile : NetworkBehaviour
         if(Physics.Raycast(ray, out hit)){
             destination = hit.point;
 
-            Debug.Log("Ray hit object: " + hit.collider.gameObject.name);
-            Debug.Log("Positon: " + destination);
         }else{
             destination = ray.GetPoint(1000);
         }
@@ -96,7 +94,6 @@ public class Projectile : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void ProjectileRpc(ulong id, float pressTime, Vector3 destination)
     {
-        
 
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);

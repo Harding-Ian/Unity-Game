@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -12,42 +13,48 @@ public class PlayerSpawner : NetworkBehaviour
 
     public GameObject playerPrefab;
     public bool playersSpawned = false;
+    
+    public ulong lastPlayerToWinId;
 
 
     public void Start()
     {
-        
-        DontDestroyOnLoad(this.gameObject);
-        if(NetworkManager.IsHost) NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
+        if(NetworkManager.Singleton.IsHost) NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
     }
-
-    // public override void OnNetworkSpawn()
-    // {
-    //     Debug.Log("subscribed to OnLoadEventCompleted");
-    //     NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
-    // }
 
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
-        if(playersSpawned == false && sceneName == "PlayerScene")
+        if (sceneName == "PlayerScene") return;
+        
+        
+        if(playersSpawned == false)
         {
-            int j = 0;
             foreach(ulong id in clientsCompleted)
             {
                 GameObject player = Instantiate(playerPrefab);
-                
                 player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
-                j++;
             }
             playersSpawned = true;
         }
-        teleportPlayers(clientsCompleted);
+
+        if (sceneName == "UpgradeMap") teleportPlayers(clientsCompleted, true);
+        else teleportPlayers(clientsCompleted, false);
     }
 
 
-    public void teleportPlayers(List<ulong> playerList)
+    public void teleportPlayers(List<ulong> playerList, bool UpgradeMap)
     {
+        if (!IsHost) return;
+
+        if(UpgradeMap)
+        {
+            playerList.Remove(lastPlayerToWinId);
+            GameObject SpawnPointWinner = GameObject.Find("SpawnPointWinner");
+            //MovePlayerRpc(SpawnPointWinner.transform.position, SpawnPointWinner.transform.rotation, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
+            MovePlayerRpc(SpawnPointWinner.transform.position, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
+        }
+        
         GameObject SpawnPointHolder = GameObject.Find("SpawnPointHolder");
         List<Transform> SpawnPoints = new List<Transform>();
         for (int i = 0; i < SpawnPointHolder.transform.childCount; i++) SpawnPoints.Add(SpawnPointHolder.transform.GetChild(i));
@@ -58,31 +65,30 @@ public class PlayerSpawner : NetworkBehaviour
         int j = 0;
         foreach(ulong id in playerList)
         {
-            Debug.Log(j % shuffledSpawnPoints.Count + " " + id);
-            Debug.Log(shuffledSpawnPoints[j % shuffledSpawnPoints.Count]);
-            Debug.Log(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position);
-            
-            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, RpcTarget.Single(id, RpcTargetUse.Temp));
+            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
+            //MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, shuffledSpawnPoints[j % shuffledSpawnPoints.Count].rotation, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void MovePlayerRpc(Vector3 position, RpcParams rpcParams)
+    private void MovePlayerRpc(Vector3 position, bool UpgradeMap, RpcParams rpcParams)
     {
-        Debug.Log("MovePlayerRpc || moving to " + position);
+        //asdasd
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        Debug.Log("player.IsOwner ==== " + player.IsOwner);
-        Debug.Log("player.IsOwnedByServer ==== " + player.IsOwnedByServer);
-        Debug.Log(player.transform);
-        Debug.Log(player.transform.position);
-        player.transform.position = position;
-        Debug.Log(player.transform.position);
-
-        player.GetComponent<PlayerMovement>().enabled = false;
-        player.GetComponent<Projectile>().enabled = false;
-        player.GetComponent<PlayerBlock>().enabled = false;
-
+        //player.GetComponent<ClientNetworkTransform>().Teleport(position, quaternion.identity, new Vector3(1,1,1));
+        player.GetComponent<Rigidbody>().position = position;
+        //player.GetComponent<Rigidbody>().rotation = rotation;
+        
+        if(!UpgradeMap)
+        {
+            player.GetComponent<PlayerMovement>().enabled = false;
+            player.GetComponent<Projectile>().enabled = false;
+            player.GetComponent<PlayerBlock>().enabled = false;
+            
+            StartCoroutine(GetComponent<GameSceneManager>().StartCountdown(3));
+            GetComponent<GameSceneManager>().EnableCountDownUI();
+        }
     }
 
 
@@ -90,9 +96,12 @@ public class PlayerSpawner : NetworkBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Y))
         {
-            NetworkManager.SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+            List<ulong> PlayerList = new List<ulong>();
+            foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+            {
+                PlayerList.Add(instance.clientId.Value);
+            }
+            teleportPlayers(PlayerList, false);
         }
     }
-
-
 }

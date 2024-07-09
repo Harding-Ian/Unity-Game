@@ -10,6 +10,11 @@ public class PlayerScript : NetworkBehaviour
     public NetworkVariable<ulong> lastDamagingPlayerId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<bool> dead = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+    public NetworkVariable<bool> upgraded = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<int> wins = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public List<string> UpgradeList = new List<string>() {"test1", "test2", "test3"};
+
     private void Start()
     {
         if (IsServer)
