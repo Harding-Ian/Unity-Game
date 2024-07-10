@@ -43,7 +43,7 @@ public class Fireball : NetworkBehaviour
 
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void ApplyKnockbackRpc(Vector3 knockbackDirection, RpcParams rpcParams)
+    private void ApplyKnockbackRpc(Vector3 knockbackDirection, float knockbackForce, RpcParams rpcParams)
     {
         NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
         
@@ -57,7 +57,7 @@ public class Fireball : NetworkBehaviour
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 50);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, knockbackForce);
     }
 
     private void DestroyProjectile()
@@ -83,9 +83,15 @@ public class Fireball : NetworkBehaviour
                 {
                     if (other.gameObject.CompareTag("Player"))
                     {   
-                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, 2, playerOwnerId);
-                        ApplyKnockbackRpc(currentVelocity.normalized, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
-                        gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, 0.25f);
+                        NetworkObject player = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject;
+
+                        float knockbackForce = player.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value;
+                        float orbDamage = player.GetComponent<PlayerStatsManager>().orbDamage.Value;
+                        float knockbackPercentDamage = player.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value;
+
+                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, orbDamage, playerOwnerId);
+                        ApplyKnockbackRpc(currentVelocity.normalized, knockbackForce, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, knockbackPercentDamage);
                         PlayHitSound(playerOwnerId, networkObject.OwnerClientId);
                     }
 

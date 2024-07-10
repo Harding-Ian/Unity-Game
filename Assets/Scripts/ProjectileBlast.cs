@@ -122,7 +122,7 @@ public class ProjectileBlast : NetworkBehaviour
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12f);
     }
     
 

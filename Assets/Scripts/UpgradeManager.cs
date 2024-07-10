@@ -7,25 +7,29 @@ using Unity.Netcode;
 
 public class UpgradeManager : NetworkBehaviour
 {
-    List<string> upgradeNames = new List<string>() {"test1", "test2", "test3", "test4", "test5"};
-    List<string> upgradeDescriptions = new List<string>() {"desc1", "desc2", "desc3", "desc4", "desc5"};
+    List<string> upgradeNames = new List<string>() {"volley1"};
+    List<string> upgradeDescriptions = new List<string>() {"Volley Shot: \n - Changes Fire Shape \n + 1 orb \n - Less Orb Power"};
 
     private bool triggered = false;
+
+    private Collider playerCollider;
 
 
     private void OnTriggerEnter(Collider collider)
     {
         if(!IsServer || triggered) return;
         triggered = true;
+        
+        playerCollider = collider;
 
-        List<string> upgradesToRemoveList = collider.GetComponent<PlayerScript>().UpgradeList;
-        Debug.Log("upgradesToRemoveList is " + upgradesToRemoveList);
-        foreach(string upgrade in upgradesToRemoveList)
-        {
-            Debug.Log("upgrade is  " + upgrade);
-            upgradeDescriptions.RemoveAt(upgradeNames.IndexOf(upgrade));
-            upgradeNames.Remove(upgrade);
-        }
+        // List<string> upgradesToRemoveList = collider.GetComponent<PlayerScript>().UpgradeList;
+        // Debug.Log("upgradesToRemoveList is " + upgradesToRemoveList);
+        // foreach(string upgrade in upgradesToRemoveList)
+        // {
+        //     Debug.Log("upgrade is  " + upgrade);
+        //     upgradeDescriptions.RemoveAt(upgradeNames.IndexOf(upgrade));
+        //     upgradeNames.Remove(upgrade);
+        // }
 
         foreach(Transform child in transform)
         {
@@ -40,9 +44,19 @@ public class UpgradeManager : NetworkBehaviour
         }
     }
 
-    private void test1()
+    private void volley1()
     {
-        Debug.Log("test1");
+        Debug.Log("volley1 upgrade selected");
+
+        playerCollider.GetComponent<PlayerStatsManager>().fireShape.Value = "volley";
+        playerCollider.GetComponent<PlayerStatsManager>().numberOfOrbs.Value += 1;
+        playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value *= 0.8f;
+        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value *= 0.8f;
+        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value *= 0.8f;
+
+        //reduce knockback
+        //reduce knockback buildup
+        //playerCollider.GetComponent<PlayerStatsManager>().
     }
 
     private void test2()

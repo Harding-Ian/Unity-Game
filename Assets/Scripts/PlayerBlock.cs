@@ -25,7 +25,7 @@ public class PlayerBlock : NetworkBehaviour
             {
                 readyToBlock = false;
                 block();
-                Invoke(nameof(ResetBlock), statsManager.blockCooldown.Value);
+                Invoke(nameof(ResetBlock), statsManager.pulseCooldown.Value);
             }
         }
     }
@@ -100,7 +100,7 @@ public class PlayerBlock : NetworkBehaviour
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12f);
     }
 
 }

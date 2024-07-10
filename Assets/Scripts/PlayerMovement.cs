@@ -174,7 +174,7 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    public void ApplyKnockback(Vector3 dir, int knockback)
+    public void ApplyKnockback(Vector3 dir, float knockback)
     {
         rb.AddForce(dir.normalized * knockback * statsManager.knockbackBuildUp.Value, ForceMode.VelocityChange);
     }

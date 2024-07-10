@@ -33,6 +33,9 @@ public class GameSceneManager : NetworkBehaviour
     private string[] victoryString;
 
     [SerializeField]
+    private List<string> victoryList2 = new List<string>();
+
+    [SerializeField]
     private GameObject victoryUI;
 
     [SerializeField]
@@ -115,8 +118,17 @@ public class GameSceneManager : NetworkBehaviour
             winner.GetComponent<PlayerScript>().wins.Value++;
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
             {
-                string bm1 = victoryString[Random.Range(0, victoryString.Length)];
-                GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString(), bm1);
+                // string bm1 = victoryString[Random.Range(0, victoryString.Length)];
+                // string bm2 = victoryString[Random.Range(0, victoryString.Length)];
+                // string bm3 = victoryString[Random.Range(0, victoryString.Length)];
+
+                // while (bm2 == bm1) bm2 = victoryString[Random.Range(0, victoryString.Length)];
+                // while (bm3 == bm1 || bm3 == bm2) bm2 = victoryString[Random.Range(0, victoryString.Length)];
+
+                List<string> randomBM = new List<string>();
+                randomBM = victoryList2.OrderBy(x => UnityEngine.Random.value).ToList();
+                
+                GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString(), randomBM[0], randomBM[1],randomBM[2]);
             }
             else
             {
@@ -126,11 +138,24 @@ public class GameSceneManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    private void GameCompletedRpc(string winner, string bm)
+    private void GameCompletedRpc(string winner, string bm1, string bm2, string bm3)
     {
-        victoryText.text = bm;
+        victoryText.text = bm1;
         victoryName.text = winner + " Wins";
         victoryUI.SetActive(true);
+
+        StartCoroutine(ChangeVictoryTextsAfterDelay(bm1, bm2, bm3));
+    }
+
+    private IEnumerator ChangeVictoryTextsAfterDelay(string bm1, string bm2, string bm3)
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        victoryText.text = bm2;
+
+        yield return new WaitForSeconds(1.5f);
+
+        victoryText.text = bm3;
     }
     
     [Rpc(SendTo.Everyone)]
