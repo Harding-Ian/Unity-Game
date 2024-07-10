@@ -967,6 +967,25 @@ MonoBehaviour:
   - Better luck next time
   - Close one!
   - ggez
+  victoryList2:
+  - "\U0001F609\U0001F609\U0001F609"
+  - EASY CLAP
+  - ezpz
+  - LOW DIF
+  - GG go next
+  - Congratulations!
+  - Skill Issue
+  - That was fun!
+  - Outplayed
+  - Just Better
+  - Maybe Next Time
+  - Out Edged
+  - Thanks
+  - Free Elo
+  - gg?
+  - Better luck next time
+  - Close one!
+  - ggez
   victoryUI: {fileID: 145626515}
   victoryText: {fileID: 2111623046}
   victoryName: {fileID: 990782871}

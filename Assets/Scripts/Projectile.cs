@@ -48,7 +48,7 @@ public class Projectile : NetworkBehaviour
             {
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
-                Invoke(nameof(ResetFire), statsManager.projectileCooldown.Value);
+                Invoke(nameof(ResetFire), statsManager.orbCooldown.Value);
                 accumulatedTime = 0f;
             }
         }
