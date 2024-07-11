@@ -103,7 +103,6 @@ public class UpgradeManager : NetworkBehaviour
         Debug.Log("orbPower1 upgrade selected");
 
         playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value += 0.5f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbCooldown.Value += 0.4f;
         playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value += 10f;
         playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value += 0.08f;
     
@@ -113,7 +112,6 @@ public class UpgradeManager : NetworkBehaviour
     {
         Debug.Log("orb knockback1 upgrade selected");
 
-        playerCollider.GetComponent<PlayerStatsManager>().orbCooldown.Value += 0.4f;
         playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value += 20f;
         playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value += 0.2f;
     }
@@ -122,7 +120,6 @@ public class UpgradeManager : NetworkBehaviour
     {
         Debug.Log("orb damage 1 upgrade selected");
         playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value += 1f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbCooldown.Value += 0.4f;
     }
 
 
