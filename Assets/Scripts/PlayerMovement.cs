@@ -12,22 +12,24 @@ public class PlayerMovement : NetworkBehaviour
     private float moveSpeed;
     public float groundedMoveSpeed;
     public float airMoveSpeed;
+
     public float groundDrag;
     public float antislideDrag;
     public float airDrag;
 
-    public float jumpForce;
-    public float dashForce;
     public float jumpCooldown;
-    public float dashCooldown;
+
+    public float groundMultiplier = 1f;
     public float airMultiplier;
+
     bool readyToJump;
     bool readyToDash;
+
     private int jumpcount;
     private int dashcount;
-    public int maxjumpcount;
-    public int maxdashcount;
-    public float maxDownwardsJumpCancel;
+
+
+    public float maxDownwardsJumpCancel; //decide later
     
 
     [Header("Keybinds")]
@@ -102,7 +104,7 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // when to jump
-        if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < maxjumpcount)
+        if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < GetComponent<PlayerStatsManager>().numberOfJumps.Value)
         {
             readyToJump = false;
             Jump();
@@ -113,11 +115,11 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
-        if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < maxdashcount)
+        if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < GetComponent<PlayerStatsManager>().numberOfDashes.Value)
         {
             readyToDash = false;
             Dash();
-            Invoke(nameof(ResetDash), dashCooldown);
+            Invoke(nameof(ResetDash), GetComponent<PlayerStatsManager>().dashCooldown.Value);
             dashcount++;
 
             groundedOverride = true;
@@ -150,7 +152,7 @@ public class PlayerMovement : NetworkBehaviour
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * moveSpeed * 10f, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * moveSpeed * 10f * groundMultiplier, ForceMode.Acceleration);
         }
         else
             rb.AddForce(moveDirection * moveSpeed * 10f * airMultiplier, ForceMode.Acceleration);
@@ -161,16 +163,16 @@ public class PlayerMovement : NetworkBehaviour
         if(rb.velocity.y < maxDownwardsJumpCancel)
         {
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - maxDownwardsJumpCancel, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * GetComponent<PlayerStatsManager>().jumpForce.Value, ForceMode.VelocityChange);
         }
         else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0)
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * GetComponent<PlayerStatsManager>().jumpForce.Value, ForceMode.VelocityChange);
         }
         else
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * GetComponent<PlayerStatsManager>().jumpForce.Value, ForceMode.VelocityChange);
         }
     }
 
@@ -196,7 +198,7 @@ public class PlayerMovement : NetworkBehaviour
             else forwardCorrection = dashDirComponentOfVelocity;
             rb.velocity += forwardCorrection;
         }
-        rb.velocity += orientation.forward * dashForce;
+        rb.velocity += orientation.forward * GetComponent<PlayerStatsManager>().dashForce.Value;
 
     }
     private void ResetJump()

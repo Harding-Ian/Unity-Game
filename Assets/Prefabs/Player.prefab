@@ -564,7 +564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 5486534364741473120}
-  card: 0
+  bigGuy: 0
 --- !u!1 &5486534364741473120
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,6 +589,7 @@ GameObject:
   - component: {fileID: 2558519288129156580}
   - component: {fileID: 2588037333218576276}
   - component: {fileID: 4004671611658254471}
+  - component: {fileID: 4896879886274159136}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -678,13 +679,9 @@ MonoBehaviour:
   groundDrag: 6
   antislideDrag: 15
   airDrag: 1
-  jumpForce: 12
-  dashForce: 20
   jumpCooldown: 0.5
-  dashCooldown: 1
+  groundMultiplier: 1
   airMultiplier: 1.5
-  maxjumpcount: 2
-  maxdashcount: 3
   maxDownwardsJumpCancel: -100
   jumpKey: 32
   dashKey: 304
@@ -755,10 +752,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 7360464807818155601}
   projectile: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
-  FirePoint: {fileID: 4120642327271369139}
   fireKey: 323
   statsManager: {fileID: 1242329627409332268}
-  maxChargeTime: 1
 --- !u!114 &1645909117300595920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -836,8 +831,14 @@ MonoBehaviour:
     m_InternalValue: 0
   dead:
     m_InternalValue: 0
+  upgraded:
+    m_InternalValue: 0
   wins:
     m_InternalValue: 0
+  UpgradeList:
+  - test1
+  - test2
+  - test3
 --- !u!114 &1699247220030846899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -869,18 +870,85 @@ MonoBehaviour:
     m_InternalValue: 20
   maxPlayerHealth:
     m_InternalValue: 20
-  projectileCooldown:
-    m_InternalValue: 1.3
   knockbackBuildUp:
     m_InternalValue: 1
-  blockCooldown:
-    m_InternalValue: 3.5
+  orbDamage:
+    m_InternalValue: 2
+  orbKnockbackForce:
+    m_InternalValue: 50
+  orbKnockbackPercentDamage:
+    m_InternalValue: 0.2
+  orbCooldown:
+    m_InternalValue: 1.3
   maxProjectileSpeed:
     m_InternalValue: 100
   minProjectileSpeed:
     m_InternalValue: 50
   projectileChargeTime:
     m_InternalValue: 1.2
+  explosionDamage:
+    m_InternalValue: 1
+  explosionKnockbackForce:
+    m_InternalValue: 12
+  explosionKnockbackPercentDamage:
+    m_InternalValue: 0.1
+  explosionRadius:
+    m_InternalValue: 4
+  pulseDamage:
+    m_InternalValue: 3.5
+  pulseKnockbackForce:
+    m_InternalValue: 3.5
+  pulseKnockbackPercentDamage:
+    m_InternalValue: 3.5
+  pulseRadius:
+    m_InternalValue: 3.5
+  numberOfJumps:
+    m_InternalValue: 2
+  numberOfDashes:
+    m_InternalValue: 3
+  jumpForce:
+    m_InternalValue: 12
+  dashForce:
+    m_InternalValue: 20
+  dashCooldown:
+    m_InternalValue: 1
+  numberOfOrbs:
+    m_InternalValue: 1
+  fireShape:
+    m_InternalValue:
+      utf8LengthInBytes: 7
+      bytes:
+        offset0000:
+          byte0000: 100
+          byte0001: 101
+          byte0002: 102
+          byte0003: 97
+          byte0004: 117
+          byte0005: 108
+          byte0006: 116
+          byte0007: 0
+          byte0008: 0
+          byte0009: 0
+          byte0010: 0
+          byte0011: 0
+          byte0012: 0
+          byte0013: 0
+          byte0014: 0
+          byte0015: 0
+        byte0016: 0
+        byte0017: 0
+        byte0018: 0
+        byte0019: 0
+        byte0020: 0
+        byte0021: 0
+        byte0022: 0
+        byte0023: 0
+        byte0024: 0
+        byte0025: 0
+        byte0026: 0
+        byte0027: 0
+        byte0028: 0
+        byte0029: 0
 --- !u!75 &2558519288129156580
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -919,6 +987,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4bd243004e2175a43a6a2e0831567699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4896879886274159136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5486534364741473120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b48f3a2e55f7f45bc3b49cb6e214e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &7833775591222118325

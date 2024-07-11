@@ -35,7 +35,7 @@ public class PlayerBlock : NetworkBehaviour
     }
 
     private void block(){
-        BlockRpc(OwnerClientId, GetComponent<Transform>().position, 4f);
+        BlockRpc(OwnerClientId, GetComponent<Transform>().position, GetComponent<PlayerStatsManager>().pulseRadius.Value);
     }
 
     [Rpc(SendTo.Server)]
@@ -70,9 +70,9 @@ public class PlayerBlock : NetworkBehaviour
             if (Physics.Raycast(ray, out hit)) {
                 GameObject objectHit = hit.collider.gameObject;
                 if (objectHit.CompareTag("Player")){
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 0.5f, id);
+                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseDamage.Value, id);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
-                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
+                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseKnockbackPercentDamage.Value);
                 }
             }
 
@@ -100,7 +100,7 @@ public class PlayerBlock : NetworkBehaviour
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12f);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value);
     }
 
 }

@@ -8,13 +8,12 @@ public class ProjectileBlast : NetworkBehaviour
 
 
     private ulong playerOwnerId;
-    public float radius = 4f;
     public string playerTag = "Player";
 
     public GameObject audioSrcPrefab;
 
     public GameObject gameManager;
-    // Start is called before the first frame update
+
     void Start()
     {
         if (IsServer){
@@ -34,11 +33,6 @@ public class ProjectileBlast : NetworkBehaviour
         playerOwnerId = playerId;
     }
 
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
 
     private void DestroyProjectile()
     {
@@ -48,7 +42,9 @@ public class ProjectileBlast : NetworkBehaviour
     private void FindPlayers(){
         Vector3 blastCenter = transform.position;
 
-        Collider[] hitColliders = Physics.OverlapSphere(blastCenter, radius);
+        PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
+
+        Collider[] hitColliders = Physics.OverlapSphere(blastCenter, playerWhoShot.explosionRadius.Value);
 
         List<GameObject> playersInRange = new List<GameObject>();
 
@@ -71,16 +67,16 @@ public class ProjectileBlast : NetworkBehaviour
             
             Collider playerCollider = player.GetComponent<Collider>();
             if (playerCollider.bounds.Contains(ray.origin)) {
-                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f, playerOwnerId);
+                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
                 ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
-                gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
+                gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
             }
             else if (Physics.Raycast(ray, out hit)) {
             GameObject objectHit = hit.collider.gameObject;
                 if (objectHit.CompareTag("Player")){
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, 1f, playerOwnerId);
+                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
-                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, 0.1f);
+                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
 
                     if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId){
                         clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
@@ -111,6 +107,7 @@ public class ProjectileBlast : NetworkBehaviour
     private void ApplyKnockbackRpc(Vector3 knockbackDirection, RpcParams rpcParams)
     {
         NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
         
 
         float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
@@ -122,7 +119,7 @@ public class ProjectileBlast : NetworkBehaviour
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, 12f);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, playerWhoShot.explosionKnockbackForce.Value);
     }
     
 

@@ -83,15 +83,11 @@ public class Fireball : NetworkBehaviour
                 {
                     if (other.gameObject.CompareTag("Player"))
                     {   
-                        NetworkObject player = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject;
+                        PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-                        float knockbackForce = player.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value;
-                        float orbDamage = player.GetComponent<PlayerStatsManager>().orbDamage.Value;
-                        float knockbackPercentDamage = player.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value;
-
-                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, orbDamage, playerOwnerId);
-                        ApplyKnockbackRpc(currentVelocity.normalized, knockbackForce, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
-                        gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, knockbackPercentDamage);
+                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, playerWhoShot.orbDamage.Value, playerOwnerId);
+                        ApplyKnockbackRpc(currentVelocity.normalized, playerWhoShot.orbKnockbackForce.Value, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
+                        gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, playerWhoShot.orbKnockbackPercentDamage.Value);
                         PlayHitSound(playerOwnerId, networkObject.OwnerClientId);
                     }
 

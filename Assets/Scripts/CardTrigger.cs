@@ -12,11 +12,17 @@ public class CardTrigger : NetworkBehaviour
     [SerializeField]
     private UpgradeManager upgradeManager;
 
+    private GameObject gameManager;
+
     [SerializeField]
     private GameObject cardText;
 
     private string upgradeName = "empty";
 
+    void Start()
+    {
+        gameManager = GameObject.Find("GameManager");
+    }
     public void setUpgradeName(string name)
     {
         upgradeName = name;
@@ -42,6 +48,8 @@ public class CardTrigger : NetworkBehaviour
             Debug.Log("upgrade acquired!");
             upgradeManager.GetComponent<UpgradeManager>().CallFunctionByName(upgradeName);
             collider.GetComponent<PlayerScript>().UpgradeList.Add(upgradeName);
+
+            gameManager.GetComponent<GameSceneManager>().checkAllUpgraded();
         }
     }
 

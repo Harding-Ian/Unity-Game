@@ -118,12 +118,6 @@ public class GameSceneManager : NetworkBehaviour
             winner.GetComponent<PlayerScript>().wins.Value++;
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
             {
-                // string bm1 = victoryString[Random.Range(0, victoryString.Length)];
-                // string bm2 = victoryString[Random.Range(0, victoryString.Length)];
-                // string bm3 = victoryString[Random.Range(0, victoryString.Length)];
-
-                // while (bm2 == bm1) bm2 = victoryString[Random.Range(0, victoryString.Length)];
-                // while (bm3 == bm1 || bm3 == bm2) bm2 = victoryString[Random.Range(0, victoryString.Length)];
 
                 List<string> randomBM = new List<string>();
                 randomBM = victoryList2.OrderBy(x => UnityEngine.Random.value).ToList();
@@ -149,11 +143,11 @@ public class GameSceneManager : NetworkBehaviour
 
     private IEnumerator ChangeVictoryTextsAfterDelay(string bm1, string bm2, string bm3)
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
 
         victoryText.text = bm2;
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
 
         victoryText.text = bm3;
     }
@@ -210,14 +204,14 @@ public class GameSceneManager : NetworkBehaviour
         }
     }
 
-    void Update()
+    public void checkAllUpgraded()
     {
-        if(!IsHost) return;
-
-        if(Input.GetKeyDown(KeyCode.L))
+        foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
-            NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
-            StartCoroutine(NextMap());
+            if (instance.upgraded.Value == false) return;
         }
+        NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+        StartCoroutine(NextMap());
     }
+
 }
