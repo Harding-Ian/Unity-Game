@@ -880,12 +880,16 @@ MonoBehaviour:
     m_InternalValue: 0.2
   orbCooldown:
     m_InternalValue: 1.3
-  maxProjectileSpeed:
+  orbMaxSpeed:
     m_InternalValue: 100
-  minProjectileSpeed:
+  orbMinSpeed:
     m_InternalValue: 50
-  projectileChargeTime:
+  orbChargeTime:
     m_InternalValue: 1.2
+  orbBurst:
+    m_InternalValue: 2
+  orbBurstDelay:
+    m_InternalValue: 0.3
   explosionDamage:
     m_InternalValue: 1
   explosionKnockbackForce:
@@ -895,7 +899,7 @@ MonoBehaviour:
   explosionRadius:
     m_InternalValue: 4
   pulseDamage:
-    m_InternalValue: 3.5
+    m_InternalValue: 3
   pulseKnockbackForce:
     m_InternalValue: 3.5
   pulseKnockbackPercentDamage:

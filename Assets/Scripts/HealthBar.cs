@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 public class HealthBar : NetworkBehaviour
 {
@@ -67,11 +69,11 @@ public class HealthBar : NetworkBehaviour
         }
     }
 
-    private void OnHealthChanged(float oldValue, float newValue){
+    public void OnHealthChanged(float oldValue, float newValue){
         SetHealth(newValue);
     }
 
-    private void OnKnockbackChanged(float oldValue, float newValue){
+    public void OnKnockbackChanged(float oldValue, float newValue){
         SetKnockback(newValue);
     }
 

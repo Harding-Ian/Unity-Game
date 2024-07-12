@@ -18,6 +18,8 @@ public class Projectile : NetworkBehaviour
     private bool readyToFire = true;
 
     private float accumulatedTime = 0f;
+    private float accumulatedTimeBurst;
+    private int burstIteration = 1;
     
 
     void Update()
@@ -33,14 +35,34 @@ public class Projectile : NetworkBehaviour
 
             if(Input.GetKeyUp(fireKey))
             {
+                accumulatedTimeBurst = accumulatedTime;
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
+                Invoke(nameof(burstshot), GetComponent<PlayerStatsManager>().orbBurstDelay.Value);
                 Invoke(nameof(ResetFire), statsManager.orbCooldown.Value);
                 accumulatedTime = 0f;
             }
         }
     }
 
+
+    void burstshot()
+    {
+        Debug.Log("burstshot called");
+        Debug.Log("burstIteration is " + burstIteration);
+        Debug.Log("orbBurst.value is " + GetComponent<PlayerStatsManager>().orbBurst.Value);
+        if(burstIteration < GetComponent<PlayerStatsManager>().orbBurst.Value)
+        {
+            Debug.Log("burstIteration + 1 < GetComponent<PlayerStatsManager>().orbBurst.Value is true");
+            ShootProjectile(accumulatedTimeBurst);
+            Invoke(nameof(burstshot), GetComponent<PlayerStatsManager>().orbBurstDelay.Value);
+            burstIteration++;
+        }
+        else
+        {
+            burstIteration = 1;
+        }
+    }
 
     void ShootProjectile(float pressTime)
     {
@@ -49,23 +71,13 @@ public class Projectile : NetworkBehaviour
 
         Vector3 destination;
         RaycastHit hit;
-
-        if(Physics.Raycast(ray, out hit)){
-            destination = hit.point;
-
-        }else{
-            destination = ray.GetPoint(1000);
-        }
-
         List<Vector3> firepoints = new List<Vector3>();
         List<Vector3> hitpoints = new List<Vector3>();
 
-        Vector3 forward = (destination - cam.transform.position).normalized;
-                
-        Vector3 right = Vector3.Cross(cam.transform.up, forward).normalized;
-        Vector3 left = -right;
+        if(Physics.Raycast(ray, out hit)) destination = hit.point;
+        else destination = ray.GetPoint(1000);
 
-        GetComponent<PlayerMultishot>().calculateMultiShot(destination, right, left, out firepoints, out hitpoints);
+        GetComponent<PlayerMultishot>().calculateMultiShot(destination, out firepoints, out hitpoints);
 
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);
@@ -84,15 +96,15 @@ public class Projectile : NetworkBehaviour
     }
 
     private float calculateChargeBonus(float pressTime, out float dropMod){
-        float range = statsManager.maxProjectileSpeed.Value - statsManager.minProjectileSpeed.Value;
+        float range = statsManager.orbMaxSpeed.Value - statsManager.orbMinSpeed.Value;
 
-        if (statsManager.projectileChargeTime.Value < pressTime){
+        if (statsManager.orbChargeTime.Value < pressTime){
             dropMod = 0.5f;
-            return statsManager.maxProjectileSpeed.Value;
+            return statsManager.orbMaxSpeed.Value;
         }
         else{
-            dropMod = 1f - 0.5f * (pressTime / statsManager.projectileChargeTime.Value);
-            return statsManager.minProjectileSpeed.Value + range * (pressTime / statsManager.projectileChargeTime.Value);
+            dropMod = 1f - 0.5f * (pressTime / statsManager.orbChargeTime.Value);
+            return statsManager.orbMinSpeed.Value + range * (pressTime / statsManager.orbChargeTime.Value);
         }
     }
 
@@ -100,10 +112,6 @@ public class Projectile : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void ProjectileRpc(ulong id, Vector3 firepoint, Vector3 destination, float dropMod, float speedMod)
     {
-
-        Debug.Log("Reached rpc");
-
-
         GameObject projectileObj = Instantiate(projectile, firepoint, Quaternion.identity);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
         

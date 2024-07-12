@@ -8,7 +8,7 @@ public class PlayerMultishot : NetworkBehaviour
 
 
 
-    public void calculateMultiShot(Vector3 hitpoint, Vector3 leftDir, Vector3 rightDir, out List<Vector3> firepoints, out List<Vector3> hitpoints)
+    public void calculateMultiShot(Vector3 hitpoint, out List<Vector3> firepoints, out List<Vector3> hitpoints)
     {
         firepoints = new List<Vector3>();
         hitpoints  = new List<Vector3>();
@@ -59,7 +59,6 @@ public class PlayerMultishot : NetworkBehaviour
 
             for(int i = 1; i <= remainingOrbs / 2; i++)
             {
-
                 Vector3 nextLfirepoint = firepoint - separation * i * transform.right.normalized;
                 Vector3 nextRfirepoint = firepoint + separation * i * transform.right.normalized;
                 Vector3 nextLhitpoint = hitpoint - separation * i * transform.right.normalized;

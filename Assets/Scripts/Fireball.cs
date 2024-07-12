@@ -76,8 +76,11 @@ public class Fireball : NetworkBehaviour
             {
                 if (other.gameObject.CompareTag("projectile"))
                 {
-                    NetworkObject.Despawn();
-                    CreateBlast();
+                    if(playerOwnerId != 0)
+                    {
+                        NetworkObject.Despawn();
+                        CreateBlast();
+                    }
                 }
                 else if (playerOwnerId != networkObject.OwnerClientId)
                 {

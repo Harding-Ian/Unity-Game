@@ -90,6 +90,14 @@ public class PlayerDeath : NetworkBehaviour
             if (instance.GetComponent<PlayerScript>().clientId.Value == playerWasSpectatingId) playerWasSpectating = instance.gameObject.GetComponent<NetworkObject>();
         }
 
+        playerWasSpectating.GetComponent<PlayerStatsManager>().playerHealth.OnValueChanged -= GetComponent<HealthBar>().OnHealthChanged;
+        playerToSpectate.GetComponent<PlayerStatsManager>().playerHealth.OnValueChanged += GetComponent<HealthBar>().OnHealthChanged;
+        GetComponent<HealthBar>().OnHealthChanged(playerWasSpectating.GetComponent<PlayerStatsManager>().playerHealth.Value, playerToSpectate.GetComponent<PlayerStatsManager>().playerHealth.Value);
+
+        playerWasSpectating.GetComponent<PlayerStatsManager>().knockbackBuildUp.OnValueChanged -= GetComponent<HealthBar>().OnKnockbackChanged;
+        playerToSpectate.GetComponent<PlayerStatsManager>().knockbackBuildUp.OnValueChanged += GetComponent<HealthBar>().OnKnockbackChanged;
+        GetComponent<HealthBar>().OnKnockbackChanged(playerWasSpectating.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value, playerToSpectate.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value);
+
         playerWasSpectating.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = false;
         playerToSpectate.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = true;
 
