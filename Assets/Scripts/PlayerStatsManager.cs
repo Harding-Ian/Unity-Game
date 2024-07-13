@@ -83,7 +83,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     // ------------------------------- Altered Mechanics Related Stuff -------------------------------
 
-    [NonSerialized] public NetworkVariable<int> numberOfOrbs = new NetworkVariable<int>(3);
+    [NonSerialized] public NetworkVariable<int> numberOfOrbs = new NetworkVariable<int>(4);
     
     [NonSerialized] public NetworkVariable<FixedString32Bytes> fireShape = new NetworkVariable<FixedString32Bytes>("volley");
 

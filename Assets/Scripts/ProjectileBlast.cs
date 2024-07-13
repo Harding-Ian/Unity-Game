@@ -23,7 +23,7 @@ public class ProjectileBlast : NetworkBehaviour
                 Debug.LogError("GameManager not found within scene");
             }
 
-            Invoke("DestroyProjectile", 0.3f);
+            Invoke(nameof(DestroyBlastObject), 0.3f); // REPLACE 0.3 /////////////////////
             FindPlayers();
         }
         
@@ -34,57 +34,54 @@ public class ProjectileBlast : NetworkBehaviour
     }
 
 
-    private void DestroyProjectile()
+    private void DestroyBlastObject()
     {
         NetworkObject.Despawn();
     }
 
-    private void FindPlayers(){
-        Vector3 blastCenter = transform.position;
+    private void FindPlayers()
+    {
 
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-        Collider[] hitColliders = Physics.OverlapSphere(blastCenter, playerWhoShot.explosionRadius.Value);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, playerWhoShot.explosionRadius.Value);
 
         List<GameObject> playersInRange = new List<GameObject>();
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag(playerTag))
-            {
-                playersInRange.Add(hitCollider.gameObject);
-            }
+            if (hitCollider.CompareTag(playerTag)) playersInRange.Add(hitCollider.gameObject);
         }
 
-        int i = 0;
         List<ulong> clientIdsList = new List<ulong>();
         
-        foreach (var player in playersInRange) {
-            i += 1;
-
-            var ray = new Ray(GetComponent<Transform>().position, player.GetComponent<Transform>().position - GetComponent<Transform>().position);
+        foreach (var player in playersInRange) 
+        {
+            var ray = new Ray(transform.position, player.transform.position - transform.position);
             RaycastHit hit;
-            
-            Collider playerCollider = player.GetComponent<Collider>();
-            if (playerCollider.bounds.Contains(ray.origin)) {
+
+            if (player.GetComponent<Collider>().bounds.Contains(ray.origin)) 
+            {
                 gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
-                ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                 gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
+                ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
             }
-            else if (Physics.Raycast(ray, out hit)) {
-            GameObject objectHit = hit.collider.gameObject;
-                if (objectHit.CompareTag("Player")){
+
+            else if (Physics.Raycast(ray, out hit)) 
+            {
+                if (hit.collider.gameObject.CompareTag("Player"))
+                {
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
-                    ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
+                    ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
 
-                    if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId){
-                        clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
-
-                    }
+                    if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId) clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
                 }
             }
         }
+
+
+
         if (clientIdsList.Count > 0){
             GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
             audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
@@ -104,11 +101,9 @@ public class ProjectileBlast : NetworkBehaviour
 
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void ApplyKnockbackRpc(Vector3 knockbackDirection, RpcParams rpcParams)
+    private void ApplyKnockbackRpc(Vector3 knockbackDirection, float knockbackForce, RpcParams rpcParams)
     {
         NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
-        
 
         float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
 
@@ -119,7 +114,7 @@ public class ProjectileBlast : NetworkBehaviour
         float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, playerWhoShot.explosionKnockbackForce.Value);
+        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, knockbackForce);
     }
     
 

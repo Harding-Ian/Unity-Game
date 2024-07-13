@@ -48,12 +48,8 @@ public class Projectile : NetworkBehaviour
 
     void burstshot()
     {
-        Debug.Log("burstshot called");
-        Debug.Log("burstIteration is " + burstIteration);
-        Debug.Log("orbBurst.value is " + GetComponent<PlayerStatsManager>().orbBurst.Value);
         if(burstIteration < GetComponent<PlayerStatsManager>().orbBurst.Value)
         {
-            Debug.Log("burstIteration + 1 < GetComponent<PlayerStatsManager>().orbBurst.Value is true");
             ShootProjectile(accumulatedTimeBurst);
             Invoke(nameof(burstshot), GetComponent<PlayerStatsManager>().orbBurstDelay.Value);
             burstIteration++;

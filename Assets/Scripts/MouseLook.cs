@@ -15,8 +15,8 @@ public class MouseLook : NetworkBehaviour
     public GameObject playerCamera;
     public GameObject cameraHolder;
 
-    float xRotation = 0f;
-    float yRotation = 0f;
+    public float xRotation = 0f;
+    public float yRotation = 0f;
 
     Rigidbody rb;
 

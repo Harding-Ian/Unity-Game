@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -50,9 +51,9 @@ public class PlayerSpawner : NetworkBehaviour
         if(UpgradeMap)
         {
             playerList.Remove(lastPlayerToWinId);
-            GameObject SpawnPointWinner = GameObject.Find("SpawnPointWinner");
             //MovePlayerRpc(SpawnPointWinner.transform.position, SpawnPointWinner.transform.rotation, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
-            MovePlayerRpc(SpawnPointWinner.transform.position, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
+            Transform spawnpoint = GameObject.Find("SpawnPointWinner").transform;
+            MovePlayerRpc(spawnpoint.position, spawnpoint.rotation.eulerAngles.x, spawnpoint.rotation.eulerAngles.y, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
         }
         
         GameObject SpawnPointHolder = GameObject.Find("SpawnPointHolder");
@@ -65,19 +66,26 @@ public class PlayerSpawner : NetworkBehaviour
         int j = 0;
         foreach(ulong id in playerList)
         {
-            MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
+            Transform spawnpoint = shuffledSpawnPoints[j % shuffledSpawnPoints.Count];
+            MovePlayerRpc(spawnpoint.position, spawnpoint.rotation.eulerAngles.x, spawnpoint.rotation.eulerAngles.y, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             //MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, shuffledSpawnPoints[j % shuffledSpawnPoints.Count].rotation, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void MovePlayerRpc(Vector3 position, bool UpgradeMap, RpcParams rpcParams)
+    private void MovePlayerRpc(Vector3 position, float xRotation, float yRotation, bool UpgradeMap, RpcParams rpcParams)
     {
-        //asdasd
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
         //player.GetComponent<ClientNetworkTransform>().Teleport(position, quaternion.identity, new Vector3(1,1,1));
+
+        //Debug.Log("xrotation is " + xRotation);
+        //Debug.Log("yrotation is " + yRotation);
+
         player.GetComponent<Rigidbody>().position = position;
+        player.GetComponent<MouseLook>().xRotation = 0f;
+        player.GetComponent<MouseLook>().yRotation = 0f;
+        player.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
         //player.GetComponent<Rigidbody>().rotation = rotation;
         
         if(!UpgradeMap)
