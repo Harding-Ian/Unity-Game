@@ -21,7 +21,6 @@ public class PlayerStatsManager : NetworkBehaviour
     
 
 
-
     // ------------------------------- Orb Related Stuff -------------------------------
 
     [NonSerialized] public NetworkVariable<float> orbDamage = new NetworkVariable<float>(2f);
@@ -38,9 +37,11 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> orbChargeTime = new NetworkVariable<float>(1.2f);
     
-    [NonSerialized] public NetworkVariable<int> orbBurst = new NetworkVariable<int>(4);
+    [NonSerialized] public NetworkVariable<int> orbBurst = new NetworkVariable<int>(5);
 
-    [NonSerialized] public NetworkVariable<float> orbBurstDelay = new NetworkVariable<float>(0.1f);
+    [NonSerialized] public NetworkVariable<float> orbBurstDelay = new NetworkVariable<float>(0.3f);
+
+    [NonSerialized] public NetworkVariable<float> orbScale = new NetworkVariable<float>(1.4f);
 
     // ------------------------------- Explosion Related Stuff -------------------------------
     [NonSerialized] public NetworkVariable<float> explosionDamage = new NetworkVariable<float>(1f);
@@ -90,7 +91,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     // ------------------------------- Altered Mechanics Related Stuff -------------------------------
 
-    [NonSerialized] public NetworkVariable<int> numberOfOrbs = new NetworkVariable<int>(4);
+    [NonSerialized] public NetworkVariable<int> numberOfOrbs = new NetworkVariable<int>(5);
     
     [NonSerialized] public NetworkVariable<FixedString32Bytes> fireShape = new NetworkVariable<FixedString32Bytes>("volley");
 

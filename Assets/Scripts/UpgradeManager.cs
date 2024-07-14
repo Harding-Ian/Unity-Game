@@ -28,7 +28,9 @@ public class UpgradeManager : NetworkBehaviour
 
     { "orbKnockback1", "Orb Knockback:\n <color=#00FF00> + More Orb Knockback </color>\n <color=#FF0000> - More orb cooldown </color>" },
 
-    { "orbDamage1", "Orb Damage:\n <color=#00FF00> + Huge Orb Damage </color>\n <color=#FF0000> - More orb cooldown </color>" }
+    { "orbDamage1", "Orb Damage:\n <color=#00FF00> + Huge Orb Damage </color>\n <color=#FF0000> - More orb cooldown </color>" },
+
+    { "movement1", "run n gun:\n <color=#00FF00> + Huge speed increase" }
 };
 
     private bool triggered = false;
@@ -67,6 +69,22 @@ public class UpgradeManager : NetworkBehaviour
             child.GetComponent<CardTrigger>().cardTextRpc(upgradeDescription);
 
             upgradeDictionary.Remove(upgradeName);
+        }
+    }
+
+    public void CallFunctionByName(string functionName)
+    {
+        if (!IsServer) return;
+        Type type = this.GetType();
+        MethodInfo methodInfo = type.GetMethod(functionName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+        
+        if (methodInfo != null)
+        {
+            methodInfo.Invoke(this, null);
+        }
+        else
+        {
+            Debug.LogError($"Method {functionName} not found in class {type.Name}");
         }
     }
 
@@ -122,21 +140,14 @@ public class UpgradeManager : NetworkBehaviour
         playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value += 1f;
     }
 
-
-    public void CallFunctionByName(string functionName)
+    private void movement1()
     {
-        if (!IsServer) return;
-        Type type = this.GetType();
-        MethodInfo methodInfo = type.GetMethod(functionName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
-        
-        if (methodInfo != null)
-        {
-            methodInfo.Invoke(this, null);
-        }
-        else
-        {
-            Debug.LogError($"Method {functionName} not found in class {type.Name}");
-        }
+        Debug.Log("movement 1 upgrade selected");
+        playerCollider.GetComponent<PlayerStatsManager>().groundedMoveSpeed.Value += 2f;
+        playerCollider.GetComponent<PlayerStatsManager>().airMoveSpeed.Value += 2f;
+        playerCollider.GetComponent<PlayerStatsManager>().groundMultiplier.Value += 0.3f;
+        playerCollider.GetComponent<PlayerStatsManager>().airMultiplier.Value += 0.3f;
     }
+
 
 }

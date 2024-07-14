@@ -109,7 +109,9 @@ public class Projectile : NetworkBehaviour
     private void ProjectileRpc(ulong id, Vector3 firepoint, Vector3 destination, float dropMod, float speedMod)
     {
         GameObject projectileObj = Instantiate(projectile, firepoint, Quaternion.identity);
+        projectileObj.transform.localScale = new Vector3(statsManager.orbScale.Value,statsManager.orbScale.Value,statsManager.orbScale.Value);
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
+        
         
         IgnorePhysicsRpc(projectileObj.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(id, RpcTargetUse.Temp));
         
