@@ -76,7 +76,14 @@ public class PlayerStatsManager : NetworkBehaviour
     [NonSerialized] public NetworkVariable<float> dashForce = new NetworkVariable<float>(20f);
 
     [NonSerialized] public NetworkVariable<float> dashCooldown = new NetworkVariable<float>(1f);
-    
+
+    [NonSerialized] public NetworkVariable<float> groundedMoveSpeed = new NetworkVariable<float>(8f);
+
+    [NonSerialized] public NetworkVariable<float> airMoveSpeed = new NetworkVariable<float>(5f);
+
+    [NonSerialized] public NetworkVariable<float> groundMultiplier = new NetworkVariable<float>(10f);
+
+    [NonSerialized] public NetworkVariable<float> airMultiplier = new NetworkVariable<float>(15f);
         // other movement vars
 
     

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -8,7 +9,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 public class PlayerDeath : NetworkBehaviour
 {
-    public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(1000003, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [NonSerialized] public NetworkVariable<ulong> playerSpectatingId = new NetworkVariable<ulong>(1000003, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public GameObject playerCamera;
     public GameObject GameManager;
 

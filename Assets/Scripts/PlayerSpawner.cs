@@ -53,7 +53,7 @@ public class PlayerSpawner : NetworkBehaviour
             playerList.Remove(lastPlayerToWinId);
             //MovePlayerRpc(SpawnPointWinner.transform.position, SpawnPointWinner.transform.rotation, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
             Transform spawnpoint = GameObject.Find("SpawnPointWinner").transform;
-            MovePlayerRpc(spawnpoint.position, spawnpoint.rotation.eulerAngles.x, spawnpoint.rotation.eulerAngles.y, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
+            MovePlayerRpc(spawnpoint.position, spawnpoint.GetComponent<SpawnPointRotationData>().xRotation, spawnpoint.GetComponent<SpawnPointRotationData>().yRotation, UpgradeMap, RpcTarget.Single(lastPlayerToWinId, RpcTargetUse.Temp));
         }
         
         GameObject SpawnPointHolder = GameObject.Find("SpawnPointHolder");
@@ -67,7 +67,7 @@ public class PlayerSpawner : NetworkBehaviour
         foreach(ulong id in playerList)
         {
             Transform spawnpoint = shuffledSpawnPoints[j % shuffledSpawnPoints.Count];
-            MovePlayerRpc(spawnpoint.position, spawnpoint.rotation.eulerAngles.x, spawnpoint.rotation.eulerAngles.y, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
+            MovePlayerRpc(spawnpoint.position, spawnpoint.GetComponent<SpawnPointRotationData>().xRotation, spawnpoint.GetComponent<SpawnPointRotationData>().yRotation, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             //MovePlayerRpc(shuffledSpawnPoints[j % shuffledSpawnPoints.Count].position, shuffledSpawnPoints[j % shuffledSpawnPoints.Count].rotation, UpgradeMap, RpcTarget.Single(id, RpcTargetUse.Temp));
             j++;
         }
@@ -83,8 +83,8 @@ public class PlayerSpawner : NetworkBehaviour
         //Debug.Log("yrotation is " + yRotation);
 
         player.GetComponent<Rigidbody>().position = position;
-        player.GetComponent<MouseLook>().xRotation = 0f;
-        player.GetComponent<MouseLook>().yRotation = 0f;
+        player.GetComponent<MouseLook>().xRotation = xRotation;
+        player.GetComponent<MouseLook>().yRotation = yRotation;
         player.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
         //player.GetComponent<Rigidbody>().rotation = rotation;
         

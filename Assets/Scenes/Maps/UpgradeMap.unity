@@ -350,6 +350,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 66585855}
+  - component: {fileID: 66585856}
   m_Layer: 0
   m_Name: SpawnPointLoser2
   m_TagString: Untagged
@@ -372,6 +373,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1005076552}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &66585856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66585854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee5586bf0d713647b9a6fdba157e53f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xRotation: 0
+  yRotation: 0
 --- !u!1 &92177345
 GameObject:
   m_ObjectHideFlags: 0
@@ -1999,7 +2014,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 457230956}
+  m_Mesh: {fileID: 1385825671}
 --- !u!33 &263365960
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -3067,7 +3082,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 170148802}
+  m_Mesh: {fileID: 1095240302}
 --- !u!33 &411028015
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -3721,7 +3736,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1747897546}
+  m_Mesh: {fileID: 810710995}
 --- !u!33 &549599733
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -4022,6 +4037,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 559485615}
+  - component: {fileID: 559485616}
   m_Layer: 0
   m_Name: SpawnPointLoser1
   m_TagString: Untagged
@@ -4044,6 +4060,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1005076552}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &559485616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559485614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee5586bf0d713647b9a6fdba157e53f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xRotation: 0
+  yRotation: 0
 --- !u!1 &566039264
 GameObject:
   m_ObjectHideFlags: 0
@@ -7271,7 +7301,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 867743992}
+  m_Mesh: {fileID: 1901403368}
 --- !u!33 &1049493739
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -7620,7 +7650,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 974135415}
+  m_Mesh: {fileID: 355257628}
 --- !u!33 &1080713733
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -8796,6 +8826,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1335727657}
+  - component: {fileID: 1335727658}
   m_Layer: 0
   m_Name: SpawnPointWinner
   m_TagString: Untagged
@@ -8818,6 +8849,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 366491586}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1335727658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1335727656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ee5586bf0d713647b9a6fdba157e53f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xRotation: 0
+  yRotation: 0
 --- !u!1 &1352052243
 GameObject:
   m_ObjectHideFlags: 0
@@ -9274,7 +9319,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 141457007}
+  m_Mesh: {fileID: 1892639702}
 --- !u!33 &1489404866
 MeshFilter:
   m_ObjectHideFlags: 10
