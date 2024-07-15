@@ -42,6 +42,12 @@ public class Projectile : NetworkBehaviour
                 Invoke(nameof(ResetFire), statsManager.orbCooldown.Value);
                 accumulatedTime = 0f;
             }
+
+            if(Input.GetKeyDown(KeyCode.M))
+            {
+                GetComponent<PlayerStatsManager>().orbPriority.Value += 1;
+                Debug.Log("orb priority increased to" + GetComponent<PlayerStatsManager>().orbPriority.Value);
+            }
         }
     }
 

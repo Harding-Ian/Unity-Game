@@ -9,7 +9,8 @@ using UnityEngine;
 public class Fireball : NetworkBehaviour
 {
 
-    private ulong playerOwnerId;
+    public ulong playerOwnerId;
+    private int bounces = 0;
     public GameObject blast;
 
     public GameObject gameManager;
@@ -27,6 +28,7 @@ public class Fireball : NetworkBehaviour
         if (IsServer){
             Invoke(nameof(DestroyProjectile), 5);
         }
+        //GetComponent<Rigidbody>().detectCollisions = false;
     }
 
     void Update(){
@@ -67,36 +69,21 @@ public class Fireball : NetworkBehaviour
 
 
 
-    private void OnCollisionEnter(Collision other){
-        NetworkObject networkObject = other.gameObject.GetComponent<NetworkObject>();
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!IsServer) return;
+        Debug.Log("collion " + bounces);
+        
+        NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
+        PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-        if (IsServer)
+        if(otherObject == null)
         {
-            if (networkObject != null)
+            Vector3 dir;
+            if(bounces < playerWhoShot.bounces.Value)
             {
-                if (other.gameObject.CompareTag("projectile"))
-                {
-                    if(playerOwnerId != 0)
-                    {
-                        NetworkObject.Despawn();
-                        CreateBlast();
-                    }
-                }
-                else if (playerOwnerId != networkObject.OwnerClientId)
-                {
-                    if (other.gameObject.CompareTag("Player"))
-                    {   
-                        PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
-
-                        gameManager.GetComponent<StatsManager>().ApplyDamage(networkObject.OwnerClientId, playerWhoShot.orbDamage.Value, playerOwnerId);
-                        ApplyKnockbackRpc(currentVelocity.normalized, playerWhoShot.orbKnockbackForce.Value, RpcTarget.Single(networkObject.OwnerClientId, RpcTargetUse.Temp));
-                        gameManager.GetComponent<StatsManager>().UpdateKnockback(networkObject.OwnerClientId, playerWhoShot.orbKnockbackPercentDamage.Value);
-                        PlayHitSound(playerOwnerId, networkObject.OwnerClientId);
-                    }
-
-                    NetworkObject.Despawn();
-                    CreateBlast();
-                }
+                if(BounceDirection(out dir)) GetComponent<Rigidbody>().velocity = dir * currentVelocity.magnitude * 0.5f;
+                bounces++;
             }
             else
             {
@@ -104,10 +91,49 @@ public class Fireball : NetworkBehaviour
                 CreateBlast();
             }
         }
+        else if(otherObject.CompareTag("projectile"))
+        {
+            PlayerStatsManager otherPlayerWhoShot = NetworkManager.Singleton.ConnectedClients[otherObject.GetComponent<Fireball>().playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();;
+            
+            if(playerWhoShot.OwnerClientId == otherPlayerWhoShot.OwnerClientId)
+            {
+                Physics.IgnoreCollision(GetComponent<Collider>(),otherObject.GetComponent<Collider>());
+                GetComponent<Rigidbody>().velocity = currentVelocity;
+            }
+            else if(playerWhoShot.orbPriority.Value > otherPlayerWhoShot.orbPriority.Value)
+            {
+                GetComponent<Rigidbody>().velocity = currentVelocity;
+            }
+            else
+            {
+                NetworkObject.Despawn();
+                CreateBlast();
+            }
+        }
+        else if(otherObject.CompareTag("Player") && playerOwnerId != otherObject.OwnerClientId)
+        {
+            gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, playerWhoShot.orbDamage.Value, playerOwnerId);
+            ApplyKnockbackRpc(currentVelocity.normalized, playerWhoShot.orbKnockbackForce.Value, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
+            gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, playerWhoShot.orbKnockbackPercentDamage.Value);
+            PlayHitSound(playerOwnerId, otherObject.OwnerClientId);
+
+            NetworkObject.Despawn();
+            CreateBlast();
+        }
+        else
+        {
+            NetworkObject.Despawn();
+            CreateBlast();
+        }
     }
 
 
-    private void CreateBlast(){
+
+    
+
+
+    private void CreateBlast()
+    {
         GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
         blastObj.GetComponent<NetworkObject>().Spawn(true);
         blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
@@ -145,7 +171,53 @@ public class Fireball : NetworkBehaviour
         }
     }
 
+    private bool BounceDirection(out Vector3 direction)
+    {
 
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
+
+        List<GameObject> playersInRange = new List<GameObject>();
+        List<GameObject> playersInView = new List<GameObject>();
+
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Player") && hitCollider.GetComponent<NetworkObject>().OwnerClientId != playerOwnerId) playersInRange.Add(hitCollider.gameObject);
+        }
+        
+        foreach (var player in playersInRange)
+        {
+            var ray = new Ray(transform.position, player.transform.position - transform.position);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit)) playersInView.Add(player);
+        }
+
+        GameObject closestPlayer = null;
+        float closestdistance = 20f;
+
+        foreach (var player in playersInView)
+        {
+            var ray = new Ray(transform.position, player.transform.position - transform.position);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit);
+
+            if(hit.distance < closestdistance)
+            {
+                closestPlayer = player;
+                closestdistance = hit.distance;
+            }
+        }
+
+        Debug.Log("closest player is " + closestPlayer.GetComponent<NetworkObject>().OwnerClientId);
+
+        if (closestPlayer == null) direction = new Vector3(0,0,0);
+        else direction = (closestPlayer.transform.position - transform.position).normalized;
+
+        if (closestPlayer == null) return false;
+        else return true;
+        
+
+    }
 
     
 }
