@@ -50,6 +50,20 @@ public class PlayerMovement : NetworkBehaviour
     Vector3 Velxz;
 
     Rigidbody rb;
+    
+    public ParticleSystem dustParticles;
+    private bool playDust  = false;
+
+    private bool PlayDust{
+        get { return playDust;}
+        set {
+            if(playDust != value){
+                playDust = value;
+                HandleDustUpdate(value);
+            }
+        }
+    }
+
 
     private void Start()
     {
@@ -74,16 +88,46 @@ public class PlayerMovement : NetworkBehaviour
         // handle drag
         if (grounded)
         {
-            
+            if (rb.velocity.magnitude > 0.5f){
+                PlayDust = true;
+            }
+            else{
+                PlayDust = false;
+            }
+
             rb.drag = groundDrag;
             if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)) rb.drag = antislideDrag;
             jumpcount = 0;
             dashcount = 0;
         }
-        else
+        else{
             rb.drag = airDrag;
+            PlayDust = false;
+        }
 
         MyInput();
+    }
+
+    private void HandleDustUpdate(bool condition)
+    {
+        if (condition)
+        {
+            playDustParticlesRpc();
+        }
+        else
+        {
+            stopDustParticlesRpc();
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void playDustParticlesRpc(){
+        dustParticles.Play();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void stopDustParticlesRpc(){
+        dustParticles.Stop();
     }
 
     private void FixedUpdate()

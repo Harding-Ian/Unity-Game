@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e47d9968372f9454b9951e2e569850df
+guid: 84eb98a39f4e2114ca94fc718d1f2cc7
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,13 +7,63 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: 9289c1a915aa30046870520123e965c6, type: 2}
+      name: BaseHat
+    second: {fileID: 2100000, guid: 902cb17cba7015049b0df2fd6cc43a3d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: 1630f20e3fd08be4a9cb03b2b7bb589a, type: 2}
+      name: BeardMat
+    second: {fileID: 2100000, guid: da0dbf3dd0183fa4b9f408e1f2fd759f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cloak
+    second: {fileID: 2100000, guid: 8c053e21d7e1f28459ccd4691addbf4c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DarkCloak
+    second: {fileID: 2100000, guid: 3d657f4f3ed871e418f60cc8ed8c80df, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyeMat
+    second: {fileID: 2100000, guid: 3616ef54e6a781840a81bcaa07d3a294, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FaceMat2
+    second: {fileID: 2100000, guid: ea49ec7b39496ef4b8e928d3a0260a84, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HatBelt
+    second: {fileID: 2100000, guid: c9473b7774905434995e896cb7bba66e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HatBuckle
+    second: {fileID: 2100000, guid: 2604e977a4b346e4f90a9a45ca002ab2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: InnerCloak
+    second: {fileID: 2100000, guid: 12a9c9c281f56bf4bb97281f9f7015d4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MouthMat
+    second: {fileID: 2100000, guid: 7cae51d0964bbdb43b483141f56483bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WasteBelt
+    second: {fileID: 2100000, guid: 0de42b9522985334c9482bd4c7610146, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WasteBuckle
+    second: {fileID: 2100000, guid: c6bc99cc6c9514b449d241517fb2920b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

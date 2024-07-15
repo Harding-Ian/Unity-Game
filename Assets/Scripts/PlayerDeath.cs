@@ -109,8 +109,14 @@ public class PlayerDeath : NetworkBehaviour
 
     public void SetVisibility(NetworkObject PlayerToChangeVisibility, bool visibility)
     {
-        PlayerToChangeVisibility.transform.Find("Capsule").GetComponent<MeshRenderer>().enabled = visibility;
-        PlayerToChangeVisibility.transform.Find("Visor").GetComponent<MeshRenderer>().enabled = visibility;
+        //PlayerToChangeVisibility.transform.Find("Capsule").GetComponent<MeshRenderer>().enabled = visibility;
+        //PlayerToChangeVisibility.transform.Find("Visor").GetComponent<MeshRenderer>().enabled = visibility;
+
+        PlayerToChangeVisibility.transform.Find("Head").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Body").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Eyes").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Hat").GetComponent<MeshRenderer>().enabled = visibility;
+
         PlayerToChangeVisibility.transform.Find("VisibleHealthBarCanvas").GetComponent<Canvas>().enabled = visibility;
     }
 

@@ -20,7 +20,10 @@ public class HealthBar : NetworkBehaviour
 
     public Canvas visibleHealthBarCanvas;
     
-    public Renderer playerRenderer;
+    public Renderer headRenderer;
+    public Renderer bodyRenderer;
+    public Renderer eyeRenderer;
+    public Renderer hatRenderer;
 
     public Renderer eyeCube;
 
@@ -32,7 +35,11 @@ public class HealthBar : NetworkBehaviour
     {   
         if (IsLocalPlayer)
         {
-            playerRenderer.enabled = false;
+            headRenderer.enabled = false;
+            bodyRenderer.enabled = false;
+            hatRenderer.enabled = false;
+            eyeRenderer.enabled = false;
+            
             eyeCube.enabled = false;
             FillSliderHolder = GameObject.Find("FillSliderHolder");
             healthBarSlider = FillSliderHolder.GetComponent<Slider>();
