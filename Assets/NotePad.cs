@@ -42,10 +42,10 @@ Pulse:
 
 Mechanics:
 
-- Multi Shot (Volley preset vs cluster preset) 2 upgrades, but can only choose 1 path 
+- /////////////Multi Shot (Volley preset vs cluster preset) 2 upgrades, but can only choose 1 path 
 
 
-- Burst
+- //////////////Burst
 
 
 
@@ -53,7 +53,7 @@ Mechanics:
 
 
 
-- Wall bounce shot
+- ////////////Wall bounce shot
 
 
 
