@@ -112,10 +112,10 @@ public class PlayerDeath : NetworkBehaviour
         //PlayerToChangeVisibility.transform.Find("Capsule").GetComponent<MeshRenderer>().enabled = visibility;
         //PlayerToChangeVisibility.transform.Find("Visor").GetComponent<MeshRenderer>().enabled = visibility;
 
-        PlayerToChangeVisibility.transform.Find("Head").GetComponent<MeshRenderer>().enabled = visibility;
-        PlayerToChangeVisibility.transform.Find("Body").GetComponent<MeshRenderer>().enabled = visibility;
-        PlayerToChangeVisibility.transform.Find("Eyes").GetComponent<MeshRenderer>().enabled = visibility;
-        PlayerToChangeVisibility.transform.Find("Hat").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Model/Head").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Model/Body").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Model/Eyes").GetComponent<MeshRenderer>().enabled = visibility;
+        PlayerToChangeVisibility.transform.Find("Model/Hat").GetComponent<MeshRenderer>().enabled = visibility;
 
         PlayerToChangeVisibility.transform.Find("VisibleHealthBarCanvas").GetComponent<Canvas>().enabled = visibility;
     }

@@ -68,7 +68,6 @@ public class Fireball : NetworkBehaviour
     }
 
 
-
     private void OnCollisionEnter(Collision collision)
     {
         if (!IsServer) return;
@@ -176,22 +175,19 @@ public class Fireball : NetworkBehaviour
 
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
 
-        List<GameObject> playersInRange = new List<GameObject>();
         List<GameObject> playersInView = new List<GameObject>();
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag("Player") && hitCollider.GetComponent<NetworkObject>().OwnerClientId != playerOwnerId) playersInRange.Add(hitCollider.gameObject);
+            if (hitCollider.transform.root.CompareTag("Player") && hitCollider.transform.root.GetComponent<NetworkObject>().OwnerClientId != playerOwnerId)
+            {
+                var ray = new Ray(transform.position, hitCollider.gameObject.transform.position - transform.position);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit)) playersInView.Add(hitCollider.transform.root.gameObject);
+            }
         }
         
-        foreach (var player in playersInRange)
-        {
-            var ray = new Ray(transform.position, player.transform.position - transform.position);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit)) playersInView.Add(player);
-        }
-
         GameObject closestPlayer = null;
         float closestdistance = 20f;
 

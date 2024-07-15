@@ -52,9 +52,9 @@ public class PlayerBlock : NetworkBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag("Player"))
+            if (hitCollider.transform.root.CompareTag("Player"))
             {
-                playersInRange.Add(hitCollider.gameObject);
+                playersInRange.Add(hitCollider.transform.root.gameObject);
             }
         }
 
@@ -68,7 +68,7 @@ public class PlayerBlock : NetworkBehaviour
             RaycastHit hit;
             
             if (Physics.Raycast(ray, out hit)) {
-                GameObject objectHit = hit.collider.gameObject;
+                GameObject objectHit = hit.collider.transform.root.gameObject;
                 if (objectHit.CompareTag("Player")){
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseDamage.Value, id);
                     ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));

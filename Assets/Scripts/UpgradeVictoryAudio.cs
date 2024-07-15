@@ -11,7 +11,7 @@ public class UpgradeVictoryAudio : NetworkBehaviour
     
 
     private void OnTriggerEnter(Collider collider){
-        //PlayVictoryScreechRpc(RpcTarget.Single(collider.GetComponent<PlayerScript>().clientId.Value, RpcTargetUse.Temp));
+        //PlayVictoryScreechRpc(RpcTarget.Single(collider.transform.root.GetComponent<PlayerScript>().clientId.Value, RpcTargetUse.Temp));
     }
 
     [Rpc(SendTo.SpecifiedInParams)]

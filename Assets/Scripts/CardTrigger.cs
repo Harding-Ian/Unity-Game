@@ -39,15 +39,15 @@ public class CardTrigger : NetworkBehaviour
 
 
     private void OnTriggerEnter(Collider collider){
-        if (IsServer && collider.gameObject.GetComponent<PlayerScript>().upgraded.Value == false){
-            collider.gameObject.GetComponent<PlayerScript>().upgraded.Value = true;
+        if (IsServer && collider.transform.root.GetComponent<PlayerScript>().upgraded.Value == false){
+            collider.transform.root.GetComponent<PlayerScript>().upgraded.Value = true;
             if (upgradeName == "empty"){
                 Debug.Log("No more upgrades left");
                 return;
             }
             Debug.Log("upgrade acquired!");
             upgradeManager.GetComponent<UpgradeManager>().CallFunctionByName(upgradeName);
-            collider.GetComponent<PlayerScript>().UpgradeList.Add(upgradeName);
+            collider.transform.root.GetComponent<PlayerScript>().UpgradeList.Add(upgradeName);
 
             gameManager.GetComponent<GameSceneManager>().checkAllUpgraded();
         }

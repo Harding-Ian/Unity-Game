@@ -130,7 +130,8 @@ public class Projectile : NetworkBehaviour
         projectileObj.GetComponent<ConstantForce>().force = new Vector3(constantForce.force.x, constantForce.force.y * dropMod, constantForce.force.z);
 
         NetworkObject playerNetworkObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject;
-        Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.GetComponent<Collider>());
+        Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Body").GetComponent<Collider>());
+        Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Head").GetComponent<Collider>());
 
 
     }
@@ -141,6 +142,7 @@ public class Projectile : NetworkBehaviour
         NetworkObject projectileNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[projectileId];
         NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
 
-        Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.GetComponent<Collider>());
+        Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Body").GetComponent<Collider>());
+        Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Head").GetComponent<Collider>());
     }
 }

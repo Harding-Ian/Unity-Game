@@ -37,15 +37,17 @@ public class UpgradeManager : NetworkBehaviour
 
     private Collider playerCollider;
 
+    private PlayerStatsManager statsManager;
+
 
     private void OnTriggerEnter(Collider collider)
     {
         if(!IsServer || triggered) return;
         triggered = true;
         
-        playerCollider = collider;
+        statsManager = collider.transform.root.GetComponent<PlayerStatsManager>();
 
-        // List<string> upgradesToRemoveList = collider.GetComponent<PlayerScript>().UpgradeList;
+        // List<string> upgradesToRemoveList = collider.transform.root.GetComponent<PlayerScript>().UpgradeList;
         // Debug.Log("upgradesToRemoveList is " + upgradesToRemoveList);
         // foreach(string upgrade in upgradesToRemoveList)
         // {
@@ -92,37 +94,37 @@ public class UpgradeManager : NetworkBehaviour
     {
         Debug.Log("volley1 upgrade selected");
 
-        playerCollider.GetComponent<PlayerStatsManager>().fireShape.Value = "volley";
-        playerCollider.GetComponent<PlayerStatsManager>().numberOfOrbs.Value += 1;
-        playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value *= 0.8f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value *= 0.8f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value *= 0.8f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbCooldown.Value += 0.2f;
+        statsManager.fireShape.Value = "volley";
+        statsManager.numberOfOrbs.Value += 1;
+        statsManager.orbDamage.Value *= 0.8f;
+        statsManager.orbKnockbackForce.Value *= 0.8f;
+        statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
+        statsManager.orbCooldown.Value += 0.2f;
 
         //reduce knockback
         //reduce knockback buildup
-        //playerCollider.GetComponent<PlayerStatsManager>().
+        //playerCollider.transform.root.GetComponent<PlayerStatsManager>().
     }
 
     private void cluster1()
     {
         Debug.Log("volley1 upgrade selected");
 
-        playerCollider.GetComponent<PlayerStatsManager>().fireShape.Value = "cluster";
-        playerCollider.GetComponent<PlayerStatsManager>().numberOfOrbs.Value += 1;
-        playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value *= 0.8f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value *= 0.8f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value *= 0.8f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbCooldown.Value += 0.2f;
+        statsManager.fireShape.Value = "cluster";
+        statsManager.numberOfOrbs.Value += 1;
+        statsManager.orbDamage.Value *= 0.8f;
+        statsManager.orbKnockbackForce.Value *= 0.8f;
+        statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
+        statsManager.orbCooldown.Value += 0.2f;
     }
 
     private void orbPower1()
     {
         Debug.Log("orbPower1 upgrade selected");
 
-        playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value += 0.5f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value += 10f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value += 0.08f;
+        statsManager.orbDamage.Value += 0.5f;
+        statsManager.orbKnockbackForce.Value += 10f;
+        statsManager.orbKnockbackPercentDamage.Value += 0.08f;
     
     }
 
@@ -130,23 +132,23 @@ public class UpgradeManager : NetworkBehaviour
     {
         Debug.Log("orb knockback1 upgrade selected");
 
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackForce.Value += 20f;
-        playerCollider.GetComponent<PlayerStatsManager>().orbKnockbackPercentDamage.Value += 0.2f;
+        statsManager.orbKnockbackForce.Value += 20f;
+        statsManager.orbKnockbackPercentDamage.Value += 0.2f;
     }
 
     private void orbDamage1()
     {
         Debug.Log("orb damage 1 upgrade selected");
-        playerCollider.GetComponent<PlayerStatsManager>().orbDamage.Value += 1f;
+        statsManager.orbDamage.Value += 1f;
     }
 
     private void movement1()
     {
         Debug.Log("movement 1 upgrade selected");
-        playerCollider.GetComponent<PlayerStatsManager>().groundedMoveSpeed.Value += 2f;
-        playerCollider.GetComponent<PlayerStatsManager>().airMoveSpeed.Value += 2f;
-        playerCollider.GetComponent<PlayerStatsManager>().groundMultiplier.Value += 0.3f;
-        playerCollider.GetComponent<PlayerStatsManager>().airMultiplier.Value += 0.3f;
+        statsManager.groundedMoveSpeed.Value += 2f;
+        statsManager.airMoveSpeed.Value += 2f;
+        statsManager.groundMultiplier.Value += 0.3f;
+        statsManager.airMultiplier.Value += 0.3f;
     }
 
 

@@ -50,7 +50,7 @@ public class ProjectileBlast : NetworkBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag(playerTag)) playersInRange.Add(hitCollider.gameObject);
+            if (hitCollider.transform.root.CompareTag(playerTag)) playersInRange.Add(hitCollider.transform.root.gameObject);
         }
 
         List<ulong> clientIdsList = new List<ulong>();
@@ -69,7 +69,7 @@ public class ProjectileBlast : NetworkBehaviour
 
             else if (Physics.Raycast(ray, out hit)) 
             {
-                if (hit.collider.gameObject.CompareTag("Player"))
+                if (hit.collider.transform.root.gameObject.CompareTag("Player"))
                 {
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
