@@ -71,7 +71,6 @@ public class Fireball : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (!IsServer) return;
-        Debug.Log("collison " + bounces);
         
         NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
@@ -188,8 +187,6 @@ public class Fireball : NetworkBehaviour
         }
         
         if (closestPlayer == null) return Vector3.zero;
-
-        Debug.Log("closest player is " + closestPlayer.GetComponent<NetworkObject>().OwnerClientId);
 
         return (closestPlayer.transform.position - transform.position).normalized;
     }

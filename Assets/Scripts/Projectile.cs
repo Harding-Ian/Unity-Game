@@ -116,6 +116,8 @@ public class Projectile : NetworkBehaviour
     {
         GameObject projectileObj = Instantiate(projectile, firepoint, Quaternion.identity);
         projectileObj.transform.localScale = new Vector3(statsManager.orbScale.Value,statsManager.orbScale.Value,statsManager.orbScale.Value);
+        projectileObj.GetComponent<Homing>().origin = firepoint;
+        projectileObj.GetComponent<Homing>().direction = (destination - firepoint).normalized;
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
         
         
