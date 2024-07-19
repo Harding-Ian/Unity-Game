@@ -49,7 +49,7 @@ Mechanics:
 
 
 
-- Homing
+- /////////////Homing
 
 
 
@@ -100,7 +100,7 @@ Mechanics:
 - blocking becomes small dash
 
 
-- spwans a decoy/ mirage
+- spawns a decoy/ mirage
 
 
 

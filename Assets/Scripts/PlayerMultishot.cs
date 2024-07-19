@@ -15,11 +15,13 @@ public class PlayerMultishot : NetworkBehaviour
 
         Vector3 firepoint = transform.Find("FirePoint").position;
 
+        float orbSize = GetComponent<PlayerStatsManager>().orbScale.Value;
+        int remainingOrbs = GetComponent<PlayerStatsManager>().numberOfOrbs.Value;
+
         if (GetComponent<PlayerStatsManager>().fireShape.Value.ToString() == "volley")
         {
             float gap =  0.1f;
-            float separation = GetComponent<PlayerStatsManager>().orbScale.Value + gap;
-            int remainingOrbs = GetComponent<PlayerStatsManager>().numberOfOrbs.Value;
+            float separation = orbSize + gap;
 
             Vector3 Lfirepoint;
             Vector3 Rfirepoint;
@@ -81,12 +83,53 @@ public class PlayerMultishot : NetworkBehaviour
         
         else if (GetComponent<PlayerStatsManager>().fireShape.Value.ToString() == "cluster")
         {
+            // List<Vector3> points = new List<Vector3>();
+
+            // points.Add(firepoint);
+
+            // orbSize += 0.05f;
+
+
+            // float rand = Random.Range(-orbSize, orbSize);
+            // bool vertical  = (Random.value > 0.5f);
+            // bool side  = (Random.value > 0.5f);
+
+
+            // if(vertical)
+            // {
+            //     Vector3 randVec = firepoint + transform.right.normalized * rand;
+            //     if(side) points.Add(randVec + transform.up.normalized * orbSize);
+            //     else points.Add(randVec - transform.up.normalized * orbSize);
+            // }
+            // else
+            // {
+            //     Vector3 randVec = firepoint + transform.up.normalized * rand;
+            //     if(side) points.Add(randVec + transform.right.normalized * orbSize);
+            //     else points.Add(randVec - transform.right.normalized * orbSize);
+            // }
+
+            // for(int i = 3; i <= remainingOrbs; i++)
+            // {
+            //     for(int j = i+1; j <= remainingOrbs; j++)
+            //     {
+            //         List<Vector3> possiblepoints = new List<Vector3>();
+            //     }
+            // }
+
+            List<Vector3> points = new List<Vector3>();
+            points.Add(firepoint);
+            orbSize += 0.05f;
+
+            float rand = Random.Range(0f, 1f);
+            
+
+
+
             firepoints.Add(firepoint);
             hitpoints.Add(hitpoint);
+            // firepoints.Add(points[1]);
+            // hitpoints.Add(hitpoint + points[1] - firepoint);
         }
 
     }
-
-
-
 }
