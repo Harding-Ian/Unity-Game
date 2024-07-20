@@ -62,8 +62,6 @@ Mechanics:
 
 - Life Steal
 
-- orb damage depends on range
-
 
 - blocks spawns bombs that dont damage you 
 
