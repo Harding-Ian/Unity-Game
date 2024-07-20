@@ -15,7 +15,7 @@ public class Fireball : NetworkBehaviour
 
     public GameObject gameManager;
 
-    public Vector3 currentVelocity;
+    public Vector3 currentVelocity = Vector3.zero;
 
     public GameObject audioSrcPrefab;
     void Start()
@@ -33,7 +33,7 @@ public class Fireball : NetworkBehaviour
 
     void Update(){
         if (IsServer){
-            currentVelocity = GetComponent<Rigidbody>().velocity;
+            //currentVelocity = GetComponent<Rigidbody>().velocity;
         }
 
     }
