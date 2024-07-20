@@ -116,11 +116,11 @@ public class PlayerMultishot : NetworkBehaviour
             //     }
             // }
 
-            List<Vector3> points = new List<Vector3>();
-            points.Add(firepoint);
-            orbSize += 0.05f;
+            // List<Vector3> points = new List<Vector3>();
+            // points.Add(firepoint);
+            // orbSize += 0.05f;
 
-            float rand = Random.Range(0f, 1f);
+            // float rand = Random.Range(0f, 1f);
             
 
 

@@ -11,15 +11,6 @@ public class UpgradeManager : NetworkBehaviour
     // Small, Modest, Considerable, Huge, Colossal
     // 1/5    2/5     3/5           4/5   5/5
 
-    // 
-    // Dictionary<string, string> upgradeDictionary = new Dictionary<string, string>() {
-    // { "volley1", "Volley Shot:\n <color=#00FF00> + Volley Fire Shape </color>\n <color=#00FF00> + 1 orb </color>\n <color=#FF0000> - Considerable Orb Damage </color>\n <color=#FF0000> - Modest Orb Cooldown </color>" },
-
-    // { "cluster1", "Cluster Shot:\n <color=#00FF00> + Cluster Fire Shape </color>\n <color=#00FF00> + 1 orb </color>\n <color=#FF0000> - Considerable Orb Damage Decrease </color> \n <color=#FF0000> - Modest Orb Cooldown </color>" },
-
-    // { "orbPower1", "Orb Power:\n <color=#009900> + Huge Orb Damage </color>\n <color=#cf0000> - More orb cooldown </color>" },
-
-    // { "orbKnockback1", "Orb Knockback:\n <color=#00FF00> + More Orb Knockback </color>\n <color=#FF0000> - More orb cooldown </color>" }
 
     Dictionary<string, string> upgradeDictionary = new Dictionary<string, string>() {
     { "volley1", "Volley Shot:\n <color=#00FF00> + Volley Fire Shape </color>\n <color=#00FF00> + 1 orb </color>\n <color=#FF0000> - Considerable Orb Damage </color>\n <color=#FF0000> - Modest Orb Cooldown </color>" },
@@ -30,7 +21,7 @@ public class UpgradeManager : NetworkBehaviour
 
     { "orbDamage1", "Orb Damage:\n <color=#00FF00> + Huge Orb Damage </color>\n <color=#FF0000> - More orb cooldown </color>" },
 
-    { "movement1", "run n gun:\n <color=#00FF00> + Huge speed increase" }
+    { "movement1", "Run N Gun:\n <color=#00FF00> + Huge speed increase" }
 };
 
     private bool triggered = false;
@@ -100,10 +91,8 @@ public class UpgradeManager : NetworkBehaviour
         statsManager.orbKnockbackForce.Value *= 0.8f;
         statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
         statsManager.orbCooldown.Value += 0.2f;
+        statsManager.orbPriority.Value -= 1;
 
-        //reduce knockback
-        //reduce knockback buildup
-        //playerCollider.transform.root.GetComponent<PlayerStatsManager>().
     }
 
     private void cluster1()
@@ -116,6 +105,7 @@ public class UpgradeManager : NetworkBehaviour
         statsManager.orbKnockbackForce.Value *= 0.8f;
         statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
         statsManager.orbCooldown.Value += 0.2f;
+        statsManager.orbPriority.Value -= 1;
     }
 
     private void orbPower1()
@@ -125,6 +115,7 @@ public class UpgradeManager : NetworkBehaviour
         statsManager.orbDamage.Value += 0.5f;
         statsManager.orbKnockbackForce.Value += 10f;
         statsManager.orbKnockbackPercentDamage.Value += 0.08f;
+        statsManager.orbPriority.Value += 1;
     
     }
 
@@ -140,6 +131,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         Debug.Log("orb damage 1 upgrade selected");
         statsManager.orbDamage.Value += 1f;
+        statsManager.orbPriority.Value += 2;
     }
 
     private void movement1()
