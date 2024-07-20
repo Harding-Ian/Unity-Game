@@ -161,7 +161,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5419416255850735117
 Transform:
   m_ObjectHideFlags: 0
@@ -260,7 +260,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.8
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -431,8 +431,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 4
-      minScalar: 1
+      scalar: 95
+      minScalar: 35
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1124,7 +1124,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 400
+        scalar: 140
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -2830,13 +2830,13 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxis: 0
     inWorldSpace: 0
-    multiplyDragByParticleSize: 1
+    multiplyDragByParticleSize: 0
     multiplyDragByParticleVelocity: 1
     dampen: 0
     drag:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.06
+      scalar: 1
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4979,7 +4979,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7cae51d0964bbdb43b483141f56483bb, type: 2}
+  - {fileID: 2100000, guid: db1ae6ef4213b574f9c9313c288478eb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5023,10 +5023,10 @@ ParticleSystemRenderer:
   m_VertexStreams: 00010304
   m_UseCustomTrailVertexStreams: 0
   m_TrailVertexStreams: 00010304
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  m_Mesh1: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  m_Mesh2: {fileID: 0}
-  m_Mesh3: {fileID: 0}
+  m_Mesh: {fileID: 289301614986012343, guid: 916f0be4fa1ec3b4c8422e39dcecfa19, type: 3}
+  m_Mesh1: {fileID: -806024180829847847, guid: 51af2dd653e1d7d4981f8967d13a57c1, type: 3}
+  m_Mesh2: {fileID: -8156870392999314590, guid: a50dd7bc10059f84b93f29fedc27b642, type: 3}
+  m_Mesh3: {fileID: -5495902117074765545, guid: 6321b6715360b5f4293996a981f3d466, type: 3}
   m_MeshWeighting: 1
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1

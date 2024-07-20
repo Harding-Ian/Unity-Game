@@ -23,7 +23,7 @@ public class ProjectileBlast : NetworkBehaviour
                 Debug.LogError("GameManager not found within scene");
             }
 
-            Invoke(nameof(DestroyBlastObject), 0.3f); // REPLACE 0.3 /////////////////////
+            Invoke(nameof(DestroyBlastObject), 1f); // REPLACE 1 /////////////////////
             FindPlayers();
         }
         

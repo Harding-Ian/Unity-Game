@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a50dd7bc10059f84b93f29fedc27b642
+guid: a595289054f7b9f4ab8ad6e085ca3bba
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: d8Mat
-    second: {fileID: 2100000, guid: b882a2fab26b4cf40b02ff854b5c47d7, type: 2}
+      name: RoundShape
+    second: {fileID: 2100000, guid: 5d1192b90db533744b547c6fe0f5eb38, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -95,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.01
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

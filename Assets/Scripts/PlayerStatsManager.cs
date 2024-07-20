@@ -37,7 +37,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> orbChargeTime = new NetworkVariable<float>(1.2f);
 
-    [NonSerialized] public NetworkVariable<float> orbScale = new NetworkVariable<float>(0.7f);
+    [NonSerialized] public NetworkVariable<float> orbScale = new NetworkVariable<float>(0.8f);
 
     [NonSerialized] public NetworkVariable<int> orbPriority = new NetworkVariable<int>(1);
 
@@ -68,13 +68,13 @@ public class PlayerStatsManager : NetworkBehaviour
     // ------------------------------- Movement Related Stuff -------------------------------
     [NonSerialized] public NetworkVariable<int> numberOfJumps = new NetworkVariable<int>(2);
 
-    [NonSerialized] public NetworkVariable<int> numberOfDashes = new NetworkVariable<int>(3);
+    [NonSerialized] public NetworkVariable<int> numberOfDashes = new NetworkVariable<int>(1);
 
-    [NonSerialized] public NetworkVariable<float> jumpForce = new NetworkVariable<float>(12f);
+    [NonSerialized] public NetworkVariable<float> jumpForce = new NetworkVariable<float>(16f);
 
-    [NonSerialized] public NetworkVariable<float> dashForce = new NetworkVariable<float>(20f);
+    [NonSerialized] public NetworkVariable<float> dashForce = new NetworkVariable<float>(28f);
 
-    [NonSerialized] public NetworkVariable<float> dashCooldown = new NetworkVariable<float>(1f);
+    [NonSerialized] public NetworkVariable<float> dashCooldown = new NetworkVariable<float>(1.3f);
 
     [NonSerialized] public NetworkVariable<float> groundedMoveSpeed = new NetworkVariable<float>(8f);
 
@@ -89,16 +89,17 @@ public class PlayerStatsManager : NetworkBehaviour
 
     // ------------------------------- Altered Mechanics Related Stuff -------------------------------
 
-    [NonSerialized] public NetworkVariable<int> numberOfOrbs = new NetworkVariable<int>(20);
+    [NonSerialized] public NetworkVariable<int> numberOfOrbs = new NetworkVariable<int>(1);
     
-    [NonSerialized] public NetworkVariable<FixedString32Bytes> fireShape = new NetworkVariable<FixedString32Bytes>("volley");
+    [NonSerialized] public NetworkVariable<FixedString32Bytes> fireShape = new NetworkVariable<FixedString32Bytes>("default");
 
     [NonSerialized] public NetworkVariable<float> homing = new NetworkVariable<float>(0f);
 
-    [NonSerialized] public NetworkVariable<int> orbBurst = new NetworkVariable<int>(3);
+    [NonSerialized] public NetworkVariable<int> orbBurst = new NetworkVariable<int>(1);
 
     [NonSerialized] public NetworkVariable<float> orbBurstDelay = new NetworkVariable<float>(0.1f);
 
     [NonSerialized] public NetworkVariable<int> bounces = new NetworkVariable<int>(0);
+
 
 }

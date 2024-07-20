@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a50dd7bc10059f84b93f29fedc27b642
+guid: 51b1de8cd7aa6a24bb2b69ddba253e91
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: d8Mat
-    second: {fileID: 2100000, guid: b882a2fab26b4cf40b02ff854b5c47d7, type: 2}
+      name: NonSymShape
+    second: {fileID: 2100000, guid: 589152b7f103ee94d989f2c72e4f4f52, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -40,7 +40,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 4
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -95,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.01
+    globalScale: 0.04
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

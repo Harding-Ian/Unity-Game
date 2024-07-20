@@ -1,5 +1,20 @@
 /*
 
+Colours:
+
+hat
+cloak
+skin
+eyes???
+buckles?
+
+player trail
+explosion
+orb
+orb trail
+
+
+
 Health Stuff:
 
 - Player Max Health
