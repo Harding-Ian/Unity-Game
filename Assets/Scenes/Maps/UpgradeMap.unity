@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 1372838020}
+  gameManager: {fileID: 0}
   cardText: {fileID: 92177345}
 --- !u!114 &37441242
 MonoBehaviour:
@@ -436,7 +436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 336075988}
+  gameManager: {fileID: 0}
   cardText: {fileID: 175706555}
 --- !u!114 &81054232
 MonoBehaviour:
@@ -2829,8 +2829,8 @@ GameObject:
   m_Component:
   - component: {fileID: 336075987}
   - component: {fileID: 336075990}
-  - component: {fileID: 336075988}
   - component: {fileID: 336075989}
+  - component: {fileID: 336075991}
   m_Layer: 0
   m_Name: CardHolder
   m_TagString: Untagged
@@ -2856,18 +2856,6 @@ Transform:
   - {fileID: 1258212384}
   m_Father: {fileID: 576471929}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &336075988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 336075986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd13407a47e527e47a97244a8688d272, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &336075989
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2910,6 +2898,18 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &336075991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336075986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0213f9c2d83a14ab551f01510edeb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &355257628
 Mesh:
   m_ObjectHideFlags: 0
@@ -4505,7 +4505,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 810710995}
+  m_Mesh: {fileID: 2005485698}
 --- !u!33 &535866794
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -6142,7 +6142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 1372838020}
+  gameManager: {fileID: 0}
   cardText: {fileID: 1912599063}
 --- !u!114 &622375441
 MonoBehaviour:
@@ -6293,7 +6293,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 355257628}
+  m_Mesh: {fileID: 1079522927}
 --- !u!33 &638717927
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -6634,7 +6634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 1758701936}
+  gameManager: {fileID: 0}
   cardText: {fileID: 808616835}
 --- !u!114 &661501745
 MonoBehaviour:
@@ -7550,7 +7550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 1758701936}
+  gameManager: {fileID: 0}
   cardText: {fileID: 1580485804}
 --- !u!114 &772720380
 MonoBehaviour:
@@ -8581,7 +8581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 336075988}
+  gameManager: {fileID: 0}
   cardText: {fileID: 947286180}
 --- !u!114 &917433459
 MonoBehaviour:
@@ -11324,7 +11324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 336075988}
+  gameManager: {fileID: 0}
   cardText: {fileID: 145792912}
 --- !u!114 &1258212386
 MonoBehaviour:
@@ -11636,7 +11636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 1758701936}
+  gameManager: {fileID: 0}
   cardText: {fileID: 151605686}
 --- !u!1 &1372838018
 GameObject:
@@ -11648,8 +11648,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1372838019}
   - component: {fileID: 1372838022}
-  - component: {fileID: 1372838020}
   - component: {fileID: 1372838021}
+  - component: {fileID: 1372838023}
   m_Layer: 0
   m_Name: CardHolder
   m_TagString: Untagged
@@ -11675,18 +11675,6 @@ Transform:
   - {fileID: 622375439}
   m_Father: {fileID: 151301208}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1372838020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1372838018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd13407a47e527e47a97244a8688d272, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &1372838021
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11729,6 +11717,18 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &1372838023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1372838018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0213f9c2d83a14ab551f01510edeb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1385825671
 Mesh:
   m_ObjectHideFlags: 0
@@ -12877,7 +12877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fff786e6542a71429ff1589f4266032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeManager: {fileID: 1372838020}
+  gameManager: {fileID: 0}
   cardText: {fileID: 156419310}
 --- !u!114 &1695991218
 MonoBehaviour:
@@ -13028,7 +13028,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1095240302}
+  m_Mesh: {fileID: 587842736}
 --- !u!33 &1730064926
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -13542,7 +13542,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1901403368}
+  m_Mesh: {fileID: 711567222}
 --- !u!33 &1756331794
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -13844,8 +13844,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1758701935}
   - component: {fileID: 1758701937}
-  - component: {fileID: 1758701936}
   - component: {fileID: 1758701938}
+  - component: {fileID: 1758701939}
   m_Layer: 0
   m_Name: CardHolder
   m_TagString: Untagged
@@ -13871,18 +13871,6 @@ Transform:
   - {fileID: 661501743}
   m_Father: {fileID: 528947218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1758701936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1758701934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd13407a47e527e47a97244a8688d272, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1758701937
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13925,6 +13913,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 11.12, y: -4.12, z: 9.29}
   m_Center: {x: 1.28, y: -1.26, z: -1.49}
+--- !u!114 &1758701939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758701934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0213f9c2d83a14ab551f01510edeb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1760195217
 Mesh:
   m_ObjectHideFlags: 0
@@ -14782,7 +14782,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1385825671}
+  m_Mesh: {fileID: 387526735}
 --- !u!33 &1915251067
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -15906,7 +15906,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1892639702}
+  m_Mesh: {fileID: 1193859791}
 --- !u!33 &2050197102
 MeshFilter:
   m_ObjectHideFlags: 10

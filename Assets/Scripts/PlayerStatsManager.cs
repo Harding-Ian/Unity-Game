@@ -8,13 +8,20 @@ using System;
 public class PlayerStatsManager : NetworkBehaviour
 {
 
-    // void Start()
-    // {
-    //     GetComponent<UpgradeManager>().CallFunctionByName("explosion1");
-    //     GetComponent<PlayerScript>().UpgradeList.Add("explosion1");
-    //     GetComponent<UpgradeManager>().CallFunctionByName("orbspeed1");
-    //     GetComponent<PlayerScript>().UpgradeList.Add("orbspeed1");
-    // }
+    void Start()
+    {
+        GameObject gameManager = GameObject.Find("GameManager");
+        PlayerStatsManager player = this;
+
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("explosion1", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("explosion1");
+
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("orbspeed1", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("orbspeed1");
+
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("bounceshot1");
+    }
 
     // ------------------------------- Player Health Stuff -------------------------------
 

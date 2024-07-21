@@ -16,7 +16,7 @@ public class UpgradeManager : NetworkBehaviour
     private const string XR = "</color>\n<color=#FF0000>";
     private const string X = "</color>";
 
-    Dictionary<string, string> upgradeDictionary = new Dictionary<string, string>() {
+    public Dictionary<string, string> upgradeDictionary = new Dictionary<string, string>() {
     { "volley1", $"Volley Shot:\n {G} + Volleyshot {XG} + 1 orb {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Modest orb cooldown {X}" },
 
     { "orbPower1", $"Orb Power:\n {G} + Considerable Orb Damage {XG} + Considerable Orb knockback {XR} - Modest orb cooldown {X}" },
@@ -58,158 +58,164 @@ public class UpgradeManager : NetworkBehaviour
 
 };
 
-    private bool triggered = false;
+    //private bool triggered = false;
 
-    private Collider playerCollider;
+    //private Collider playerCollider;
 
-    private PlayerStatsManager statsManager;
+    public PlayerStatsManager stats;
 
 
-    private void OnTriggerEnter(Collider collider)
-    {
-        if(!IsServer || triggered) return;
-        triggered = true;
+    // private void OnTriggerEnter(Collider collider)
+    // {
+    //     if(!IsServer || triggered) return;
+    //     triggered = true;
         
-        statsManager = collider.transform.root.GetComponent<PlayerStatsManager>();
+    //     stats = collider.transform.root.GetComponent<PlayerStatsManager>();
 
-        // List<string> upgradesToRemoveList = collider.transform.root.GetComponent<PlayerScript>().UpgradeList;
-        // Debug.Log("upgradesToRemoveList is " + upgradesToRemoveList);
-        // foreach(string upgrade in upgradesToRemoveList)
-        // {
-        //     Debug.Log("upgrade is  " + upgrade);
-        //     upgradeDescriptions.RemoveAt(upgradeNames.IndexOf(upgrade));
-        //     upgradeNames.Remove(upgrade);
-        // }
+    //     // List<string> upgradesToRemoveList = collider.transform.root.GetComponent<PlayerScript>().UpgradeList;
+    //     // Debug.Log("upgradesToRemoveList is " + upgradesToRemoveList);
+    //     // foreach(string upgrade in upgradesToRemoveList)
+    //     // {
+    //     //     Debug.Log("upgrade is  " + upgrade);
+    //     //     upgradeDescriptions.RemoveAt(upgradeNames.IndexOf(upgrade));
+    //     //     upgradeNames.Remove(upgrade);
+    //     // }
 
-        foreach(Transform child in transform)
-        {
-            if (upgradeDictionary.Count == 0) return;
+    //     foreach(Transform child in transform)
+    //     {
+    //         if (upgradeDictionary.Count == 0) return;
 
-            List<string> keys = new List<string>(upgradeDictionary.Keys);
-            int index = UnityEngine.Random.Range(0, keys.Count);
-            string upgradeName = keys[index];
-            string upgradeDescription = upgradeDictionary[upgradeName];
+    //         List<string> keys = new List<string>(upgradeDictionary.Keys);
+    //         int index = UnityEngine.Random.Range(0, keys.Count);
+    //         string upgradeName = keys[index];
+    //         string upgradeDescription = upgradeDictionary[upgradeName];
 
-            child.GetComponent<CardTrigger>().setUpgradeName(upgradeName);
-            child.GetComponent<CardTrigger>().cardTextRpc(upgradeDescription);
+    //         child.GetComponent<CardTrigger>().setUpgradeName(upgradeName);
+    //         child.GetComponent<CardTrigger>().cardTextRpc(upgradeDescription);
 
-            upgradeDictionary.Remove(upgradeName);
-        }
-    }
+    //         upgradeDictionary.Remove(upgradeName);
+    //     }
+    // }
 
-    public void CallFunctionByName(string functionName)
+    public void UpgradePlayer(string upgrade, PlayerStatsManager player)
     {
-        if (!IsServer) return;
+        if(!IsServer) return;
+
+        stats = player;
+
         Type type = this.GetType();
-        MethodInfo methodInfo = type.GetMethod(functionName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+        MethodInfo methodInfo = type.GetMethod(upgrade, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
         
         if (methodInfo != null) methodInfo.Invoke(this, null);
-        else Debug.LogError($"Method {functionName} not found in class {type.Name}");
+        else Debug.LogError($"Method {upgrade} not found in class {type.Name}");
     }
 
     private void volley1()
     {
-        statsManager.fireShape.Value = "volley";
-        statsManager.numberOfOrbs.Value += 1;
-        statsManager.orbDamage.Value *= 0.8f;
-        statsManager.orbKnockbackForce.Value *= 0.8f;
-        statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
-        statsManager.orbCooldown.Value += 0.2f;
-        statsManager.orbPriority.Value -= 1;
+        stats.fireShape.Value = "volley";
+        stats.numberOfOrbs.Value += 1;
+        stats.orbDamage.Value *= 0.8f;
+        stats.orbKnockbackForce.Value *= 0.8f;
+        stats.orbKnockbackPercentDamage.Value *= 0.8f;
+        stats.orbCooldown.Value += 0.2f;
+        stats.orbPriority.Value -= 1;
     }
 
     private void cluster1()
     {
-        statsManager.fireShape.Value = "cluster";
-        statsManager.numberOfOrbs.Value += 1;
-        statsManager.orbDamage.Value *= 0.8f;
-        statsManager.orbKnockbackForce.Value *= 0.8f;
-        statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
-        statsManager.orbCooldown.Value += 0.2f;
-        statsManager.orbPriority.Value -= 1;
+        stats.fireShape.Value = "cluster";
+        stats.numberOfOrbs.Value += 1;
+        stats.orbDamage.Value *= 0.8f;
+        stats.orbKnockbackForce.Value *= 0.8f;
+        stats.orbKnockbackPercentDamage.Value *= 0.8f;
+        stats.orbCooldown.Value += 0.2f;
+        stats.orbPriority.Value -= 1;
     }
 
     private void orbPower1()
     {
-        statsManager.orbDamage.Value += 0.5f;
-        statsManager.orbKnockbackForce.Value += 10f;
-        statsManager.orbKnockbackPercentDamage.Value += 0.08f;
-        statsManager.orbPriority.Value += 1;
+        stats.orbDamage.Value += 0.5f;
+        stats.orbKnockbackForce.Value += 10f;
+        stats.orbKnockbackPercentDamage.Value += 0.08f;
+        stats.orbPriority.Value += 1;
     }
 
     private void orbKnockback1()
     {
-        statsManager.orbKnockbackForce.Value += 20f;
-        statsManager.orbKnockbackPercentDamage.Value += 0.2f;
+        stats.orbKnockbackForce.Value += 20f;
+        stats.orbKnockbackPercentDamage.Value += 0.2f;
     }
 
     private void orbDamage1()
     {
-        statsManager.orbDamage.Value += 1f;
-        statsManager.orbPriority.Value += 2;
+        stats.orbDamage.Value += 1f;
+        stats.orbPriority.Value += 2;
     }
 
     private void movement1()
     {
-        statsManager.groundedMoveSpeed.Value += 2f;
-        statsManager.airMoveSpeed.Value += 2f;
-        statsManager.groundMultiplier.Value += 0.3f;
-        statsManager.airMultiplier.Value += 0.3f;
+        stats.groundedMoveSpeed.Value += 2f;
+        stats.airMoveSpeed.Value += 2f;
+        stats.groundMultiplier.Value += 0.3f;
+        stats.airMultiplier.Value += 0.3f;
     }
 
     private void homing1()
     {
-        statsManager.homing.Value += 10f;
-        statsManager.orbMinSpeed.Value -= 20f;
-        statsManager.orbMaxSpeed.Value -= 30f;
-        statsManager.orbDamage.Value -= 0.5f;
+        stats.homing.Value += 10f;
+        stats.orbMinSpeed.Value -= 20f;
+        stats.orbMaxSpeed.Value -= 30f;
+        stats.orbDamage.Value -= 0.5f;
     }
 
     private void bounceshot1()
     {
-        statsManager.bounces.Value += 1;
-        statsManager.orbKnockbackForce.Value -= 15f;
-        statsManager.orbKnockbackPercentDamage.Value -= 0.05f;
+        stats.bounces.Value += 1;
+        stats.orbKnockbackForce.Value -= 15f;
+        stats.orbKnockbackPercentDamage.Value -= 0.05f;
     }
 
     private void orbspeed1()
     {
-        statsManager.orbMinSpeed.Value += 25f;
-        statsManager.orbMaxSpeed.Value += 35f;
-        statsManager.orbCooldown.Value -= 0.2f;
-        statsManager.orbDamage.Value -= 0.1f;
-        statsManager.orbKnockbackForce.Value -= 5f;
-        statsManager.orbKnockbackPercentDamage.Value -= 0.025f;
-        statsManager.orbPriority.Value += 2;
+        stats.orbMinSpeed.Value += 25f;
+        stats.orbMaxSpeed.Value += 35f;
+        stats.orbCooldown.Value -= 0.2f;
+        stats.orbDamage.Value -= 0.1f;
+        stats.orbKnockbackForce.Value -= 5f;
+        stats.orbKnockbackPercentDamage.Value -= 0.025f;
+        stats.orbPriority.Value += 2;
     }
 
     private void burst1()
     {
-        statsManager.orbBurst.Value += 1;
-        statsManager.orbKnockbackForce.Value -= 15f;
-        statsManager.orbKnockbackPercentDamage.Value -= 0.05f;
-        statsManager.orbDamage.Value *= 0.8f;
-        statsManager.orbKnockbackForce.Value *= 0.8f;
-        statsManager.orbKnockbackPercentDamage.Value *= 0.8f;
-        statsManager.orbCooldown.Value += 0.2f;
-        statsManager.orbPriority.Value -= 1;
+        stats.orbBurst.Value += 1;
+        stats.orbKnockbackForce.Value -= 15f;
+        stats.orbKnockbackPercentDamage.Value -= 0.05f;
+        stats.orbDamage.Value *= 0.8f;
+        stats.orbKnockbackForce.Value *= 0.8f;
+        stats.orbKnockbackPercentDamage.Value *= 0.8f;
+        stats.orbCooldown.Value += 0.2f;
+        stats.orbPriority.Value -= 1;
     }
 
     private void explosion1()
     {
-        statsManager.explosionRadius.Value += 1.5f;
-        statsManager.explosionDamage.Value += 0.5f;
-        statsManager.explosionKnockbackForce.Value += 10f;
-        statsManager.explosionKnockbackPercentDamage.Value += 0.05f;
-        statsManager.orbCooldown.Value -= 0.2f;
+        stats.explosionRadius.Value += 1.5f;
+        stats.explosionDamage.Value += 0.5f;
+        stats.explosionKnockbackForce.Value += 10f;
+        stats.explosionKnockbackPercentDamage.Value += 0.05f;
+        stats.orbCooldown.Value -= 0.2f;
     }
 
     private void orbsize1()
     {
-        statsManager.orbScale.Value += 0.3f;
-        statsManager.orbMinSpeed.Value -= 10f;
-        statsManager.orbMaxSpeed.Value -= 15f;
-        statsManager.orbCooldown.Value -= 0.1f;
+        stats.orbScale.Value += 0.3f;
+        stats.orbMinSpeed.Value -= 10f;
+        stats.orbMaxSpeed.Value -= 15f;
+        stats.orbCooldown.Value -= 0.1f;
     }
+
+
+
 
 }

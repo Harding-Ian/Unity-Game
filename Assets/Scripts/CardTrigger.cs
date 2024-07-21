@@ -10,7 +10,6 @@ public class CardTrigger : NetworkBehaviour
 {
 
     [SerializeField]
-    private UpgradeManager upgradeManager;
 
     private GameObject gameManager;
 
@@ -38,16 +37,16 @@ public class CardTrigger : NetworkBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider collider){
-        if (IsServer && collider.transform.root.GetComponent<PlayerScript>().upgraded.Value == false){
-            collider.transform.root.GetComponent<PlayerScript>().upgraded.Value = true;
-            if (upgradeName == "empty"){
-                Debug.Log("No more upgrades left");
-                return;
-            }
-            Debug.Log("upgrade acquired!");
-            upgradeManager.GetComponent<UpgradeManager>().CallFunctionByName(upgradeName);
-            collider.transform.root.GetComponent<PlayerScript>().UpgradeList.Add(upgradeName);
+    private void OnTriggerEnter(Collider collider)
+    {
+        PlayerScript player = collider.transform.root.GetComponent<PlayerScript>();
+        if (IsServer && player.upgraded.Value == false)
+        {
+            player.upgraded.Value = true;
+            if (upgradeName == "empty") return;
+
+            gameManager.GetComponent<UpgradeManager>().UpgradePlayer(upgradeName, collider.transform.root.GetComponent<PlayerStatsManager>());
+            player.UpgradeList.Add(upgradeName);
 
             gameManager.GetComponent<GameSceneManager>().checkAllUpgraded();
         }
