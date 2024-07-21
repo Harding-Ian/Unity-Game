@@ -18,9 +18,48 @@ public class CardTrigger : NetworkBehaviour
 
     private string upgradeName = "empty";
 
+    private Vector3 originalPosition;
+
+    public Vector2 hoverHeightRange = new Vector2(0.6f, 0.8f);
+    public Vector2 hoverDurationRange = new Vector2(5f, 12f);
+
     void Start()
     {
         gameManager = GameObject.Find("GameManager");
+
+        originalPosition = transform.position;
+        StartCoroutine(Hover());
+    }
+
+    IEnumerator Hover()
+    {
+        while (true)
+        {
+            float hoverUpDuration = Random.Range(hoverDurationRange.x, hoverDurationRange.y);
+
+            float hoverHeight = Random.Range(hoverHeightRange.x, hoverHeightRange.y);
+
+            yield return StartCoroutine(MoveToPosition(originalPosition + Vector3.up * hoverHeight, hoverUpDuration));
+
+            float hoverDownDuration = Random.Range(hoverDurationRange.x, hoverDurationRange.y);
+
+            yield return StartCoroutine(MoveToPosition(originalPosition, hoverDownDuration));
+        }
+    }
+
+    IEnumerator MoveToPosition(Vector3 targetPosition, float duration)
+    {
+        Vector3 startPosition = transform.position;
+        float elapsedTime = 0;
+
+        while (elapsedTime < duration)
+        {
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPosition;
     }
     public void setUpgradeName(string name)
     {

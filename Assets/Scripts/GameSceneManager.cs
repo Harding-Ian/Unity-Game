@@ -27,7 +27,7 @@ public class GameSceneManager : NetworkBehaviour
     private string[] maps;
 
     [SerializeField]
-    private int winCondition = 3;
+    private int winCondition = 5;
 
     [SerializeField]
     private string[] victoryString;

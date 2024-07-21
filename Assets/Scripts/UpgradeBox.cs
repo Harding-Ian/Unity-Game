@@ -45,7 +45,7 @@ public class UpgradeBox : NetworkBehaviour
             child.GetComponent<CardTrigger>().setUpgradeName(upgradeName);
             child.GetComponent<CardTrigger>().cardTextRpc(upgradeDescription);
 
-            upgradeDictionary.Remove(upgradeName);
+            //upgradeDictionary.Remove(upgradeName);
         }
     }
 
