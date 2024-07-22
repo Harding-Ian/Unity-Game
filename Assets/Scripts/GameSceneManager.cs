@@ -27,7 +27,7 @@ public class GameSceneManager : NetworkBehaviour
     private string[] maps;
 
     [SerializeField]
-    private int winCondition = 5;
+    private int winCondition = 8;
 
     [SerializeField]
     private string[] victoryString;
@@ -112,10 +112,12 @@ public class GameSceneManager : NetworkBehaviour
 
     public void RoundCompleted(GameObject winner)
     {
+        Debug.Log("Round Completed Run");
         if (IsHost)
         {
             GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
             winner.GetComponent<PlayerScript>().wins.Value++;
+            Debug.Log("Winner = " + winner.GetComponent<PlayerScript>().wins.Value);
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
             {
 

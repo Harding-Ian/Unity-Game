@@ -142,9 +142,9 @@ public class UpgradeManager : NetworkBehaviour
 
     private void homing1()
     {
-        stats.homing.Value += 20f;
-        stats.orbMinSpeed.Value -= 20f;
-        stats.orbMaxSpeed.Value -= 30f;
+        stats.homing.Value += 50f;
+        stats.orbMinSpeed.Value -= 10f;
+        stats.orbMaxSpeed.Value -= 20f;
         stats.orbDamage.Value -= 0.5f;
     }
 
