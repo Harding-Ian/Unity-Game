@@ -37,7 +37,9 @@ public class UpgradeManager : NetworkBehaviour
 
     { "explosion1", $"Explosion Power:\n {G} + Considerable explosion size {XG} + Modest explosion damage {XG} + Modest explosion knockback {XR} - Modest orb cooldown {X}" },
 
-    { "orbsize1", $"Orb Size:\n {G} + Considerable orb size {XR} - Modest orb speed {XR} - small orb cooldown {X}" }
+    { "orbsize1", $"Orb Size:\n {G} + Considerable orb size {XR} - Modest orb speed {XR} - small orb cooldown {X}" },
+
+    { "cluster1", $"Cluster Shot:\n {G} + Clustershot {XG} + 1 orb {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Modest orb cooldown {X}" }
 /*
 
 
@@ -110,17 +112,6 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbPriority.Value -= 1;
     }
 
-    private void cluster1()
-    {
-        stats.fireShape.Value = "cluster";
-        stats.numberOfOrbs.Value += 1;
-        stats.orbDamage.Value *= 0.8f;
-        stats.orbKnockbackForce.Value *= 0.8f;
-        stats.orbKnockbackPercentDamage.Value *= 0.8f;
-        stats.orbCooldown.Value += 0.2f;
-        stats.orbPriority.Value -= 1;
-    }
-
     private void orbPower1()
     {
         stats.orbDamage.Value += 0.5f;
@@ -151,7 +142,7 @@ public class UpgradeManager : NetworkBehaviour
 
     private void homing1()
     {
-        stats.homing.Value += 10f;
+        stats.homing.Value += 20f;
         stats.orbMinSpeed.Value -= 20f;
         stats.orbMaxSpeed.Value -= 30f;
         stats.orbDamage.Value -= 0.5f;
@@ -204,7 +195,16 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbCooldown.Value -= 0.1f;
     }
 
-
+    private void cluster1()
+    {
+        stats.fireShape.Value = "cluster";
+        stats.numberOfOrbs.Value += 1;
+        stats.orbDamage.Value *= 0.8f;
+        stats.orbKnockbackForce.Value *= 0.8f;
+        stats.orbKnockbackPercentDamage.Value *= 0.8f;
+        stats.orbCooldown.Value += 0.2f;
+        stats.orbPriority.Value -= 1;
+    }
 
 
 }
