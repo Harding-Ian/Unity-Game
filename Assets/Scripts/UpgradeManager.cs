@@ -114,35 +114,35 @@ public class UpgradeManager : NetworkBehaviour
 
     private void orbPower1()
     {
-        stats.orbDamage.Value += 0.5f;
+        stats.orbDamage.Value += 1f;
         stats.orbKnockbackForce.Value += 10f;
-        stats.orbKnockbackPercentDamage.Value += 0.08f;
+        stats.orbKnockbackPercentDamage.Value += 0.2f;
         stats.orbPriority.Value += 1;
     }
 
     private void orbKnockback1()
     {
-        stats.orbKnockbackForce.Value += 20f;
-        stats.orbKnockbackPercentDamage.Value += 0.2f;
+        stats.orbKnockbackForce.Value += 25f;
+        stats.orbKnockbackPercentDamage.Value += 0.4f;
     }
 
     private void orbDamage1()
     {
-        stats.orbDamage.Value += 1f;
+        stats.orbDamage.Value += 1.5f;
         stats.orbPriority.Value += 2;
     }
 
     private void movement1()
     {
-        stats.groundedMoveSpeed.Value += 2f;
-        stats.airMoveSpeed.Value += 2f;
-        stats.groundMultiplier.Value += 0.3f;
-        stats.airMultiplier.Value += 0.3f;
+        stats.groundedMoveSpeed.Value += 4f;
+        stats.airMoveSpeed.Value += 4f;
+        stats.groundMultiplier.Value += 0.6f;
+        stats.airMultiplier.Value += 0.6f;
     }
 
     private void homing1()
     {
-        stats.homing.Value += 50f;
+        stats.homing.Value += 30f;
         stats.orbMinSpeed.Value -= 10f;
         stats.orbMaxSpeed.Value -= 20f;
         stats.orbDamage.Value -= 0.5f;
@@ -159,7 +159,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.orbMinSpeed.Value += 25f;
         stats.orbMaxSpeed.Value += 35f;
-        stats.orbCooldown.Value -= 0.2f;
+        //stats.orbCooldown.Value -= 0.2f;
         stats.orbDamage.Value -= 0.1f;
         stats.orbKnockbackForce.Value -= 5f;
         stats.orbKnockbackPercentDamage.Value -= 0.025f;
