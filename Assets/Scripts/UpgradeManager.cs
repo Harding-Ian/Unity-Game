@@ -44,6 +44,22 @@ public class UpgradeManager : NetworkBehaviour
     { "multiDash1", $"Mutli Dash:\n {G} + 2 Additional Dash {X}" },
 
     { "dash1", $"Long Jump:\n {G} + Huge dash strength {X}" },
+
+    { "health1", $"HP Increase:\n {G} + Huge HP {XR} - Small Speed {X}" },
+
+    { "jump1", $"Extra Jump:\n {G} + 1 Jump {XG} + Modest Jump force {X} " },
+
+    { "reload1", $"Quick Reload:\n {G} + Huge Cooldown {XR} - small knockback {XR} - small damage" },
+
+    { "pulseknockback1", $"Melee Knockback:\n {G} + Huge Pulse Knockback {XR} - small orb Cooldown {XR} - small pulse cooldown {X}" },
+
+    { "pulsedamage1", $"Melee Damage:\n {G} + Huge Pulse Damage {XR} - small orb Cooldown {XR} - small pulse cooldown {X}" },
+    
+    { "pulsecooldown1", $"Melee Cooldown:\n {G} + Huge Pulse Cooldown {X}" },
+
+    { "topspeed1", $"Sanic:\n {G} + Huge top speed {XR} - Modest Agility {X}" },
+    
+    { "agility1", $"Dodging:\n {G} + Huge agililty {XR} - small HP {X}" }
 /*
 
 
