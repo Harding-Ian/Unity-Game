@@ -25,11 +25,11 @@ public class UpgradeManager : NetworkBehaviour
 
     { "orbDamage1", $"Orb Damage:\n {G} + Huge Orb Damage {XR} - Modest orb cooldown {X}" },
 
-    { "movement1", $"Run N' Gun:\n {G} + Huge speed increase {X}" },
+    { "movement1", $"Run N' Gun:\n {G} + Huge Speed Increase {X}" },
 
-    { "homing1", $"Homing:\n {G} + adds homing to your shots! {XR} - Considerable orb speed {XR} - Modest orb damage {X}" },
+    { "homing1", $"Homing:\n {G} + Adds Orb Homing {XR} - Considerable orb speed {XR} - Modest orb damage {X}" },
 
-    { "bounceshot1", $"Bounce Shot:\n {G} + adds an extra bounce towards the nearest player! {XR} - Modest knockback {X}" },
+    { "bounceshot1", $"Bounce Shot:\n {G} + Extra bounce towards enemy {XR} - Modest knockback {X}" },
 
     { "orbspeed1", $"orbspeed:\n {G} + Considerable orb speed {XR} - Modest orb cooldown {XR} - Small damage {XR} - Small knockback {X}" },
 
@@ -39,7 +39,11 @@ public class UpgradeManager : NetworkBehaviour
 
     { "orbsize1", $"Orb Size:\n {G} + Considerable orb size {XR} - Modest orb speed {XR} - small orb cooldown {X}" },
 
-    { "cluster1", $"Cluster Shot:\n {G} + Clustershot {XG} + 1 orb {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Modest orb cooldown {X}" }
+    { "cluster1", $"Cluster Shot:\n {G} + Clustershot {XG} + 1 orb {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Modest orb cooldown {X}" },
+
+    { "multiDash1", $"Mutli Dash:\n {G} + 2 Additional Dash {X}" },
+
+    { "dash1", $"Long Jump:\n {G} + Huge dash strength {X}" },
 /*
 
 
@@ -204,6 +208,14 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbKnockbackPercentDamage.Value *= 0.8f;
         stats.orbCooldown.Value += 0.2f;
         stats.orbPriority.Value -= 1;
+    }
+
+    private void multiDash1(){
+        stats.numberOfDashes.Value += 2;
+    }
+
+    private void dash1(){
+        stats.dashForce.Value += 25f;
     }
 
 

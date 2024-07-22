@@ -21,6 +21,9 @@ public class PlayerStatsManager : NetworkBehaviour
 
         // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
         // GetComponent<PlayerScript>().UpgradeList.Add("bounceshot1");
+
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("dash1", player);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("multiDash1", player);
     }
 
     // ------------------------------- Player Health Stuff -------------------------------

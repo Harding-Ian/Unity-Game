@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.UI;
+using Unity.VisualScripting;
 
 
 public class Projectile : NetworkBehaviour
@@ -20,8 +22,30 @@ public class Projectile : NetworkBehaviour
     private float accumulatedTime = 0f;
     private float accumulatedTimeBurst;
     private int burstIteration = 1;
+
+    private Slider reloadUISlider;
+    private GameObject reloadSliderHolder;
+
+    private Slider chargeUISlider;
+
+    private GameObject chargeSliderHolder;
     
 
+
+
+    private void Start()
+    {   
+        if (IsLocalPlayer)
+        { 
+            reloadSliderHolder = GameObject.Find("ReloadUI");
+            reloadUISlider = reloadSliderHolder.GetComponent<Slider>();
+            reloadUISlider.value = 0f;
+
+            chargeSliderHolder = GameObject.Find("ChargeUI");
+            chargeUISlider = chargeSliderHolder.GetComponent<Slider>();
+            chargeUISlider.value = 0f;
+        }
+    }
     void Update()
     {
 
@@ -31,24 +55,35 @@ public class Projectile : NetworkBehaviour
             if (Input.GetKey(fireKey))
             {
                 accumulatedTime += Time.deltaTime;
+
+                chargeUISlider.value = Mathf.Min(0.4f, 0.4f * Mathf.Clamp01(accumulatedTime / statsManager.orbChargeTime.Value));
             }
 
             if(Input.GetKeyUp(fireKey))
             {
+                chargeUISlider.value = 0f;
                 accumulatedTimeBurst = accumulatedTime;
                 readyToFire = false;
                 ShootProjectile(accumulatedTime);
                 Invoke(nameof(burstshot), GetComponent<PlayerStatsManager>().orbBurstDelay.Value);
                 Invoke(nameof(ResetFire), statsManager.orbCooldown.Value);
+                StartCoroutine(UpdateReloadUI());
                 accumulatedTime = 0f;
             }
-
-            if(Input.GetKeyDown(KeyCode.M))
-            {
-                GetComponent<PlayerStatsManager>().orbPriority.Value += 1;
-                Debug.Log("orb priority increased to" + GetComponent<PlayerStatsManager>().orbPriority.Value);
-            }
         }
+    }
+
+    private IEnumerator UpdateReloadUI(){
+        float elapsedTime = 0f;
+
+        while (elapsedTime < statsManager.orbCooldown.Value)
+        {
+            elapsedTime += Time.deltaTime;
+            reloadUISlider.value = 0.4f - 0.4f*Mathf.Clamp01(elapsedTime / statsManager.orbCooldown.Value);
+            yield return null;
+        }
+
+        reloadUISlider.value = 0f;
     }
 
 
