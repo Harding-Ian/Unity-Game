@@ -7,24 +7,24 @@ public class Homing : NetworkBehaviour
 {
     public Vector3 origin;
     public Vector3 direction;
-    GameObject nearestPlayer = null;
+    public GameObject nearestPlayer = null;
     PlayerStatsManager playerWhoShot = null;
-    bool homing = true;
+    public float homingStrength;
 
     void Start()
     {
         if (!IsServer) return;
         playerWhoShot = NetworkManager.Singleton.ConnectedClients[GetComponent<Fireball>().playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
-        if(playerWhoShot.homing.Value == 0) homing = false;
+        homingStrength = playerWhoShot.homing.Value;
         findNearestPlayer();
     }
 
     void Update()
     {
-        if (!IsServer || nearestPlayer == null || homing == false) return;
+        if (!IsServer || nearestPlayer == null || homingStrength == 0) return;
 
         Vector3 dir = -1f * FindPointToRay(nearestPlayer.transform.position, transform.position, GetComponent<Rigidbody>().velocity.normalized).normalized;
-        GetComponent<Rigidbody>().AddForce(dir*playerWhoShot.homing.Value, ForceMode.Acceleration);
+        GetComponent<Rigidbody>().AddForce(dir*homingStrength, ForceMode.Acceleration);
     }
 
     private GameObject findNearestPlayer()

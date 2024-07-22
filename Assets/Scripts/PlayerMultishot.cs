@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using Unity.Mathematics;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMultishot : NetworkBehaviour
@@ -116,19 +119,48 @@ public class PlayerMultishot : NetworkBehaviour
             //     }
             // }
 
-            // List<Vector3> points = new List<Vector3>();
-            // points.Add(firepoint);
-            // orbSize += 0.05f;
+            List<Vector3> points = new List<Vector3>();
+            points.Add(firepoint);
+            remainingOrbs--;
+            orbSize += 0.2f;
 
-            // float rand = Random.Range(0f, 1f);
-            
+            bool addPoint = true;
+            int myself = 0;
+
+            while(remainingOrbs > 0)
+            {
+                float angle = UnityEngine.Random.Range(0f, 6.2831853f);
+                int randPoint = UnityEngine.Random.Range(0, points.Count - 1);
+                Vector3 newPoint = points[randPoint] + transform.right.normalized * orbSize * Mathf.Cos(angle) + transform.up.normalized * orbSize * Mathf.Sin(angle);
+                
+                foreach(Vector3 point in points)
+                {
+                    if(Vector3.Distance(point, newPoint) <= orbSize) addPoint = false;
+                }
+                if(addPoint)
+                {
+                    points.Add(newPoint);
+                    remainingOrbs--;
+                }
+                addPoint = true;
+
+                myself++;
+                if(myself > 500) break;
+            }
 
 
+            Vector3 sum = Vector3.zero;
+            foreach(Vector3 point in points)
+            {
+                sum += point;
+            }
 
-            firepoints.Add(firepoint);
-            hitpoints.Add(hitpoint);
-            // firepoints.Add(points[1]);
-            // hitpoints.Add(hitpoint + points[1] - firepoint);
+            Vector3 newCenter = sum/points.Count;
+            Vector3 offset = newCenter - firepoint;
+
+
+            foreach(Vector3 point in points) firepoints.Add(point - offset);
+            foreach(Vector3 point in points) hitpoints.Add(hitpoint + point - offset - firepoint);
         }
 
     }

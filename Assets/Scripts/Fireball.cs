@@ -11,13 +11,14 @@ public class Fireball : NetworkBehaviour
 
     public ulong playerOwnerId;
     private int bounces = 0;
+
+    private int clusterBombs;
     public GameObject blast;
 
     public GameObject gameManager;
 
     public Vector3 currentVelocity;
-
-    public GameObject audioSrcPrefab;
+    Vector3 gravity;
     void Start()
     {   
         gameManager = GameObject.Find("GameManager");
@@ -43,24 +44,10 @@ public class Fireball : NetworkBehaviour
         playerOwnerId = playerId;
     }
 
-
-    [Rpc(SendTo.SpecifiedInParams)]
-    private void ApplyKnockbackRpc(Vector3 knockbackDirection, float knockbackForce, RpcParams rpcParams)
-    {
-        NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+    public void setStats(){
         
-
-        float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
-
-        if (angle < 0) {angle = 0;}
-
-        float adjustedAngle = (angle / 115f) * 30f;
-        
-        float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
-
-        Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, knockbackForce);
     }
+
 
     private void DestroyProjectile()
     {
@@ -75,12 +62,26 @@ public class Fireball : NetworkBehaviour
         NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
+        Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
+
         if(otherObject == null)
         {
             if(bounces < playerWhoShot.bounces.Value)
             {
-                Vector3 dir = BounceDirection();
-                if(dir != Vector3.zero) GetComponent<Rigidbody>().velocity = dir * currentVelocity.magnitude * 0.5f;
+                //vel towards player
+                Vector3 dir = GetComponent<CalculateBounce>().BounceDirection();
+                if(dir != Vector3.zero) 
+                {
+                    gravity = GetComponent<ConstantForce>().force;
+                    GetComponent<Rigidbody>().velocity = dir * currentVelocity.magnitude * 0.5f;
+                    GetComponent<ConstantForce>().force = new Vector3(0, 0, 0);
+                    Invoke(nameof(SetGravity), 0.5f);
+                }
+
+                //homing
+                //GetComponent<Homing>().nearestPlayer = NearestPlayer();
+                //GetComponent<Homing>().homingStrength = 50f;
+                
                 bounces++;
             }
             else
@@ -111,9 +112,11 @@ public class Fireball : NetworkBehaviour
         else if(otherObject.CompareTag("Player") && playerOwnerId != otherObject.OwnerClientId)
         {
             gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, playerWhoShot.orbDamage.Value, playerOwnerId);
-            ApplyKnockbackRpc(currentVelocity.normalized, playerWhoShot.orbKnockbackForce.Value, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
+            
+            otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, playerWhoShot.orbKnockbackForce.Value, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
+
             gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, playerWhoShot.orbKnockbackPercentDamage.Value);
-            PlayHitSound(playerOwnerId, otherObject.OwnerClientId);
+            GetComponent<FireballAudio>().PlayHitSound(playerOwnerId, otherObject.OwnerClientId);
 
             NetworkObject.Despawn();
             CreateBlast();
@@ -131,64 +134,15 @@ public class Fireball : NetworkBehaviour
         blastObj.GetComponent<NetworkObject>().Spawn(true);
         blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
 
-        PlayBlastSound();
+        GetComponent<FireballAudio>().PlayBlastSound();
     }
 
-    private void PlayBlastSound(){
-        GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
-        audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
+    
 
-        SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
-        if (soundPlayer != null)
-        {
-            soundPlayer.PlayBlastSound();
-        }
-        else
-        {
-            Debug.LogError("SoundEffectPlayer component not found on audioSrcInstance.");
-        }
-    }
 
-    private void PlayHitSound(ulong id1, ulong id2){
-        GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
-        audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
-
-        SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
-        if (soundPlayer != null)
-        {
-            soundPlayer.OnDirectHit(id1, id2);
-        }
-        else
-        {
-            Debug.LogError("SoundEffectPlayer component not found on audioSrcInstance.");
-        }
-    }
-
-    private Vector3 BounceDirection()
+    void SetGravity()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 20f);
-        List<GameObject> playersInView = new List<GameObject>();
-        GameObject closestPlayer = null;
-        float closestdistance = 20f;
-
-        foreach (Collider hitCollider in hitColliders)
-        {
-            if (hitCollider.transform.root.CompareTag("Player") && hitCollider.transform.root.GetComponent<NetworkObject>().OwnerClientId != playerOwnerId)
-            {
-                var ray = new Ray(transform.position, hitCollider.gameObject.transform.position - transform.position);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit) && hit.collider.transform.root.CompareTag("Player") && hit.distance < closestdistance)
-                {
-                    closestPlayer = hitCollider.transform.root.gameObject;
-                    closestdistance= hit.distance;
-                }
-            }
-        }
-        
-        if (closestPlayer == null) return Vector3.zero;
-
-        return (closestPlayer.transform.position - transform.position).normalized;
+        GetComponent<ConstantForce>().force = gravity;
     }
 
     

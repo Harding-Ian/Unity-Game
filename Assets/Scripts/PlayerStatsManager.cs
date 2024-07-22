@@ -13,14 +13,14 @@ public class PlayerStatsManager : NetworkBehaviour
         GameObject gameManager = GameObject.Find("GameManager");
         PlayerStatsManager player = this;
 
-        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("explosion1", player);
-        GetComponent<PlayerScript>().UpgradeList.Add("explosion1");
+        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("explosion1", player);
+        // GetComponent<PlayerScript>().UpgradeList.Add("explosion1");
 
-        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("orbspeed1", player);
-        GetComponent<PlayerScript>().UpgradeList.Add("orbspeed1");
+        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("orbspeed1", player);
+        // GetComponent<PlayerScript>().UpgradeList.Add("orbspeed1");
 
-        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
-        GetComponent<PlayerScript>().UpgradeList.Add("bounceshot1");
+        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
+        // GetComponent<PlayerScript>().UpgradeList.Add("bounceshot1");
     }
 
     // ------------------------------- Player Health Stuff -------------------------------
@@ -113,6 +113,8 @@ public class PlayerStatsManager : NetworkBehaviour
     [NonSerialized] public NetworkVariable<float> orbBurstDelay = new NetworkVariable<float>(0.1f);
 
     [NonSerialized] public NetworkVariable<int> bounces = new NetworkVariable<int>(0);
+
+    [NonSerialized] public NetworkVariable<int> clusterBomb = new NetworkVariable<int>(0);
 
 
 }

@@ -52,26 +52,28 @@ public class PlayerBlock : NetworkBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.transform.root.CompareTag("Player"))
+            if (hitCollider.transform.root.CompareTag("Player") && hitCollider.transform.root.GetComponent<NetworkObject>().OwnerClientId != id)
             {
-                playersInRange.Add(hitCollider.transform.root.gameObject);
+                if (!playersInRange.Contains(hitCollider.transform.root.gameObject))
+                {
+                    playersInRange.Add(hitCollider.transform.root.gameObject);
+                }
             }
         }
 
-        int i = 0;
-        foreach (var player in playersInRange) {
-            i += 1;
-
-            if (player.GetComponent<NetworkObject>().OwnerClientId == id) {continue;}
-
+        foreach (var player in playersInRange)
+        {
             var ray = new Ray(GetComponent<Transform>().position, player.GetComponent<Transform>().position - GetComponent<Transform>().position);
             RaycastHit hit;
             
-            if (Physics.Raycast(ray, out hit)) {
+            if (Physics.Raycast(ray, out hit)) 
+            {
                 GameObject objectHit = hit.collider.transform.root.gameObject;
-                if (objectHit.CompareTag("Player")){
+                if (objectHit.CompareTag("Player"))
+                {
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseDamage.Value, id);
-                    ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                    
+                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseKnockbackPercentDamage.Value);
                 }
             }
@@ -84,23 +86,6 @@ public class PlayerBlock : NetworkBehaviour
     private void SpawnBlockWaveRpc(Vector3 blockOrigin){
         GameObject blockObject = Instantiate(blockWave, blockOrigin, Quaternion.identity);
     }
-
-    [Rpc(SendTo.SpecifiedInParams)]
-    private void ApplyKnockbackRpc(Vector3 knockbackDirection, RpcParams rpcParams)
-    {
-        NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        
-
-        float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
-
-        if (angle < 0) {angle = 0;}
-
-        float adjustedAngle = (angle / 115f) * 30f;
-
-        float adjustedRadians = (adjustedAngle * 3.1415f) / 180f;
-
-        Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
-        playerNetworkObject.GetComponent<PlayerMovement>().ApplyKnockback(adjustedknockbackDirection, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value);
-    }
+    
 
 }

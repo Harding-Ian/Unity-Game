@@ -131,12 +131,14 @@ public class Projectile : NetworkBehaviour
 
         projectileObj.GetComponent<ConstantForce>().force = new Vector3(constantForce.force.x, constantForce.force.y * dropMod, constantForce.force.z);
 
+        projectileObj.GetComponent<Fireball>().setStats();
+        
+
         NetworkObject playerNetworkObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject;
         Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Body").GetComponent<Collider>());
         Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Head").GetComponent<Collider>());
-
-
     }
+
 
     [Rpc(SendTo.SpecifiedInParams)]
     private void IgnorePhysicsRpc(ulong projectileId, RpcParams rpcParams)

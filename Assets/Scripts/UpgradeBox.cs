@@ -10,13 +10,14 @@ public class UpgradeBox : NetworkBehaviour
 
     GameObject gameManager;
 
-    Dictionary<string, string> upgradeDictionary = new Dictionary<string, string>();
+    Dictionary<string, string> upgradeDictionary;
 
 
     void Start()
     {
         gameManager = GameObject.Find("GameManager");
-        upgradeDictionary = gameManager.GetComponent<UpgradeManager>().upgradeDictionary;
+        //upgradeDictionary = gameManager.GetComponent<UpgradeManager>().upgradeDictionary;
+        upgradeDictionary = new Dictionary<string, string>(gameManager.GetComponent<UpgradeManager>().upgradeDictionary);
     }
 
     private void OnTriggerEnter(Collider collider)
@@ -45,7 +46,7 @@ public class UpgradeBox : NetworkBehaviour
             child.GetComponent<CardTrigger>().setUpgradeName(upgradeName);
             child.GetComponent<CardTrigger>().cardTextRpc(upgradeDescription);
 
-            //upgradeDictionary.Remove(upgradeName);
+            upgradeDictionary.Remove(upgradeName);
         }
     }
 
