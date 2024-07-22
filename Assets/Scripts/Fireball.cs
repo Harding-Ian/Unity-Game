@@ -62,7 +62,7 @@ public class Fireball : NetworkBehaviour
         NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-        Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
+        //Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
 
         if(otherObject == null)
         {

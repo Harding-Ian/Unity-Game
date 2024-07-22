@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
+using System;
 
 public class GameSceneManager : NetworkBehaviour
 {
@@ -26,7 +27,7 @@ public class GameSceneManager : NetworkBehaviour
     [SerializeField]
     private string[] maps;
 
-    [SerializeField]
+    [NonSerialized]
     private int winCondition = 8;
 
     [SerializeField]
@@ -51,14 +52,14 @@ public class GameSceneManager : NetworkBehaviour
         if(NetworkManager.IsHost)
         {
             //NetworkManager.SceneManager.OnSceneEvent += SceneManager_OnSceneEvent;
-            NetworkManager.SceneManager.LoadScene(maps[Random.Range(0, maps.Length)], LoadSceneMode.Additive);
+            NetworkManager.SceneManager.LoadScene(maps[UnityEngine.Random.Range(0, maps.Length)], LoadSceneMode.Additive);
         }
     }
 
     private IEnumerator NextMap()
     {
         yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
-        NetworkManager.SceneManager.LoadScene(maps[Random.Range(0, maps.Length)], LoadSceneMode.Additive);
+        NetworkManager.SceneManager.LoadScene(maps[UnityEngine.Random.Range(0, maps.Length)], LoadSceneMode.Additive);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -117,7 +118,8 @@ public class GameSceneManager : NetworkBehaviour
         {
             GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
             winner.GetComponent<PlayerScript>().wins.Value++;
-            Debug.Log("Winner = " + winner.GetComponent<PlayerScript>().wins.Value);
+            Debug.Log("Number of wins = " + winner.GetComponent<PlayerScript>().wins.Value);
+            Debug.Log("Winner = " + winner);
             if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
             {
 

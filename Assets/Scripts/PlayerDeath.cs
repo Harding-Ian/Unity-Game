@@ -54,7 +54,6 @@ public class PlayerDeath : NetworkBehaviour
 
         if(AlivePlayersList.Count == 1)
         {
-            
             GameManager.GetComponent<GameSceneManager>().RoundCompleted(AlivePlayersList[0].GameObject());
         }
         
