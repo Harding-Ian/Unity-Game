@@ -226,13 +226,72 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbPriority.Value -= 1;
     }
 
-    private void multiDash1(){
+    private void multiDash1()
+    {
         stats.numberOfDashes.Value += 2;
     }
 
-    private void dash1(){
+    private void dash1()
+    {
         stats.dashForce.Value += 25f;
     }
 
+    private void health1()
+    {
+        stats.maxPlayerHealth.vars += 10f;
+        stats.groundedMoveSpeed.Value -= 1f;
+        stats.airMoveSpeed.Value -= 1f;
+        stats.groundMultiplier.Value -= 0.2f;
+        stats.airMultiplier.Value -= 0.2f;
+    }
+
+    private void jump1()
+    {
+        stats.numberOfJumps.Value += 1;
+        stats.jumpForce.vars += 5f;
+    }
+
+    private void reload1()
+    {
+        stats.orbCooldown.Value -= 0.5f;
+        stats.orbChargeTime.vars -= 0.5f;
+        stats.orbDamage.Value -= 0.3f;
+    }
+
+    private void pulsedamage1()
+    {
+        stats.pulseDamage.Value += 1.5f;
+        stats.pulseCooldown.Value += 0.4f;
+        stats.orbCooldown.Value += 0.1f;
+
+    }
+
+    private void pulseknockback1()
+    {
+        stats.pulseKnockbackForce += 15f;
+        stats.pulseKnockbackPercentDamage.Value += 0.3f;
+        stats.pulseCooldown.Value += 0.4f;
+        stats.orbCooldown.Value += 0.1f;
+    }
+
+    private void pulsecooldown1()
+    {
+        stats.pulseCooldown.Value -= 1f;
+    }
+
+    private void topspeed1()
+    {
+        stats.groundedMoveSpeed.Value += 8f;
+        stats.airMoveSpeed.Value += 8f;
+        stats.groundMultiplier.Value -= 0.2f;
+        stats.airMultiplier.Value -= 0.2f;
+    }
+
+    private void agility1()
+    {
+        stats.groundMultiplier.Value += 1.2f;
+        stats.airMultiplier.Value += 1.2f;
+        stats.maxPlayerHealth.Value -= 0.2f;
+    }
 
 }
