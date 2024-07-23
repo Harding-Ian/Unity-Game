@@ -25,7 +25,7 @@ public class UpgradeManager : NetworkBehaviour
 
     { "orbDamage1", $"Orb Damage:\n {G} + Huge Orb Damage {XR} - Modest orb cooldown {X}" },
 
-    { "movement1", $"Run N' Gun:\n {G} + Huge Speed Increase {X}" },
+    { "movement1", $"Run N' Gun:\n {G} + Huge Speed {X}" },
 
     { "homing1", $"Homing:\n {G} + Adds Orb Homing {XR} - Considerable orb speed {XR} - Modest orb damage {X}" },
 
@@ -59,12 +59,11 @@ public class UpgradeManager : NetworkBehaviour
 
     { "topspeed1", $"Sanic:\n {G} + Huge top speed {XR} - Modest Agility {X}" },
     
-    { "agility1", $"Dodging:\n {G} + Huge agililty {XR} - small HP {X}" }
-/*
+    { "agility1", $"Dodging:\n {G} + Huge agililty {XR} - small HP {X}" },
 
+    { "volley2", $"Volley Shot:\n {G} + Volleyshot {XG} + 2 orbs {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Huge orb cooldown {X}" },
 
-
-*/
+    { "cluster2", $"Cluster Shot:\n {G} + Clustershot {XG} + 2 orbs {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Huge orb cooldown {X}" }
 
 
 };
@@ -179,7 +178,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.orbMinSpeed.Value += 25f;
         stats.orbMaxSpeed.Value += 35f;
-        //stats.orbCooldown.Value -= 0.2f;
+        //stats.orbCooldown.Value += 0.2f;
         stats.orbDamage.Value -= 0.1f;
         stats.orbKnockbackForce.Value -= 5f;
         stats.orbKnockbackPercentDamage.Value -= 0.025f;
@@ -204,15 +203,15 @@ public class UpgradeManager : NetworkBehaviour
         stats.explosionDamage.Value += 0.5f;
         stats.explosionKnockbackForce.Value += 10f;
         stats.explosionKnockbackPercentDamage.Value += 0.05f;
-        stats.orbCooldown.Value -= 0.2f;
+        stats.orbCooldown.Value += 0.1f;
     }
 
     private void orbsize1()
     {
         stats.orbScale.Value += 0.3f;
-        stats.orbMinSpeed.Value -= 10f;
-        stats.orbMaxSpeed.Value -= 15f;
-        stats.orbCooldown.Value -= 0.1f;
+        stats.orbMinSpeed.Value -= 5f;
+        stats.orbMaxSpeed.Value -= 10f;
+        stats.orbCooldown.Value += 0.1f;
     }
 
     private void cluster1()
@@ -238,7 +237,7 @@ public class UpgradeManager : NetworkBehaviour
 
     private void health1()
     {
-        stats.maxPlayerHealth.vars += 10f;
+        stats.maxPlayerHealth.Value += 10f;
         stats.groundedMoveSpeed.Value -= 1f;
         stats.airMoveSpeed.Value -= 1f;
         stats.groundMultiplier.Value -= 0.2f;
@@ -248,13 +247,13 @@ public class UpgradeManager : NetworkBehaviour
     private void jump1()
     {
         stats.numberOfJumps.Value += 1;
-        stats.jumpForce.vars += 5f;
+        stats.jumpForce.Value += 5f;
     }
 
     private void reload1()
     {
         stats.orbCooldown.Value -= 0.5f;
-        stats.orbChargeTime.vars -= 0.5f;
+        stats.orbChargeTime.Value -= 0.5f;
         stats.orbDamage.Value -= 0.3f;
     }
 
@@ -268,7 +267,7 @@ public class UpgradeManager : NetworkBehaviour
 
     private void pulseknockback1()
     {
-        stats.pulseKnockbackForce += 15f;
+        stats.pulseKnockbackForce.Value += 15f;
         stats.pulseKnockbackPercentDamage.Value += 0.3f;
         stats.pulseCooldown.Value += 0.4f;
         stats.orbCooldown.Value += 0.1f;
@@ -292,6 +291,28 @@ public class UpgradeManager : NetworkBehaviour
         stats.groundMultiplier.Value += 1.2f;
         stats.airMultiplier.Value += 1.2f;
         stats.maxPlayerHealth.Value -= 0.2f;
+    }
+
+    private void volley2()
+    {
+        stats.fireShape.Value = "volley";
+        stats.numberOfOrbs.Value += 2;
+        stats.orbDamage.Value *= 0.6f;
+        stats.orbKnockbackForce.Value *= 0.6f;
+        stats.orbKnockbackPercentDamage.Value *= 0.6f;
+        stats.orbCooldown.Value += 1f;
+        stats.orbPriority.Value -= 2;
+    }
+
+    private void cluster2()
+    {
+        stats.fireShape.Value = "cluster";
+        stats.numberOfOrbs.Value += 2;
+        stats.orbDamage.Value *= 0.6f;
+        stats.orbKnockbackForce.Value *= 0.6f;
+        stats.orbKnockbackPercentDamage.Value *= 0.6f;
+        stats.orbCooldown.Value += 1f;
+        stats.orbPriority.Value -= 2;
     }
 
 }
