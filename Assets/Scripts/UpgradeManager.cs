@@ -63,9 +63,9 @@ public class UpgradeManager : NetworkBehaviour
 
     { "volley2", $"Volley Shot:\n {G} + Volleyshot {XG} + 2 orbs {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Huge orb cooldown {X}" },
 
-    { "cluster2", $"Cluster Shot:\n {G} + Clustershot {XG} + 2 orbs {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Huge orb cooldown {X}" }
+    { "cluster2", $"Cluster Shot:\n {G} + Clustershot {XG} + 2 orbs {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Huge orb cooldown {X}" },
 
-
+    { "charge1", $"Charge Shot:\n {G} + Huge Max orb speed {XR} - Huge Charge time {X}" }
 };
 
     //private bool triggered = false;
@@ -178,7 +178,6 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.orbMinSpeed.Value += 25f;
         stats.orbMaxSpeed.Value += 35f;
-        //stats.orbCooldown.Value += 0.2f;
         stats.orbDamage.Value -= 0.1f;
         stats.orbKnockbackForce.Value -= 5f;
         stats.orbKnockbackPercentDamage.Value -= 0.025f;
@@ -290,7 +289,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.groundMultiplier.Value += 1.2f;
         stats.airMultiplier.Value += 1.2f;
-        stats.maxPlayerHealth.Value -= 0.2f;
+        stats.maxPlayerHealth.Value -= 2f;
     }
 
     private void volley2()
@@ -314,5 +313,13 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbCooldown.Value += 1f;
         stats.orbPriority.Value -= 2;
     }
+
+    private void charge1()
+    {
+        stats.orbMaxSpeed.Value += 60f;
+        stats.orbChargeTime.Value += 1.5f;
+        stats.orbPriority.Value += 1;
+    }
+
 
 }

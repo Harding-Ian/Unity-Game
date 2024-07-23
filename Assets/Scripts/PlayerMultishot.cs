@@ -131,7 +131,7 @@ public class PlayerMultishot : NetworkBehaviour
             {
                 float angle = UnityEngine.Random.Range(0f, 6.2831853f);
                 int randPoint = UnityEngine.Random.Range(0, points.Count - 1);
-                Vector3 newPoint = points[randPoint] + transform.right.normalized * orbSize * Mathf.Cos(angle) + transform.up.normalized * orbSize * Mathf.Sin(angle);
+                Vector3 newPoint = points[randPoint] + transform.Find("CameraHolder").right.normalized * orbSize * Mathf.Cos(angle) + transform.Find("CameraHolder").up.normalized * orbSize * Mathf.Sin(angle);
                 
                 foreach(Vector3 point in points)
                 {
@@ -164,4 +164,8 @@ public class PlayerMultishot : NetworkBehaviour
         }
 
     }
+
+
+
+
 }

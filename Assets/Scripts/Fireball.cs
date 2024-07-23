@@ -12,24 +12,21 @@ public class Fireball : NetworkBehaviour
     public ulong playerOwnerId;
     private int bounces = 0;
 
-    private int clusterBombs;
+    public int clusterBombs = 0;
     public GameObject blast;
 
     public GameObject gameManager;
 
     public Vector3 currentVelocity;
     Vector3 gravity;
+
     void Start()
     {   
+        if (!IsServer) return;
+        
         gameManager = GameObject.Find("GameManager");
-        if (gameManager == null)
-        {
-            Debug.LogError("GameManager not found within scene");
-        }
-        if (IsServer){
-            Invoke(nameof(DestroyProjectile), 5);
-        }
-        //GetComponent<Rigidbody>().detectCollisions = false;
+        currentVelocity = GetComponent<Rigidbody>().velocity;
+        Invoke(nameof(DestroyProjectile), 5);
     }
 
     void Update(){
@@ -45,7 +42,7 @@ public class Fireball : NetworkBehaviour
     }
 
     public void setStats(){
-        
+        clusterBombs = 0;
     }
 
 
@@ -58,11 +55,28 @@ public class Fireball : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (!IsServer) return;
+
+        Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
         
         NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-        //Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
+
+
+        ContactPoint contact = collision.contacts[0];
+        Vector3 normal = contact.normal;
+
+        // Vector3 incomingVelocity = GetComponent<Rigidbody>().velocity;
+
+        // Vector3 outgoingVelocity = Vector3.Reflect(incomingVelocity, normal);
+
+        // // Debug.Log("Incoming Velocity: " + incomingVelocity);
+        // // Debug.Log("Normal: " + normal);
+        // // Debug.Log("Outgoing Velocity: " + outgoingVelocity);
+        // GetComponent<Rigidbody>().velocity = outgoingVelocity;
+
+        if (clusterBombs > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
+
 
         if(otherObject == null)
         {

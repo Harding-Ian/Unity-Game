@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 4821550248243478069}
   - component: {fileID: 9059251449417435495}
   - component: {fileID: 8256478507415066785}
+  - component: {fileID: -6893582127871429861}
   m_Layer: 9
   m_Name: Fireball
   m_TagString: projectile
@@ -99,6 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOwnerId: 0
+  clusterBombs: 0
   blast: {fileID: 325097870823728784, guid: d4927cb448713e04ba9d8c2ccd3f7885, type: 3}
   gameManager: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
@@ -246,6 +248,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 812269891b3ba65499eb83aec405cc87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-6893582127871429861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900262667132587406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 147ed63aba53cff4d82d905311e96812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectile: {fileID: 4900262667132587406}
 --- !u!1 &5975477709810723135
 GameObject:
   m_ObjectHideFlags: 0

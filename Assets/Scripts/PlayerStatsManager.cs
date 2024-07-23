@@ -13,17 +13,21 @@ public class PlayerStatsManager : NetworkBehaviour
         GameObject gameManager = GameObject.Find("GameManager");
         PlayerStatsManager player = this;
 
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("explosion1", player);
-        // GetComponent<PlayerScript>().UpgradeList.Add("explosion1");
 
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("orbspeed1", player);
-        // GetComponent<PlayerScript>().UpgradeList.Add("orbspeed1");
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("cluster2");
 
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
-        // GetComponent<PlayerScript>().UpgradeList.Add("bounceshot1");
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("cluster2");
 
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("dash1", player);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("bounceshot1");
+
         gameManager.GetComponent<UpgradeManager>().UpgradePlayer("multiDash1", player);
+        GetComponent<PlayerScript>().UpgradeList.Add("multiDash1");
+
+
+
     }
 
     // ------------------------------- Player Health Stuff -------------------------------

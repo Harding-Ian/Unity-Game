@@ -29,6 +29,8 @@ public class Projectile : NetworkBehaviour
     private Slider chargeUISlider;
 
     private GameObject chargeSliderHolder;
+
+    List<GameObject> orbs = new List<GameObject>();
     
 
 
@@ -119,12 +121,17 @@ public class Projectile : NetworkBehaviour
         float dropMod = 1f;
         float speedMod = calculateChargeBonus(pressTime, out dropMod);
 
+
+        
         int i = 0;
         foreach(Vector3 firepoint in firepoints)
         {
             ProjectileRpc(OwnerClientId, firepoint, hitpoints[i], dropMod, speedMod);
             i++;
         }
+
+        IgnorePhysics(orbs);
+        orbs = new List<GameObject>();
 
     }
 
@@ -153,12 +160,16 @@ public class Projectile : NetworkBehaviour
         projectileObj.transform.localScale = new Vector3(statsManager.orbScale.Value,statsManager.orbScale.Value,statsManager.orbScale.Value);
         projectileObj.GetComponent<Homing>().origin = firepoint;
         projectileObj.GetComponent<Homing>().direction = (destination - firepoint).normalized;
+        projectileObj.GetComponent<Fireball>().setStats();
+        projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
+        orbs.Add(projectileObj);
+
+        
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
         
         
         IgnorePhysicsRpc(projectileObj.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(id, RpcTargetUse.Temp));
         
-        projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - firepoint).normalized * speedMod; //* 0.01f;
 
         ConstantForce constantForce = projectileObj.GetComponent<ConstantForce>();
@@ -166,7 +177,7 @@ public class Projectile : NetworkBehaviour
 
         projectileObj.GetComponent<ConstantForce>().force = new Vector3(constantForce.force.x, constantForce.force.y * dropMod, constantForce.force.z);
 
-        projectileObj.GetComponent<Fireball>().setStats();
+
         
 
         NetworkObject playerNetworkObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject;
@@ -184,4 +195,16 @@ public class Projectile : NetworkBehaviour
         Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Body").GetComponent<Collider>());
         Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Head").GetComponent<Collider>());
     }
+
+    void IgnorePhysics(List<GameObject> objects)
+    {
+        for(int i = 0; i < objects.Count; i++)
+        {
+            for(int j = i+1; j < objects.Count; j++)
+            {
+                Physics.IgnoreCollision(objects[i].GetComponent<Collider>(), objects[j].GetComponent<Collider>()); 
+            }
+        }
+    }
+
 }
