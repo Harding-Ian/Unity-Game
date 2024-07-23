@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ClusterBomb : NetworkBehaviour
 {
-    
     public GameObject projectile;
+
+    private List<Vector3> vectorAngleList;
 
     void Start()
     {
@@ -29,12 +31,15 @@ public class ClusterBomb : NetworkBehaviour
 
         List<GameObject> bombs = new List<GameObject>();
 
-        while(GetComponent<Fireball>().clusterBombs > 0)
-        {
-            GetComponent<Fireball>().clusterBombs -= 1;
+        calculateVectors(GetComponent<Fireball>().clusterBomb, normal);
 
-            GameObject projectileObj = Instantiate(projectile, transform.position + normal.normalized * 5f, Quaternion.identity);
+        while(GetComponent<Fireball>().clusterBomb > 0)
+        {
+            GetComponent<Fireball>().clusterBomb -= 1;
+
+            GameObject projectileObj = Instantiate(projectile, transform.position + normal.normalized * 0.3f, Quaternion.identity);
             projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(GetComponent<Fireball>().playerOwnerId);
+            projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
             bombs.Add(projectileObj);
 
@@ -42,21 +47,46 @@ public class ClusterBomb : NetworkBehaviour
 
         IgnorePhysics(bombs);
 
-        foreach(GameObject bomb in bombs){
+        foreach(GameObject bomb in bombs)
+        {
             Physics.IgnoreCollision(bomb.GetComponent<Collider>(), GetComponent<Collider>());
         }
 
-        calculateVectors(bombs);
-
-        foreach(GameObject bomb in bombs){
-            bomb.GetComponent<Rigidbody>().isKinematic = false;
-            bomb.GetComponent<Rigidbody>().velocity = normal * 10f;
+        
+        int i = 0;
+        foreach(GameObject bomb in bombs)
+        {
+            bomb.GetComponent<Rigidbody>().velocity = (normal + vectorAngleList[i].normalized * 0.5f).normalized * 10f;
+            i++;
         }
     }
 
     
-    private void calculateVectors(List<GameObject> objects){
+    private void calculateVectors(int numPoints, Vector3 normal)
+    {
+        vectorAngleList = new List<Vector3>();
+
+        Vector3 arbitraryVector = Vector3.right;
+        Vector3 perpendicular = FindPointToRay(arbitraryVector, transform.position, normal).normalized;
+        Vector3 perpendicular2 = Vector3.Cross(normal, perpendicular).normalized;
         
+        Debug.Log("Is it perp???" + Vector3.Dot(normal, perpendicular));
+        Debug.Log("Is it perp???" + Vector3.Dot(normal, perpendicular2));
+        Debug.Log("Is it perp???" + Vector3.Dot(perpendicular, perpendicular2));
+
+        float angleBetween = 6.2831853f/numPoints;
+        
+        Debug.Log("Angle between = " + angleBetween);
+
+        for(int i = 0; i < numPoints; i++)
+        {
+            vectorAngleList.Add(perpendicular * Mathf.Cos(angleBetween*i) + perpendicular2 * Mathf.Sin(angleBetween*i));
+            Debug.Log("i=" + i + " total vector  " + (perpendicular * Mathf.Cos(angleBetween*i) + perpendicular2 * Mathf.Sin(angleBetween*i)));
+            Debug.Log("i=" + i + " cos component " + perpendicular * Mathf.Cos(angleBetween*i));
+            Debug.Log("i=" + i + " sin component " + perpendicular2 * Mathf.Sin(angleBetween*i));
+            
+        }
+    
     }
 
     private void IgnorePhysics(List<GameObject> objects)

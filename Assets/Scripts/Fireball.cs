@@ -9,16 +9,50 @@ using UnityEngine;
 public class Fireball : NetworkBehaviour
 {
 
-    public ulong playerOwnerId;
+    [NonSerialized] public ulong playerOwnerId;
     private int bounces = 0;
 
-    public int clusterBombs = 0;
     public GameObject blast;
 
-    public GameObject gameManager;
+    private GameObject gameManager;
 
-    public Vector3 currentVelocity;
+    private Vector3 currentVelocity;
     Vector3 gravity;
+
+        // ------------------------------- Orb Related Stuff -------------------------------
+
+    [NonSerialized] public float orbDamage = 2f;
+
+    [NonSerialized] public float orbKnockbackForce = 50f;
+
+    [NonSerialized] public float orbKnockbackPercentDamage = 0.2f;
+
+    [NonSerialized] public int orbPriority = 1;
+
+    // ------------------------------- Explosion Related Stuff -------------------------------
+    [NonSerialized] public float explosionDamage = 1f;
+
+    [NonSerialized] public float explosionKnockbackForce = 12f;
+
+    [NonSerialized] public float explosionKnockbackPercentDamage = 0.1f;
+
+    [NonSerialized] public float explosionRadius = 4f;
+
+    
+
+    // ------------------------------- Altered Mechanics Related Stuff -------------------------------
+
+    [NonSerialized] public float homing = 0f;
+
+    [NonSerialized] public int maxBounces = 0;
+
+    [NonSerialized] public int clusterBomb = 0;
+
+    public void setStats(int clusterBombOld)
+    {
+        clusterBomb = clusterBombOld;
+    }
+    
 
     void Start()
     {   
@@ -41,9 +75,7 @@ public class Fireball : NetworkBehaviour
         playerOwnerId = playerId;
     }
 
-    public void setStats(){
-        clusterBombs = 0;
-    }
+
 
 
     private void DestroyProjectile()
@@ -75,12 +107,12 @@ public class Fireball : NetworkBehaviour
         // // Debug.Log("Outgoing Velocity: " + outgoingVelocity);
         // GetComponent<Rigidbody>().velocity = outgoingVelocity;
 
-        if (clusterBombs > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
+        if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
 
 
         if(otherObject == null)
         {
-            if(bounces < playerWhoShot.bounces.Value)
+            if(bounces < playerWhoShot.maxBounces.Value)
             {
                 //vel towards player
                 Vector3 dir = GetComponent<CalculateBounce>().BounceDirection();

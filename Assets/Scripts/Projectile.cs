@@ -160,7 +160,7 @@ public class Projectile : NetworkBehaviour
         projectileObj.transform.localScale = new Vector3(statsManager.orbScale.Value,statsManager.orbScale.Value,statsManager.orbScale.Value);
         projectileObj.GetComponent<Homing>().origin = firepoint;
         projectileObj.GetComponent<Homing>().direction = (destination - firepoint).normalized;
-        projectileObj.GetComponent<Fireball>().setStats();
+        projectileObj.GetComponent<Fireball>().setStats(GetComponent<PlayerStatsManager>().clusterBomb.Value);
         projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
         orbs.Add(projectileObj);
 

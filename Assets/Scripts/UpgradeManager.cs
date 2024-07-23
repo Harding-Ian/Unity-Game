@@ -65,7 +65,9 @@ public class UpgradeManager : NetworkBehaviour
 
     { "cluster2", $"Cluster Shot:\n {G} + Clustershot {XG} + 2 orbs {XR} - Considerable Orb damage {XR} - Considerable Orb Kockback {XR} - Huge orb cooldown {X}" },
 
-    { "charge1", $"Charge Shot:\n {G} + Huge Max orb speed {XR} - Huge Charge time {X}" }
+    { "charge1", $"Charge Shot:\n {G} + Huge Max orb speed {XR} - Huge Charge time {X}" },
+
+    { "clusterBomb1", $"Cluster Bomb:\n {G} + Spawns Bombs on Explosion {XR}" },
 };
 
     //private bool triggered = false;
@@ -169,7 +171,7 @@ public class UpgradeManager : NetworkBehaviour
 
     private void bounceshot1()
     {
-        stats.bounces.Value += 1;
+        stats.maxBounces.Value += 1;
         stats.orbKnockbackForce.Value -= 15f;
         stats.orbKnockbackPercentDamage.Value -= 0.05f;
     }
@@ -319,6 +321,10 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbMaxSpeed.Value += 60f;
         stats.orbChargeTime.Value += 1.5f;
         stats.orbPriority.Value += 1;
+    }
+
+    private void clusterBomb1(){
+        stats.clusterBomb.Value += 3;
     }
 
 

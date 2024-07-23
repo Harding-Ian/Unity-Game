@@ -14,7 +14,7 @@ public class PlayerScript : NetworkBehaviour
     [NonSerialized] public NetworkVariable<bool> upgraded = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [NonSerialized] public NetworkVariable<int> wins = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [NonSerialized] public List<string> UpgradeList = new List<string>() {"test1", "test2", "test3"};
+    [NonSerialized] public List<string> UpgradeList = new List<string>();
 
     private void Start()
     {
