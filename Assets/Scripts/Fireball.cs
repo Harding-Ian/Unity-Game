@@ -48,9 +48,20 @@ public class Fireball : NetworkBehaviour
 
     [NonSerialized] public int clusterBomb = 0;
 
-    public void setStats(int clusterBombOld)
+    public void setStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer, float explosionDamagePlayer, float explosionKnockbackForcePlayer,
+                         float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer, float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
     {
-        clusterBomb = clusterBombOld;
+        orbDamage = orbDamagePlayer;
+        orbKnockbackForce = orbKnockbackForcePlayer;
+        orbKnockbackPercentDamage = orbKnockbackPercentDamagePlayer;
+        orbPriority = orbPriorityPlayer;
+        explosionDamage = explosionDamagePlayer;
+        explosionKnockbackForce = explosionKnockbackForcePlayer;
+        explosionKnockbackPercentDamage = explosionKnockbackPercentDamagePlayer;
+        explosionRadius = explosionRadiusPlayer;
+        homing = homingPlayer;
+        maxBounces = maxBouncesPlayer;
+        clusterBomb = clusterBombPlayer;
     }
     
 
@@ -112,7 +123,7 @@ public class Fireball : NetworkBehaviour
 
         if(otherObject == null)
         {
-            if(bounces < playerWhoShot.maxBounces.Value)
+            if(bounces < maxBounces)
             {
                 //vel towards player
                 Vector3 dir = GetComponent<CalculateBounce>().BounceDirection();
@@ -145,7 +156,7 @@ public class Fireball : NetworkBehaviour
                 Physics.IgnoreCollision(GetComponent<Collider>(),otherObject.GetComponent<Collider>());
                 GetComponent<Rigidbody>().velocity = currentVelocity;
             }
-            else if(playerWhoShot.orbPriority.Value > otherPlayerWhoShot.orbPriority.Value)
+            else if(orbPriority > otherObject.GetComponent<Fireball>().orbPriority)
             {
                 GetComponent<Rigidbody>().velocity = currentVelocity;
             }
@@ -157,11 +168,11 @@ public class Fireball : NetworkBehaviour
         }
         else if(otherObject.CompareTag("Player") && playerOwnerId != otherObject.OwnerClientId)
         {
-            gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, playerWhoShot.orbDamage.Value, playerOwnerId);
+            gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, orbDamage, playerOwnerId);
             
-            otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, playerWhoShot.orbKnockbackForce.Value, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
+            otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, orbKnockbackForce, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
 
-            gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, playerWhoShot.orbKnockbackPercentDamage.Value);
+            gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, orbKnockbackPercentDamage);
             GetComponent<FireballAudio>().PlayHitSound(playerOwnerId, otherObject.OwnerClientId);
 
             NetworkObject.Despawn();

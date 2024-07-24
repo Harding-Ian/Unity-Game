@@ -15,7 +15,7 @@ public class Homing : NetworkBehaviour
     {
         if (!IsServer) return;
         playerWhoShot = NetworkManager.Singleton.ConnectedClients[GetComponent<Fireball>().playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
-        homingStrength = playerWhoShot.homing.Value;
+        homingStrength = GetComponent<Fireball>().homing;
         findNearestPlayer();
     }
 

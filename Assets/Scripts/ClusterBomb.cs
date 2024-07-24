@@ -39,6 +39,7 @@ public class ClusterBomb : NetworkBehaviour
 
             GameObject projectileObj = Instantiate(projectile, transform.position + normal.normalized * 0.3f, Quaternion.identity);
             projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(GetComponent<Fireball>().playerOwnerId);
+            projectileObj.GetComponent<Fireball>().maxBounces = 0;
             projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
             bombs.Add(projectileObj);

@@ -157,11 +157,14 @@ public class Projectile : NetworkBehaviour
     private void ProjectileRpc(ulong id, Vector3 firepoint, Vector3 destination, float dropMod, float speedMod)
     {
         GameObject projectileObj = Instantiate(projectile, firepoint, Quaternion.identity);
+        PlayerStatsManager stats = GetComponent<PlayerStatsManager>();
         projectileObj.transform.localScale = new Vector3(statsManager.orbScale.Value,statsManager.orbScale.Value,statsManager.orbScale.Value);
         projectileObj.GetComponent<Homing>().origin = firepoint;
         projectileObj.GetComponent<Homing>().direction = (destination - firepoint).normalized;
-        projectileObj.GetComponent<Fireball>().setStats(GetComponent<PlayerStatsManager>().clusterBomb.Value);
         projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
+        projectileObj.GetComponent<Fireball>().setStats(stats.orbDamage.Value, stats.orbKnockbackForce.Value, stats.orbKnockbackPercentDamage.Value, stats.orbPriority.Value, stats.explosionDamage.Value, stats.explosionKnockbackForce.Value,
+                                                        stats.explosionKnockbackPercentDamage.Value,  stats.explosionRadius.Value,  stats.homing.Value, stats.maxBounces.Value, stats.clusterBomb.Value);
+
         orbs.Add(projectileObj);
 
         
