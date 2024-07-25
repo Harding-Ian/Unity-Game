@@ -68,6 +68,12 @@ public class UpgradeManager : NetworkBehaviour
     { "charge1", $"Charge Shot:\n {G} + Huge Max orb speed {XR} - Huge Charge time {X}" },
 
     { "clusterBomb1", $"Cluster Bomb:\n {G} + Spawns Bombs on Explosion {XR}" },
+
+    { "lifesteal1", $"Leech:\n {G} + Considerable Lifesteal on all damage {XR} - Small HP {XR} - Small Orb Damage {X}"},
+
+    { "glasscannon1", $"Glass Cannon:\n {G} + Collosal damage {XR} - huge HP {X}"},
+
+    { "shotgun1", $"Shotgun:\n {G} + 4 Orbs {XG} + Huge Orb Speed {XG} + No charge {XR} + Considerable orb cooldown {XR} - Considerable orb knockback {XR} - Huge orb size {XR} - Huge Orb Damage"},
 };
 
     //private bool triggered = false;
@@ -200,10 +206,10 @@ public class UpgradeManager : NetworkBehaviour
 
     private void explosion1()
     {
-        stats.explosionRadius.Value += 1.5f;
+        stats.explosionRadius.Value += 2.5f;
         stats.explosionDamage.Value += 0.5f;
-        stats.explosionKnockbackForce.Value += 10f;
-        stats.explosionKnockbackPercentDamage.Value += 0.05f;
+        stats.explosionKnockbackForce.Value += 20f;
+        stats.explosionKnockbackPercentDamage.Value += 0.1f;
         stats.orbCooldown.Value += 0.1f;
     }
 
@@ -281,10 +287,10 @@ public class UpgradeManager : NetworkBehaviour
 
     private void topspeed1()
     {
-        stats.groundedMoveSpeed.Value += 8f;
-        stats.airMoveSpeed.Value += 8f;
-        stats.groundMultiplier.Value -= 0.2f;
-        stats.airMultiplier.Value -= 0.2f;
+        stats.groundedMoveSpeed.Value += 6f;
+        stats.airMoveSpeed.Value += 6f;
+        stats.groundMultiplier.Value -= 0.4f;
+        stats.airMultiplier.Value -= 0.4f;
     }
 
     private void agility1()
@@ -323,9 +329,50 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbPriority.Value += 1;
     }
 
-    private void clusterBomb1(){
+    private void clusterBomb1()
+    {
         stats.clusterBomb.Value += 3;
     }
+
+    private void lifesteal1()
+    {
+        stats.lifeSteal.Value += 0.4f;
+        stats.maxPlayerHealth.Value -= 2f;
+        stats.orbDamage.Value -= 0.2f;
+    }   
+
+
+    private void glasscannon1()
+    {
+        stats.orbDamage.Value += 3f;
+        stats.maxPlayerHealth.Value -= 8f;
+        stats.orbPriority.Value += 1;
+    }
+
+
+    private void shotgun1()  //bryce change
+    {
+        stats.orbScale.Value *= 0.3f;
+        stats.orbMinSpeed.Value = stats.orbMaxSpeed.Value;
+        stats.orbChargeTime.Value = 0.01f;
+        stats.fireShape.Value = "cluster";
+        stats.numberOfOrbs.Value += 4;
+        stats.orbDamage.Value *= 0.38f;
+        stats.orbCooldown.Value += 0.53f;
+        stats.orbPriority.Value -= 1;
+        stats.orbKnockbackForce.Value -= 20f;
+        stats.orbSpread.Value += 0.6f;
+    }
+
+    private void GMPGOTM()
+    {
+        stats.orbScale.Value += 0.53f;
+        stats.maxBounces.Value += 3;
+        stats.clusterBomb.Value += 3;
+        
+
+    }
+
 
 
 }

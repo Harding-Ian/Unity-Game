@@ -23,7 +23,7 @@ public class PlayerMultishot : NetworkBehaviour
 
         if (GetComponent<PlayerStatsManager>().fireShape.Value.ToString() == "volley")
         {
-            float gap =  0.1f;
+            float gap =  GetComponent<PlayerStatsManager>().orbSpread.Value;
             float separation = orbSize + gap;
 
             Vector3 Lfirepoint;
@@ -122,7 +122,7 @@ public class PlayerMultishot : NetworkBehaviour
             List<Vector3> points = new List<Vector3>();
             points.Add(firepoint);
             remainingOrbs--;
-            orbSize += 0.2f;
+            orbSize += GetComponent<PlayerStatsManager>().orbSpread.Value;
 
             bool addPoint = true;
             int myself = 0;

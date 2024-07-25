@@ -72,10 +72,10 @@ Mechanics:
 
 
 
-- Cluster bomb (an orb that on impact turns into multiple orbs)
+- ////////////Cluster bomb (an orb that on impact turns into multiple orbs)
 
 
-- Life Steal
+- /////////////Life Steal
 
 
 - blocks spawns bombs that dont damage you 
@@ -104,9 +104,6 @@ Mechanics:
 - phoenix respawn on death
 
 - Block refreshes if you hit a shot
-
-
-- manual homing
 
 
 - Hitting a shot reloads your orb

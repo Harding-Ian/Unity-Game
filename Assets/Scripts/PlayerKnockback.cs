@@ -8,10 +8,11 @@ public class PlayerKnockback : NetworkBehaviour
     public PlayerStatsManager statsManager;
 
     [Rpc(SendTo.SpecifiedInParams)]
-    public void ApplyKnockbackRpc(Vector3 knockbackDirection, float knockbackForce, RpcParams rpcParams)
+    public void ApplyKnockbackRpc(Vector3 knockbackDirection, float knockbackForce, bool invert, RpcParams rpcParams)
     {
         NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
         
+        if(invert) knockbackDirection *= -1f;
 
         float angle = 180 - Vector3.Angle(knockbackDirection, Vector3.down) - 65;
 

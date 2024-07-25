@@ -18,7 +18,13 @@ public class PlayerStatsManager : NetworkBehaviour
         //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
         //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
         //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("multiDash1", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
         //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("clusterBomb1", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("clusterBomb1", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("shotgun1", player);
+
 
     }
 
@@ -107,6 +113,8 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> homing = new NetworkVariable<float>(0f);
 
+    [NonSerialized] public NetworkVariable<float> orbSpread = new NetworkVariable<float>(0.15f);
+
     [NonSerialized] public NetworkVariable<int> orbBurst = new NetworkVariable<int>(1);
 
     [NonSerialized] public NetworkVariable<float> orbBurstDelay = new NetworkVariable<float>(0.1f);
@@ -114,6 +122,10 @@ public class PlayerStatsManager : NetworkBehaviour
     [NonSerialized] public NetworkVariable<int> maxBounces = new NetworkVariable<int>(0);
 
     [NonSerialized] public NetworkVariable<int> clusterBomb = new NetworkVariable<int>(0);
+
+    [NonSerialized] public NetworkVariable<float> lifeSteal = new NetworkVariable<float>(0f);
+
+    [NonSerialized] public NetworkVariable<bool> pulseInvertKnockback = new NetworkVariable<bool>(false);
 
 
 }

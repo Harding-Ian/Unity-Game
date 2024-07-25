@@ -170,7 +170,7 @@ public class Fireball : NetworkBehaviour
         {
             gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, orbDamage, playerOwnerId);
             
-            otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, orbKnockbackForce, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
+            otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, orbKnockbackForce, false, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
 
             gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, orbKnockbackPercentDamage);
             GetComponent<FireballAudio>().PlayHitSound(playerOwnerId, otherObject.OwnerClientId);

@@ -31,6 +31,7 @@ public class MouseLook : NetworkBehaviour
         {
             playerCamera.GetComponent<Camera>().enabled = false;
         }
+        playerCamera.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
     }
 
     // Update is called once per frame

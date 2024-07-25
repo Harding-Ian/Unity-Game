@@ -64,7 +64,7 @@ public class ProjectileBlast : NetworkBehaviour
             {
                 gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
                 gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
-                player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
             }
 
             else if (Physics.Raycast(ray, out hit)) 
@@ -74,7 +74,7 @@ public class ProjectileBlast : NetworkBehaviour
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
                     
-                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
 
                     if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId) clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
                 }

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 public class StatsManager : NetworkBehaviour
 {
-    // Dictionary to store health for each player by clientId
+
+    public ParticleSystem deathParticles;
+
     public override void OnNetworkSpawn()
     {
-        // Subscribe to the OnClientConnectedCallback and OnClientDisconnectedCallback events
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
     }
@@ -23,23 +24,16 @@ public class StatsManager : NetworkBehaviour
         Debug.Log("ID of the client that disconnected: " + clientId);
     }
 
-    public void ApplyDamage(ulong damagedPlayerId, float damage, ulong damagingPlayerId){
-        UpdateHealthServerRpc(damage, damagedPlayerId, damagingPlayerId);
-    }
-
-    public void UpdateKnockback(ulong clientId, float knockback)
-    {
-        UpdateKnockbackServerRpc(clientId, knockback);
-    }
-
-    [ServerRpc]
-    private void UpdateHealthServerRpc(float damage, ulong damagedPlayerId, ulong damagingPlayerId)
+    public void ApplyDamage(ulong damagedPlayerId, float damage, ulong damagingPlayerId)
     {
         NetworkObject damagedPlayer = NetworkManager.Singleton.ConnectedClients[damagedPlayerId].PlayerObject;
+        NetworkObject damagingPlayer = NetworkManager.Singleton.ConnectedClients[damagingPlayerId].PlayerObject;
+        PlayerStatsManager damagingPlayerStats = damagingPlayer.GetComponent<PlayerStatsManager>();
+        PlayerStatsManager damagedPlayerStats = damagedPlayer.GetComponent<PlayerStatsManager>();
+        
+        damagedPlayerStats.playerHealth.Value -= damage;
 
-        damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value -= damage;
-
-        if(damagingPlayerId != damagedPlayerId) 
+        if(damagingPlayerId != damagedPlayerId)
         {
             damagedPlayer.GetComponent<PlayerScript>().lastDamagingPlayerId.Value = damagingPlayerId;
         }
@@ -47,14 +41,30 @@ public class StatsManager : NetworkBehaviour
         if (damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0 && damagedPlayer.GetComponent<PlayerScript>().dead.Value == false)
         {
             damagedPlayer.GetComponent<PlayerDeath>().InitiatePlayerDeath();
+            deathAnimationRpc();
         }
-        
+
+        if(damagingPlayerStats.lifeSteal.Value > 0 && damagedPlayerId != damagingPlayerId)
+        {
+            damagingPlayerStats.playerHealth.Value += damage * damagingPlayerStats.lifeSteal.Value;
+
+            if(damagingPlayerStats.playerHealth.Value > damagingPlayerStats.maxPlayerHealth.Value)
+            {
+                damagingPlayerStats.playerHealth.Value = damagingPlayerStats.maxPlayerHealth.Value;
+            }
+        }
     }
 
-    [ServerRpc]
-    private void UpdateKnockbackServerRpc(ulong clientId, float knockback){
-        NetworkObject networkObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-        networkObject.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value += knockback;
+    
+    [Rpc(SendTo.Everyone)]
+    private void deathParticlesRpc(){
+        deathParticles.Play();
+    }
+
+    public void UpdateKnockback(ulong PlayerId, float knockbackBuildUp)
+    {
+        NetworkObject playerObject = NetworkManager.Singleton.ConnectedClients[PlayerId].PlayerObject;
+        playerObject.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value += knockbackBuildUp;
     }
 
 }

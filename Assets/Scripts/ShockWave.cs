@@ -24,10 +24,9 @@ public class ShockWave : NetworkBehaviour
         if (objectRenderer != null) {
             initialColor = objectRenderer.material.color;
         }
-        Destroy(gameObject, 0.1f);
+        Destroy(gameObject, 0.5f);
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (IsServer){
@@ -35,7 +34,7 @@ public class ShockWave : NetworkBehaviour
             //ShockWaveOpacityRpc(0.3f);
         }
         IncreaseScale(0.85f, initialScale);  
-        DecreaseOpacity(3f);
+        DecreaseOpacity(1f);
     }
 
 

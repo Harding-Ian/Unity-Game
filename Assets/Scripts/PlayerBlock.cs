@@ -63,7 +63,7 @@ public class PlayerBlock : NetworkBehaviour
 
         foreach (var player in playersInRange)
         {
-            var ray = new Ray(GetComponent<Transform>().position, player.GetComponent<Transform>().position - GetComponent<Transform>().position);
+            var ray = new Ray(transform.position, player.transform.position - transform.position);
             RaycastHit hit;
             
             if (Physics.Raycast(ray, out hit)) 
@@ -73,7 +73,7 @@ public class PlayerBlock : NetworkBehaviour
                 {
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseDamage.Value, id);
                     
-                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.transform.position - transform.position).normalized, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value, GetComponent<PlayerStatsManager>().pulseInvertKnockback.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseKnockbackPercentDamage.Value);
                 }
             }

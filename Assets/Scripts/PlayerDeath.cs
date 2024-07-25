@@ -38,6 +38,8 @@ public class PlayerDeath : NetworkBehaviour
         GetComponent<PlayerScript>().dead.Value = true;
         DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));
 
+
+
         List<PlayerScript> AlivePlayersList = new List<PlayerScript>();
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
@@ -56,7 +58,6 @@ public class PlayerDeath : NetworkBehaviour
         {
             GameManager.GetComponent<GameSceneManager>().RoundCompleted(AlivePlayersList[0].GameObject());
         }
-        
     }
 
 
