@@ -13,17 +13,15 @@ public class PlayerStatsManager : NetworkBehaviour
         GameObject gameManager = GameObject.Find("GameManager");
         PlayerStatsManager player = this;
 
-
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("multiDash1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("bounceshot1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("clusterBomb1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("clusterBomb1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("cluster2", player);
-        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("shotgun1", player);
+        
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("grenadelauncher1", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("decoy", this);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed1", player);
+        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed1", player);
 
 
     }
@@ -76,7 +74,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> pulseKnockbackPercentDamage = new NetworkVariable<float>(0.05f);
 
-    [NonSerialized] public NetworkVariable<float> pulseRadius = new NetworkVariable<float>(4f);
+    [NonSerialized] public NetworkVariable<float> pulseRadius = new NetworkVariable<float>(5f);
 
     [NonSerialized] public NetworkVariable<float> pulseCooldown = new NetworkVariable<float>(2.5f);
 
@@ -98,9 +96,9 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> airMoveSpeed = new NetworkVariable<float>(5f);
 
-    [NonSerialized] public NetworkVariable<float> groundMultiplier = new NetworkVariable<float>(10f);
+    [NonSerialized] public NetworkVariable<float> groundMoveForce = new NetworkVariable<float>(80f);
 
-    [NonSerialized] public NetworkVariable<float> airMultiplier = new NetworkVariable<float>(15f);
+    [NonSerialized] public NetworkVariable<float> airMoveForce = new NetworkVariable<float>(60f);
         // other movement vars
 
     
@@ -126,6 +124,8 @@ public class PlayerStatsManager : NetworkBehaviour
     [NonSerialized] public NetworkVariable<float> lifeSteal = new NetworkVariable<float>(0f);
 
     [NonSerialized] public NetworkVariable<bool> pulseInvertKnockback = new NetworkVariable<bool>(false);
+
+    [NonSerialized] public NetworkVariable<bool> decoy = new NetworkVariable<bool>(false);
 
 
 }

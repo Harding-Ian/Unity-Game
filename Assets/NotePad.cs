@@ -98,7 +98,7 @@ Mechanics:
 
 - blocking healing field aoe
 
-- invert knockback of your block
+- ///////////////invert knockback of your block
 
 
 - phoenix respawn on death
@@ -112,7 +112,7 @@ Mechanics:
 - blocking becomes small dash
 
 
-- spawns a decoy/ mirage
+- /////////////////spawns a decoy/ mirage
 
 
 

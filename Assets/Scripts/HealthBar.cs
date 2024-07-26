@@ -25,8 +25,6 @@ public class HealthBar : NetworkBehaviour
     public Renderer eyeRenderer;
     public Renderer hatRenderer;
 
-    public Renderer eyeCube;
-
     public PlayerStatsManager statsManager;
 
     public GameObject knockbackPercentObject;
@@ -40,7 +38,6 @@ public class HealthBar : NetworkBehaviour
             hatRenderer.enabled = false;
             eyeRenderer.enabled = false;
             
-            eyeCube.enabled = false;
             FillSliderHolder = GameObject.Find("FillSliderHolder");
             healthBarSlider = FillSliderHolder.GetComponent<Slider>();
             visibleHealthBarCanvas.enabled = false;

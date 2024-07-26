@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Reflection;
 using System;
 using Unity.Netcode;
+using Unity.VisualScripting;
+using Unity.Mathematics;
 
 public class UpgradeManager : NetworkBehaviour
 {
@@ -74,46 +76,30 @@ public class UpgradeManager : NetworkBehaviour
     { "glasscannon1", $"Glass Cannon:\n {G} + Collosal damage {XR} - huge HP {X}"},
 
     { "shotgun1", $"Shotgun:\n {G} + 4 Orbs {XG} + Huge Orb Speed {XG} + No charge {XR} + Considerable orb cooldown {XR} - Considerable orb knockback {XR} - Huge orb size {XR} - Huge Orb Damage"},
+
+    //{ "grenadelauncher1", $"Grenade Launcher:\n {G} + 1 Max Bounce {XG} + Huge Orb Size {XG} + 3 Cluster Bomb {XG} + Huge Explosion Damage/Radius/Knockback {XR} + Huge orb cooldown {XR} + Huge orb Charge Time {XR} - Huge Orb Damage"},
+
+    { "pulseinvertknockback1", $"Invert Pulse Knockback:\n {G} + Invert {XG} + Huge pulse range {XR} - Considerable pulse cooldown {X}"},
+
+    { "decoy1", $"Decoy:\n {G} + 1 Decoy {XR} - Considerable pulse cooldown {X}"}
 };
 
-    //private bool triggered = false;
-
-    //private Collider playerCollider;
 
     public PlayerStatsManager stats;
 
+    private float Increase(float val, float a, float y_inf)
+    {
+        float b = y_inf * (1-a);
+        float newVal = a*val + b;
+        return math.max(newVal, val);
+    }
 
-    // private void OnTriggerEnter(Collider collider)
-    // {
-    //     if(!IsServer || triggered) return;
-    //     triggered = true;
-        
-    //     stats = collider.transform.root.GetComponent<PlayerStatsManager>();
-
-    //     // List<string> upgradesToRemoveList = collider.transform.root.GetComponent<PlayerScript>().UpgradeList;
-    //     // Debug.Log("upgradesToRemoveList is " + upgradesToRemoveList);
-    //     // foreach(string upgrade in upgradesToRemoveList)
-    //     // {
-    //     //     Debug.Log("upgrade is  " + upgrade);
-    //     //     upgradeDescriptions.RemoveAt(upgradeNames.IndexOf(upgrade));
-    //     //     upgradeNames.Remove(upgrade);
-    //     // }
-
-    //     foreach(Transform child in transform)
-    //     {
-    //         if (upgradeDictionary.Count == 0) return;
-
-    //         List<string> keys = new List<string>(upgradeDictionary.Keys);
-    //         int index = UnityEngine.Random.Range(0, keys.Count);
-    //         string upgradeName = keys[index];
-    //         string upgradeDescription = upgradeDictionary[upgradeName];
-
-    //         child.GetComponent<CardTrigger>().setUpgradeName(upgradeName);
-    //         child.GetComponent<CardTrigger>().cardTextRpc(upgradeDescription);
-
-    //         upgradeDictionary.Remove(upgradeName);
-    //     }
-    // }
+    private float Decrease(float val, float a, float y_inf)
+    {
+        float b = y_inf * (1-a);
+        float newVal = a*val + b;
+        return math.min(newVal, val);
+    }
 
     public void UpgradePlayer(string upgrade, PlayerStatsManager player)
     {
@@ -163,8 +149,8 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.groundedMoveSpeed.Value += 4f;
         stats.airMoveSpeed.Value += 4f;
-        stats.groundMultiplier.Value += 0.6f;
-        stats.airMultiplier.Value += 0.6f;
+        stats.groundMoveForce.Value += 0.6f;
+        stats.airMoveForce.Value += 0.6f;
     }
 
     private void homing1()
@@ -247,8 +233,8 @@ public class UpgradeManager : NetworkBehaviour
         stats.maxPlayerHealth.Value += 10f;
         stats.groundedMoveSpeed.Value -= 1f;
         stats.airMoveSpeed.Value -= 1f;
-        stats.groundMultiplier.Value -= 0.2f;
-        stats.airMultiplier.Value -= 0.2f;
+        stats.groundMoveForce.Value -= 0.2f;
+        stats.airMoveForce.Value -= 0.2f;
     }
 
     private void jump1()
@@ -289,14 +275,24 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.groundedMoveSpeed.Value += 6f;
         stats.airMoveSpeed.Value += 6f;
-        stats.groundMultiplier.Value -= 0.4f;
-        stats.airMultiplier.Value -= 0.4f;
+        stats.groundMoveForce.Value = 30f;
+        stats.airMoveForce.Value -= 25f;
+    }
+
+    private void topspeed2()
+    {
+        stats.groundedMoveSpeed.Value += 6f;
+        stats.airMoveSpeed.Value += 6f;
+        stats.groundMoveForce.Value = Decrease(stats.groundMoveForce.Value, 0.6f, 25f);
+        stats.airMoveForce.Value = Decrease(stats.groundMoveForce.Value, 0.6f, 25f);
     }
 
     private void agility1()
     {
-        stats.groundMultiplier.Value += 1.2f;
-        stats.airMultiplier.Value += 1.2f;
+        stats.groundedMoveSpeed.Value += 1f;
+        stats.airMoveSpeed.Value += 1f;
+        stats.groundMoveForce.Value += 50f;
+        stats.airMoveForce.Value += 40f;
         stats.maxPlayerHealth.Value -= 2f;
     }
 
@@ -350,7 +346,7 @@ public class UpgradeManager : NetworkBehaviour
     }
 
 
-    private void shotgun1()  //bryce change
+    private void shotgun1()
     {
         stats.orbScale.Value *= 0.3f;
         stats.orbMinSpeed.Value = stats.orbMaxSpeed.Value;
@@ -363,15 +359,21 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbKnockbackForce.Value -= 20f;
         stats.orbSpread.Value += 0.6f;
     }
-
-    private void GMPGOTM()
+    
+    private void pulseinvertknockback1()
     {
-        stats.orbScale.Value += 0.53f;
-        stats.maxBounces.Value += 3;
-        stats.clusterBomb.Value += 3;
-        
-
+        stats.pulseInvertKnockback.Value = true;
+        stats.pulseRadius.Value += 2.5f;
+        stats.pulseCooldown.Value += 1f; 
     }
+
+    private void decoy()
+    {
+        stats.decoy.Value = true;
+        stats.pulseCooldown.Value += 1f;
+    }
+    
+    
 
 
 

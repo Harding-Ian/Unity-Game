@@ -176,23 +176,27 @@ public class PlayerMovement : NetworkBehaviour
 
         inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
 
-        //chech which max speed to apply
-        if(grounded) moveSpeed = statsManager.groundedMoveSpeed.Value;//
+        //check which max speed to apply
+        if(grounded) moveSpeed = statsManager.groundedMoveSpeed.Value;
         else moveSpeed = statsManager.airMoveSpeed.Value;
 
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
         if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)
+        {
             moveDirection = inputDirection - Vector3.Project(inputDirection, Velxz);
+        }
         else
+        {
             moveDirection = inputDirection;
+        }
 
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * moveSpeed * statsManager.groundMultiplier.Value, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * statsManager.groundMoveForce.Value, ForceMode.Acceleration);
         }
         else
-            rb.AddForce(moveDirection * moveSpeed * statsManager.airMultiplier.Value, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * statsManager.airMoveForce.Value, ForceMode.Acceleration);
     }
 
     private void Jump()

@@ -41,7 +41,7 @@ public class StatsManager : NetworkBehaviour
         if (damagedPlayer.GetComponent<PlayerStatsManager>().playerHealth.Value <= 0 && damagedPlayer.GetComponent<PlayerScript>().dead.Value == false)
         {
             damagedPlayer.GetComponent<PlayerDeath>().InitiatePlayerDeath();
-            deathAnimationRpc();
+            //deathAnimationRpc();
         }
 
         if(damagingPlayerStats.lifeSteal.Value > 0 && damagedPlayerId != damagingPlayerId)

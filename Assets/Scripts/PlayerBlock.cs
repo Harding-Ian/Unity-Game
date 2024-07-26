@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBlock : NetworkBehaviour
 {
@@ -15,6 +17,8 @@ public class PlayerBlock : NetworkBehaviour
     public PlayerStatsManager statsManager;
 
     public GameObject blockWave;
+
+    public GameObject decoyPrefab;
     
     void Update()
     {
@@ -39,8 +43,24 @@ public class PlayerBlock : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    private void BlockRpc(ulong id, Vector3 blockOrigin, float radius){
+    private void BlockRpc(ulong id, Vector3 blockOrigin, float radius)
+    {
         //GameObject blockObject = Instantiate(blockWave, GetComponent<Transform>().position, Quaternion.identity);
+        if(statsManager.decoy.Value == true)
+        {
+            GameObject decoy = Instantiate(decoyPrefab, transform.position, transform.rotation);
+            decoy.GetComponent<DecoyScript>().setStats(statsManager.groundMoveForce.Value, statsManager.groundedMoveSpeed.Value, transform.forward, GetComponent<Rigidbody>().rotation);
+
+            decoy.transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value = transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value;
+
+            Physics.IgnoreCollision(decoy.transform.Find("Model/Body").GetComponent<Collider>(), transform.Find("Model/Body").GetComponent<Collider>());
+            Physics.IgnoreCollision(decoy.transform.Find("Model/Head").GetComponent<Collider>(), transform.Find("Model/Body").GetComponent<Collider>());
+            Physics.IgnoreCollision(decoy.transform.Find("Model/Body").GetComponent<Collider>(), transform.Find("Model/Head").GetComponent<Collider>());
+            Physics.IgnoreCollision(decoy.transform.Find("Model/Head").GetComponent<Collider>(), transform.Find("Model/Head").GetComponent<Collider>());
+
+
+            decoy.GetComponent<NetworkObject>().Spawn(true);
+        }
         SpawnBlockWaveRpc(blockOrigin);
         //blockObject.GetComponent<NetworkObject>().Spawn(true);
 
@@ -86,6 +106,6 @@ public class PlayerBlock : NetworkBehaviour
     private void SpawnBlockWaveRpc(Vector3 blockOrigin){
         GameObject blockObject = Instantiate(blockWave, blockOrigin, Quaternion.identity);
     }
-    
+
 
 }

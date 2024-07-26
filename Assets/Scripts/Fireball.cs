@@ -48,8 +48,7 @@ public class Fireball : NetworkBehaviour
 
     [NonSerialized] public int clusterBomb = 0;
 
-    public void setStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer, float explosionDamagePlayer, float explosionKnockbackForcePlayer,
-                         float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer, float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
+    public void setStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer, float explosionDamagePlayer, float explosionKnockbackForcePlayer, float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer, float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
     {
         orbDamage = orbDamagePlayer;
         orbKnockbackForce = orbKnockbackForcePlayer;
@@ -92,6 +91,10 @@ public class Fireball : NetworkBehaviour
     private void DestroyProjectile()
     {
         NetworkObject.Despawn();
+        if(clusterBomb > 0)
+        {
+
+        }
     }
 
 
@@ -99,7 +102,7 @@ public class Fireball : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
+        //Debug.Log("fireball " + NetworkObjectId + " collided with " + collision.gameObject + " bounce: " + bounces);
         
         NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
@@ -117,8 +120,6 @@ public class Fireball : NetworkBehaviour
         // // Debug.Log("Normal: " + normal);
         // // Debug.Log("Outgoing Velocity: " + outgoingVelocity);
         // GetComponent<Rigidbody>().velocity = outgoingVelocity;
-
-        if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
 
 
         if(otherObject == null)
@@ -143,6 +144,7 @@ public class Fireball : NetworkBehaviour
             }
             else
             {
+                if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
                 NetworkObject.Despawn();
                 CreateBlast();
             }
@@ -162,6 +164,7 @@ public class Fireball : NetworkBehaviour
             }
             else
             {
+                if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
                 NetworkObject.Despawn();
                 CreateBlast();
             }
@@ -174,12 +177,14 @@ public class Fireball : NetworkBehaviour
 
             gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, orbKnockbackPercentDamage);
             GetComponent<FireballAudio>().PlayHitSound(playerOwnerId, otherObject.OwnerClientId);
-
+            
+            if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
             NetworkObject.Despawn();
             CreateBlast();
         }
         else
         {
+            if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
             NetworkObject.Despawn();
             CreateBlast();
         }

@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class BillBoardRotation : NetworkBehaviour
 {
-    public GameObject player;
     private ulong instanceId;
     private ulong playerToLookAtId;
     [SerializeField]
