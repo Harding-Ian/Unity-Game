@@ -12,14 +12,12 @@ public class PlayerStatsManager : NetworkBehaviour
     {
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        upgrade.UpgradePlayer("decoy", this);
-        upgrade.UpgradePlayer("clusterbomb1", this);
-        upgrade.UpgradePlayer("explosion1", this);
-        upgrade.UpgradePlayer("explosion1", this);
-        upgrade.UpgradePlayer("explosion1", this);
-        upgrade.UpgradePlayer("orbsize1", this);
-
-
+        // upgrade.UpgradePlayer("decoy", this);
+        // upgrade.UpgradePlayer("clusterbomb1", this);
+        // upgrade.UpgradePlayer("explosion1", this);
+        // upgrade.UpgradePlayer("explosion1", this);
+        // upgrade.UpgradePlayer("explosion1", this);
+        // upgrade.UpgradePlayer("orbsize1", this);
     }
 
     // ------------------------------- Player Health Stuff -------------------------------
