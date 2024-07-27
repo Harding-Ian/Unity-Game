@@ -51,8 +51,10 @@ public class HealthBar : NetworkBehaviour
     }
 
 
-    public void SetMaxHealth(float health){
-        if (IsLocalPlayer){
+    public void SetMaxHealth(float health)
+    {
+        if (IsLocalPlayer)
+        {
             healthBarSlider.maxValue = health;
             healthBarSlider.value = health;
         }
@@ -60,24 +62,29 @@ public class HealthBar : NetworkBehaviour
         visibleHealthBarSlider.value = health;
     }
 
-    public void SetHealth(float health){
-        if (IsLocalPlayer){
+    public void SetHealth(float health)
+    {
+        if (IsLocalPlayer)
+        {
             healthBarSlider.value = health;
         }
         visibleHealthBarSlider.value = health;
     }
 
-    private void SetKnockback(float value){
+    private void SetKnockback(float value)
+    {
         if (IsLocalPlayer){
             knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = value.ToString();
         }
     }
 
-    public void OnHealthChanged(float oldValue, float newValue){
+    public void OnHealthChanged(float oldValue, float newValue)
+    {
         SetHealth(newValue);
     }
 
-    public void OnKnockbackChanged(float oldValue, float newValue){
+    public void OnKnockbackChanged(float oldValue, float newValue)
+    {
         SetKnockback(newValue);
     }
 

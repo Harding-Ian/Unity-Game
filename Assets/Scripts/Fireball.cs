@@ -19,7 +19,7 @@ public class Fireball : NetworkBehaviour
     private Vector3 currentVelocity;
     Vector3 gravity;
 
-        // ------------------------------- Orb Related Stuff -------------------------------
+    // ------------------------------- Orb Related Stuff -------------------------------
 
     [NonSerialized] public float orbDamage = 2f;
 
@@ -48,19 +48,32 @@ public class Fireball : NetworkBehaviour
 
     [NonSerialized] public int clusterBomb = 0;
 
-    public void setStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer, float explosionDamagePlayer, float explosionKnockbackForcePlayer, float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer, float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
+    public void SetDamageStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer)
     {
         orbDamage = orbDamagePlayer;
         orbKnockbackForce = orbKnockbackForcePlayer;
         orbKnockbackPercentDamage = orbKnockbackPercentDamagePlayer;
         orbPriority = orbPriorityPlayer;
+    }
+
+    public void SetExplosionStats(float explosionDamagePlayer, float explosionKnockbackForcePlayer, float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer)
+    {
         explosionDamage = explosionDamagePlayer;
         explosionKnockbackForce = explosionKnockbackForcePlayer;
         explosionKnockbackPercentDamage = explosionKnockbackPercentDamagePlayer;
         explosionRadius = explosionRadiusPlayer;
+    }
+
+    public void SetSpecialStats(float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
+    {
         homing = homingPlayer;
         maxBounces = maxBouncesPlayer;
         clusterBomb = clusterBombPlayer;
+    }
+
+    public void SetPlayerOwnerId(ulong playerId)
+    {
+        playerOwnerId = playerId;
     }
     
 
@@ -70,31 +83,26 @@ public class Fireball : NetworkBehaviour
         
         gameManager = GameObject.Find("GameManager");
         currentVelocity = GetComponent<Rigidbody>().velocity;
-        Invoke(nameof(DestroyProjectile), 5);
+        Invoke(nameof(DespawnProjectile), 5);
     }
 
-    void Update(){
-        if (IsServer){
-            currentVelocity = GetComponent<Rigidbody>().velocity;
-        }
-
-    }
-
-
-    public void SetPlayerWhoFired(ulong playerId){
-        playerOwnerId = playerId;
+    void Update()
+    {
+        if (!IsServer) return;
+        currentVelocity = GetComponent<Rigidbody>().velocity;
     }
 
 
-
-
-    private void DestroyProjectile()
+    private void DespawnProjectile()
     {
         NetworkObject.Despawn();
-        if(clusterBomb > 0)
-        {
+    }
 
-        }
+    private void DestroyProjectile(Vector3 normal)
+    {
+        if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
+        NetworkObject.Despawn();
+        CreateBlast();
     }
 
 
@@ -107,26 +115,13 @@ public class Fireball : NetworkBehaviour
         NetworkObject otherObject = collision.gameObject.GetComponent<NetworkObject>();
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-
-
         ContactPoint contact = collision.contacts[0];
         Vector3 normal = contact.normal;
-
-        // Vector3 incomingVelocity = GetComponent<Rigidbody>().velocity;
-
-        // Vector3 outgoingVelocity = Vector3.Reflect(incomingVelocity, normal);
-
-        // // Debug.Log("Incoming Velocity: " + incomingVelocity);
-        // // Debug.Log("Normal: " + normal);
-        // // Debug.Log("Outgoing Velocity: " + outgoingVelocity);
-        // GetComponent<Rigidbody>().velocity = outgoingVelocity;
-
 
         if(otherObject == null)
         {
             if(bounces < maxBounces)
             {
-                //vel towards player
                 Vector3 dir = GetComponent<CalculateBounce>().BounceDirection();
                 if(dir != Vector3.zero) 
                 {
@@ -135,18 +130,11 @@ public class Fireball : NetworkBehaviour
                     GetComponent<ConstantForce>().force = new Vector3(0, 0, 0);
                     Invoke(nameof(SetGravity), 0.5f);
                 }
-
-                //homing
-                //GetComponent<Homing>().nearestPlayer = NearestPlayer();
-                //GetComponent<Homing>().homingStrength = 50f;
-                
                 bounces++;
             }
             else
             {
-                if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
-                NetworkObject.Despawn();
-                CreateBlast();
+                DestroyProjectile(normal);
             }
         }
         else if(otherObject.CompareTag("projectile"))
@@ -164,9 +152,7 @@ public class Fireball : NetworkBehaviour
             }
             else
             {
-                if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
-                NetworkObject.Despawn();
-                CreateBlast();
+                DestroyProjectile(normal);
             }
         }
         else if(otherObject.CompareTag("Player") && playerOwnerId != otherObject.OwnerClientId)
@@ -178,21 +164,19 @@ public class Fireball : NetworkBehaviour
             gameManager.GetComponent<StatsManager>().UpdateKnockback(otherObject.OwnerClientId, orbKnockbackPercentDamage);
             GetComponent<FireballAudio>().PlayHitSound(playerOwnerId, otherObject.OwnerClientId);
             
-            if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
-            NetworkObject.Despawn();
-            CreateBlast();
+            DestroyProjectile(normal);
         }
         else
         {
-            if (clusterBomb > 0) GetComponent<ClusterBomb>().spawnClusterBombs(normal);
-            NetworkObject.Despawn();
-            CreateBlast();
+            DestroyProjectile(normal);
         }
     }
 
     private void CreateBlast()
     {
         GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
+        blastObj.transform.localScale = new Vector3(explosionRadius, explosionRadius, explosionRadius);
+        blastObj.GetComponent<ProjectileBlast>().SetStats(explosionRadius, explosionDamage, explosionKnockbackPercentDamage, explosionKnockbackForce);
         blastObj.GetComponent<NetworkObject>().Spawn(true);
         blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
 

@@ -157,31 +157,22 @@ public class Projectile : NetworkBehaviour
     private void ProjectileRpc(ulong id, Vector3 firepoint, Vector3 destination, float dropMod, float speedMod)
     {
         GameObject projectileObj = Instantiate(projectile, firepoint, Quaternion.identity);
-        PlayerStatsManager stats = GetComponent<PlayerStatsManager>();
-        projectileObj.transform.localScale = new Vector3(statsManager.orbScale.Value,statsManager.orbScale.Value,statsManager.orbScale.Value);
-        projectileObj.GetComponent<Homing>().origin = firepoint;
-        projectileObj.GetComponent<Homing>().direction = (destination - firepoint).normalized;
-        projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(OwnerClientId);
-        projectileObj.GetComponent<Fireball>().setStats(stats.orbDamage.Value, stats.orbKnockbackForce.Value, stats.orbKnockbackPercentDamage.Value, stats.orbPriority.Value, stats.explosionDamage.Value, stats.explosionKnockbackForce.Value,
-                                                        stats.explosionKnockbackPercentDamage.Value,  stats.explosionRadius.Value,  stats.homing.Value, stats.maxBounces.Value, stats.clusterBomb.Value);
-
+        PlayerStatsManager player = GetComponent<PlayerStatsManager>();
+        projectileObj.transform.localScale = new Vector3(player.orbScale.Value, player.orbScale.Value, player.orbScale.Value);
+        projectileObj.GetComponent<Homing>().SetHomingStats(firepoint, (destination - firepoint).normalized);
+        projectileObj.GetComponent<Fireball>().SetDamageStats(player.orbDamage.Value, player.orbKnockbackForce.Value, player.orbKnockbackPercentDamage.Value, player.orbPriority.Value);
+        projectileObj.GetComponent<Fireball>().SetExplosionStats(player.explosionDamage.Value, player.explosionKnockbackForce.Value, player.explosionKnockbackPercentDamage.Value,  player.explosionRadius.Value);
+        projectileObj.GetComponent<Fireball>().SetSpecialStats(player.homing.Value, player.maxBounces.Value, player.clusterBomb.Value);
+        projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(OwnerClientId);
         orbs.Add(projectileObj);
 
-        
         projectileObj.GetComponent<NetworkObject>().Spawn(true);
-        
         
         IgnorePhysicsRpc(projectileObj.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(id, RpcTargetUse.Temp));
         
         projectileObj.GetComponent<Rigidbody>().velocity = (destination - firepoint).normalized * speedMod; //* 0.01f;
-
         ConstantForce constantForce = projectileObj.GetComponent<ConstantForce>();
-
-
         projectileObj.GetComponent<ConstantForce>().force = new Vector3(constantForce.force.x, constantForce.force.y * dropMod, constantForce.force.z);
-
-
-        
 
         NetworkObject playerNetworkObject = NetworkManager.Singleton.ConnectedClients[id].PlayerObject;
         Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Body").GetComponent<Collider>());

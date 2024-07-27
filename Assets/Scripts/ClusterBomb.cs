@@ -11,23 +11,9 @@ public class ClusterBomb : NetworkBehaviour
 
     private List<Vector3> vectorAngleList;
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-
     public void spawnClusterBombs(Vector3 normal)
     {
         if (!IsServer) return;
-
-        Debug.Log("cluster bomb spawned");
 
         List<GameObject> bombs = new List<GameObject>();
 
@@ -37,9 +23,14 @@ public class ClusterBomb : NetworkBehaviour
         {
             GetComponent<Fireball>().clusterBomb -= 1;
 
+            Fireball fireball = GetComponent<Fireball>();
+
             GameObject projectileObj = Instantiate(projectile, transform.position + normal.normalized * 0.3f, Quaternion.identity);
-            projectileObj.GetComponent<Fireball>().SetPlayerWhoFired(GetComponent<Fireball>().playerOwnerId);
-            projectileObj.GetComponent<Fireball>().maxBounces = 0;
+            projectileObj.transform.localScale = transform.localScale;
+            projectileObj.GetComponent<Fireball>().SetDamageStats(fireball.orbDamage, fireball.orbKnockbackForce, fireball.orbKnockbackPercentDamage, fireball.orbPriority);
+            projectileObj.GetComponent<Fireball>().SetExplosionStats(fireball.explosionDamage, fireball.explosionKnockbackForce, fireball.explosionKnockbackPercentDamage,  fireball.explosionRadius);
+            projectileObj.GetComponent<Fireball>().SetSpecialStats(0f, 0, 0);
+            projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(fireball.playerOwnerId);
             projectileObj.GetComponent<NetworkObject>().Spawn(true);
 
             bombs.Add(projectileObj);
@@ -70,22 +61,14 @@ public class ClusterBomb : NetworkBehaviour
         Vector3 arbitraryVector = Vector3.right;
         Vector3 perpendicular = FindPointToRay(arbitraryVector, transform.position, normal).normalized;
         Vector3 perpendicular2 = Vector3.Cross(normal, perpendicular).normalized;
-        
-        Debug.Log("Is it perp???" + Vector3.Dot(normal, perpendicular));
-        Debug.Log("Is it perp???" + Vector3.Dot(normal, perpendicular2));
-        Debug.Log("Is it perp???" + Vector3.Dot(perpendicular, perpendicular2));
 
         float angleBetween = 6.2831853f/numPoints;
-        
-        Debug.Log("Angle between = " + angleBetween);
+
+        float randAngle = UnityEngine.Random.Range(0f, angleBetween);
 
         for(int i = 0; i < numPoints; i++)
         {
-            vectorAngleList.Add(perpendicular * Mathf.Cos(angleBetween*i) + perpendicular2 * Mathf.Sin(angleBetween*i));
-            Debug.Log("i=" + i + " total vector  " + (perpendicular * Mathf.Cos(angleBetween*i) + perpendicular2 * Mathf.Sin(angleBetween*i)));
-            Debug.Log("i=" + i + " cos component " + perpendicular * Mathf.Cos(angleBetween*i));
-            Debug.Log("i=" + i + " sin component " + perpendicular2 * Mathf.Sin(angleBetween*i));
-            
+            vectorAngleList.Add(perpendicular * Mathf.Cos(angleBetween*i+randAngle) + perpendicular2 * Mathf.Sin(angleBetween*i+randAngle));
         }
     
     }

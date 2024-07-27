@@ -43,5 +43,4 @@ public class PlayerScript : NetworkBehaviour
 
         renderer2.materials[0].color = randomColour;
     }
-    //w
 }

@@ -98,11 +98,16 @@ public class SoundEffectPlayer : NetworkBehaviour
         NetworkObject.Despawn();
     }
 
-    public void PlayDecoySound(){
+    public void PlayDecoySound(ulong clientId){
+        PlayDecoySoundRpc(RpcTarget.Single(clientId,RpcTargetUse.Temp));
         StartCoroutine(DestroyAfterSound(decoySound));
-        src.clip = decoySound;
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    private void PlayDecoySoundRpc(RpcParams rpcParams){
+       src.clip = decoySound;
         float pitch = Random.Range(0.5f, 1.2f);
         src.pitch = pitch;
-        src.Play();
+        src.Play(); 
     }
 }

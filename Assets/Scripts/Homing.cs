@@ -5,11 +5,18 @@ using UnityEngine;
 
 public class Homing : NetworkBehaviour
 {
-    public Vector3 origin;
-    public Vector3 direction;
+    private Vector3 origin;
+    private Vector3 direction;
     public GameObject nearestPlayer = null;
     PlayerStatsManager playerWhoShot = null;
     public float homingStrength;
+
+
+    public void SetHomingStats(Vector3 originInput, Vector3 directionInput)
+    {
+        origin = originInput;
+        direction = directionInput;
+    }
 
     void Start()
     {

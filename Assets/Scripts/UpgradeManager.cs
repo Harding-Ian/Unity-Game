@@ -69,7 +69,7 @@ public class UpgradeManager : NetworkBehaviour
 
     { "charge1", $"Charge Shot:\n {G} + Huge Max orb speed {XR} - Huge Charge time {X}" },
 
-    { "clusterBomb1", $"Cluster Bomb:\n {G} + Spawns Bombs on Explosion {XR}" },
+    { "clusterbomb1", $"Cluster Bomb:\n {G} + Spawns Bombs on Explosion {XR}" },
 
     { "lifesteal1", $"Leech:\n {G} + Considerable Lifesteal on all damage {XR} - Small HP {XR} - Small Orb Damage {X}"},
 
@@ -325,7 +325,7 @@ public class UpgradeManager : NetworkBehaviour
         stats.orbPriority.Value += 1;
     }
 
-    private void clusterBomb1()
+    private void clusterbomb1()
     {
         stats.clusterBomb.Value += 3;
     }

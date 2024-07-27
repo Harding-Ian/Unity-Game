@@ -14,6 +14,11 @@ public class ProjectileBlast : NetworkBehaviour
 
     public GameObject gameManager;
 
+    private float explosionRadius;
+    private float explosionDamage;
+    private float explosionKnockbackPercentDamage;
+    private float explosionKnockbackForce;
+
     void Start()
     {
         if (IsServer){
@@ -29,7 +34,17 @@ public class ProjectileBlast : NetworkBehaviour
         
     }
 
-    public void SetPlayerWhoFired(ulong playerId){
+
+    public void SetStats(float explosionRadiusInput, float explosionDamageInput, float explosionKnockbackPercentDamageInput, float explosionKnockbackForceInput)
+    {
+        explosionRadius = explosionRadiusInput;
+        explosionDamage = explosionDamageInput;
+        explosionKnockbackPercentDamage = explosionKnockbackPercentDamageInput;
+        explosionKnockbackForce = explosionKnockbackForceInput;
+    }
+
+    public void SetPlayerWhoFired(ulong playerId)
+    {
         playerOwnerId = playerId;
     }
 
@@ -44,7 +59,7 @@ public class ProjectileBlast : NetworkBehaviour
 
         PlayerStatsManager playerWhoShot = NetworkManager.Singleton.ConnectedClients[playerOwnerId].PlayerObject.GetComponent<PlayerStatsManager>();
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, playerWhoShot.explosionRadius.Value);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
 
         List<GameObject> playersInRange = new List<GameObject>();
 
@@ -62,19 +77,19 @@ public class ProjectileBlast : NetworkBehaviour
 
             if (player.GetComponent<Collider>().bounds.Contains(ray.origin)) 
             {
-                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
-                gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
-                player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, explosionDamage, playerOwnerId);
+                gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, explosionKnockbackPercentDamage);
+                player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, explosionKnockbackForce, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
             }
 
             else if (Physics.Raycast(ray, out hit)) 
             {
                 if (hit.collider.transform.root.gameObject.CompareTag("Player"))
                 {
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionDamage.Value, playerOwnerId);
-                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, playerWhoShot.explosionKnockbackPercentDamage.Value);
+                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, explosionDamage, playerOwnerId);
+                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, explosionKnockbackPercentDamage);
                     
-                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, playerWhoShot.explosionKnockbackForce.Value, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, explosionKnockbackForce, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
 
                     if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId) clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
                 }

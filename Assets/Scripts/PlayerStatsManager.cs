@@ -10,18 +10,14 @@ public class PlayerStatsManager : NetworkBehaviour
 
     void Start()
     {
-        GameObject gameManager = GameObject.Find("GameManager");
-        PlayerStatsManager player = this;
+        UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("grenadelauncher1", player);
-        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("decoy", this);
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
-        // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed1", player);
+        upgrade.UpgradePlayer("decoy", this);
+        upgrade.UpgradePlayer("clusterbomb1", this);
+        upgrade.UpgradePlayer("explosion1", this);
+        upgrade.UpgradePlayer("explosion1", this);
+        upgrade.UpgradePlayer("explosion1", this);
+        upgrade.UpgradePlayer("orbsize1", this);
 
 
     }
