@@ -167,4 +167,4 @@ MonoBehaviour:
   directHitSound: {fileID: 8300000, guid: 1c4ec3f9a9e7d5c4683d2be085765795, type: 3}
   indirectHitSound: {fileID: 8300000, guid: 4603da27e1d131e42bfe974c852313e8, type: 3}
   blastSound: {fileID: 8300000, guid: 394bebb26f53a7947bf1e422bcd75820, type: 3}
-  upgradeVictorySound: {fileID: 8300000, guid: a6c6767ef566d004b96d3b951b6cb87f, type: 3}
+  decoySound: {fileID: 8300000, guid: 49af7f69ddbcc6543b687d0f2d41df96, type: 3}

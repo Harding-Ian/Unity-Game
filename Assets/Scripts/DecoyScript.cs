@@ -20,7 +20,7 @@ public class DecoyScript : NetworkBehaviour
     public float airDrag;
     public quaternion rotation;
 
-
+    public GameObject audioSrcPrefab;
     
 
     void Start()
@@ -87,6 +87,19 @@ public class DecoyScript : NetworkBehaviour
     private void playDecoySoundRpc(RpcParams rpcParams)
     {
         Debug.Log("played decoy sound on this pc");
+
+        GameObject audioSrcInstance = Instantiate(audioSrcPrefab, transform.position, Quaternion.identity);
+        audioSrcInstance.GetComponent<NetworkObject>().Spawn(true);
+
+        SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
+        if (soundPlayer != null)
+        {
+            soundPlayer.PlayDecoySound();
+        }
+        else
+        {
+            Debug.LogError("SoundEffectPlayer component not found on audioSrcInstance.");
+        }
     }
 
     [Rpc(SendTo.Everyone)]

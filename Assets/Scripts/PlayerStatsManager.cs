@@ -15,7 +15,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
         
         //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("grenadelauncher1", player);
-        //gameManager.GetComponent<UpgradeManager>().UpgradePlayer("decoy", this);
+        gameManager.GetComponent<UpgradeManager>().UpgradePlayer("decoy", this);
         // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
         // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);
         // gameManager.GetComponent<UpgradeManager>().UpgradePlayer("topspeed2", player);

@@ -5162,7 +5162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2334147795
+  GlobalObjectIdHash: 2179044299
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -5278,6 +5278,7 @@ MonoBehaviour:
       y: 0
       z: 0
       w: 0
+  audioSrcPrefab: {fileID: 6405057538832502360, guid: 37bac31d82a3ee145afaf00864897142, type: 3}
 --- !u!1 &7833775591222118325
 GameObject:
   m_ObjectHideFlags: 0

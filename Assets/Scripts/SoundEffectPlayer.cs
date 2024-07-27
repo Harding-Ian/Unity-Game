@@ -13,6 +13,8 @@ public class SoundEffectPlayer : NetworkBehaviour
 
     public AudioClip blastSound;
 
+    public AudioClip decoySound;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -94,5 +96,13 @@ public class SoundEffectPlayer : NetworkBehaviour
         // Wait until the sound has finished playing
         yield return new WaitForSeconds(audio.length);
         NetworkObject.Despawn();
+    }
+
+    public void PlayDecoySound(){
+        StartCoroutine(DestroyAfterSound(decoySound));
+        src.clip = decoySound;
+        float pitch = Random.Range(0.5f, 1.2f);
+        src.pitch = pitch;
+        src.Play();
     }
 }
