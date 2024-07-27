@@ -8,40 +8,42 @@ using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    public float groundDrag;
-    public float antislideDrag;
-    public float airDrag;
+    [Header("Drag")]
+    public float constantDrag;
+    public float antiMovement;
 
+    [Header("Jump")]
     public float jumpCooldown;
-
-    bool readyToJump;
-    bool readyToDash;
-
-    private int jumpcount;
-    private int dashcount;
-    private float moveSpeed;
-
-
     public float maxDownwardsJumpCancel; //decide later
-    
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode dashKey = KeyCode.LeftShift;
 
     [Header("Ground Check")]
-    public float playerHeight;
-    public LayerMask whatIsGround;
-    bool grounded;
-    bool groundedOverride;
+    public float groundRayLength;
+    public LayerMask GroundLayer;
     public float groundedOverrideTimer;
 
+    [Header("References")]
     public Transform orientation;
+    public PlayerStatsManager statsManager;
+    public ParticleSystem dustParticles;
+
+
+
+    private bool readyToJump;
+    private bool readyToDash;
+    private int jumpcount;
+    private int dashcount;
+
+    private float moveSpeed;
+
+    private bool grounded;
+    private bool groundedOverride;
 
     float horizontalInput;
     float verticalInput;
-
-    public PlayerStatsManager statsManager;
 
     Vector3 inputDirection;
     Vector3 moveDirection;
@@ -51,13 +53,16 @@ public class PlayerMovement : NetworkBehaviour
 
     Rigidbody rb;
     
-    public ParticleSystem dustParticles;
     private bool playDust  = false;
 
-    private bool PlayDust{
+
+
+    private bool PlayDust
+    {
         get { return playDust;}
         set {
-            if(playDust != value){
+            if(playDust != value)
+            {
                 playDust = value;
                 HandleDustUpdate(value);
             }
@@ -81,7 +86,9 @@ public class PlayerMovement : NetworkBehaviour
 
         // ground check
         
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, whatIsGround);
+        grounded = Physics.Raycast(transform.Find("GroundCheck").position, Vector3.down, groundRayLength, GroundLayer);
+
+        
 
         if(groundedOverride) grounded = false;
 
@@ -95,13 +102,13 @@ public class PlayerMovement : NetworkBehaviour
                 PlayDust = false;
             }
 
-            rb.drag = groundDrag;
-            if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)) rb.drag = antislideDrag;
+            rb.drag = constantDrag;
+            if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)) rb.drag = constantDrag;
             jumpcount = 0;
             dashcount = 0;
         }
         else{
-            rb.drag = airDrag;
+            rb.drag = constantDrag;
             PlayDust = false;
         }
 
@@ -168,11 +175,11 @@ public class PlayerMovement : NetworkBehaviour
     private void MovePlayer()
     {
 
-        Velxz = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Velxz = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         // calculate input direction
-        forwardxzDir = new Vector3(orientation.forward.x, 0, orientation.forward.z).normalized;
-        rightxzDir   = new Vector3(orientation.right.x,   0, orientation.right.z  ).normalized;
+        forwardxzDir = new Vector3(orientation.forward.x, 0f, orientation.forward.z).normalized;
+        rightxzDir   = new Vector3(orientation.right.x,   0f, orientation.right.z  ).normalized;
 
         inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
 
@@ -189,6 +196,12 @@ public class PlayerMovement : NetworkBehaviour
         {
             moveDirection = inputDirection;
         }
+
+        if(inputDirection.magnitude == 0f && grounded)
+        {
+            moveDirection = -antiMovement * Velxz.normalized;
+        }
+        
 
         // add force
         if(grounded)

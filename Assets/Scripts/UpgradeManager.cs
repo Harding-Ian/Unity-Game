@@ -275,7 +275,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.groundedMoveSpeed.Value += 6f;
         stats.airMoveSpeed.Value += 6f;
-        stats.groundMoveForce.Value = 30f;
+        stats.groundMoveForce.Value -= 30f;
         stats.airMoveForce.Value -= 25f;
     }
 

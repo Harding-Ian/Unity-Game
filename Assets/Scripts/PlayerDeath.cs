@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,14 +14,21 @@ public class PlayerDeath : NetworkBehaviour
     public GameObject playerCamera;
     public GameObject GameManager;
 
+    public GameObject ScreenUI;
+    TextMeshProUGUI SpectatingText;
+
 
     private void Start()
     {
         GameManager = GameObject.Find("GameManager");
+        ScreenUI = GameObject.Find("ScreenUI");
+        SpectatingText = ScreenUI.transform.Find("Spectating").GetComponent<TextMeshProUGUI>();
+
         if(IsLocalPlayer)
         {
             ChangeplayerSpectatingIdRpc(OwnerClientId);
             playerSpectatingId.OnValueChanged += playerSpectatingIdObserver;
+            GetComponent<PlayerScript>().dead.OnValueChanged += onDeadChanged;
         }
     }
 
@@ -29,6 +37,13 @@ public class PlayerDeath : NetworkBehaviour
     {
         if(oldValue == 1000003) return;
         ChangeSpectator(newValue, oldValue);
+    }
+
+    public void onDeadChanged(bool oldValue, bool newValue)
+    {
+        if(newValue == oldValue) return;
+        if(newValue == true) ScreenUI.transform.Find("Spectating").gameObject.SetActive(true);
+        if(newValue == false) ScreenUI.transform.Find("Spectating").gameObject.SetActive(false);
     }
 
 
@@ -102,6 +117,8 @@ public class PlayerDeath : NetworkBehaviour
 
         playerWasSpectating.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = false;
         playerToSpectate.transform.Find("CameraHolder").transform.Find("Camera").GetComponent<Camera>().enabled = true;
+
+        SpectatingText.text = "Spectating: " + playerToSpectate.OwnerClientId.ToString();
 
         SetVisibility(playerWasSpectating, true);
         SetVisibility(playerToSpectate, false);
