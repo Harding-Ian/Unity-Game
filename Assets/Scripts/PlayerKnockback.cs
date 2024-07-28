@@ -24,7 +24,7 @@ public class PlayerKnockback : NetworkBehaviour
 
         Vector3 adjustedknockbackDirection = Vector3.RotateTowards(knockbackDirection, Vector3.up, adjustedRadians, 1);
 
-        GetComponent<Rigidbody>().AddForce(adjustedknockbackDirection.normalized * knockbackForce * statsManager.knockbackBuildUp.Value, ForceMode.VelocityChange);
+        GetComponent<Rigidbody>().AddForce(adjustedknockbackDirection.normalized * knockbackForce * statsManager.knockbackBuildUp.Value * statsManager.knockbackMultiplier.Value, ForceMode.VelocityChange);
     }
 
 

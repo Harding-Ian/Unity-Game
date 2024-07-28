@@ -50,9 +50,11 @@ public class Fireball : NetworkBehaviour
 
     [NonSerialized] public int clusterBomb = 0;
 
-    [NonSerialized] public float orbSpeedReduction = 0f;
+    [NonSerialized] public float orbSpeedReduction = 1f;
 
-    [NonSerialized] public float orbAgilityReduction = 0f;
+    [NonSerialized] public float orbAgilityReduction = 1f;
+
+    [NonSerialized] public float orbStunTimer = 0f;
 
 
     public void SetDamageStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer)
@@ -72,13 +74,18 @@ public class Fireball : NetworkBehaviour
         explosionIgnoreOwnerDamage = explosionIgnoreOwnerDamageInput;
     }
 
-    public void SetSpecialStats(float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer, float orbSpeedReductionInput, float orbAgilityReductionInput)
+    public void SetSpecialStats(float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
     {
         homing = homingPlayer;
         maxBounces = maxBouncesPlayer;
         clusterBomb = clusterBombPlayer;
+    }
+
+    public void SetStunStats(float orbSpeedReductionInput, float orbAgilityReductionInput, float orbStunTimerInput)
+    {
         orbSpeedReduction = orbSpeedReductionInput;
         orbAgilityReduction = orbAgilityReductionInput;
+        orbStunTimer = orbStunTimerInput;
     }
 
     public void SetPlayerOwnerId(ulong playerId)
@@ -167,8 +174,8 @@ public class Fireball : NetworkBehaviour
         }
         else if(otherObject.CompareTag("Player") && playerOwnerId != otherObject.OwnerClientId)
         {
-            otherObject.GetComponent<PlayerStatsManager>().topspeedreduced.Value = orbSpeedReduction;
-            otherObject.GetComponent<PlayerStatsManager>().agilityreduced.Value = orbAgilityReduction;
+            if(orbStunTimer > 0) otherObject.GetComponent<PlayerMovement>().ReduceSpeed(orbSpeedReduction, orbAgilityReduction, orbStunTimer);
+
             gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, orbDamage, playerOwnerId);
             
             otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, orbKnockbackForce, false, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));

@@ -29,7 +29,6 @@ public class ClusterBomb : NetworkBehaviour
             projectileObj.transform.localScale = transform.localScale;
             projectileObj.GetComponent<Fireball>().SetDamageStats(fireball.orbDamage, fireball.orbKnockbackForce, fireball.orbKnockbackPercentDamage, fireball.orbPriority);
             projectileObj.GetComponent<Fireball>().SetExplosionStats(fireball.explosionDamage, fireball.explosionKnockbackForce, fireball.explosionKnockbackPercentDamage,  fireball.explosionRadius, fireball.explosionIgnoreOwnerDamage);
-            projectileObj.GetComponent<Fireball>().SetSpecialStats(0f, 0, 0, 0f, 0f);
             projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(fireball.playerOwnerId);
             projectileObj.GetComponent<NetworkObject>().Spawn(true);
 

@@ -162,7 +162,8 @@ public class Projectile : NetworkBehaviour
         projectileObj.GetComponent<Homing>().SetHomingStats(firepoint, (destination - firepoint).normalized);
         projectileObj.GetComponent<Fireball>().SetDamageStats(player.orbDamage.Value, player.orbKnockbackForce.Value, player.orbKnockbackPercentDamage.Value, player.orbPriority.Value);
         projectileObj.GetComponent<Fireball>().SetExplosionStats(player.explosionDamage.Value, player.explosionKnockbackForce.Value, player.explosionKnockbackPercentDamage.Value,  player.explosionRadius.Value, player.explosionIgnoreOwnerDamage.Value);
-        projectileObj.GetComponent<Fireball>().SetSpecialStats(player.homing.Value, player.maxBounces.Value, player.clusterBomb.Value, player.orbSpeedReduction.Value, player.orbAgilityReduction.Value);
+        projectileObj.GetComponent<Fireball>().SetSpecialStats(player.homing.Value, player.maxBounces.Value, player.clusterBomb.Value);
+        projectileObj.GetComponent<Fireball>().SetStunStats(player.orbSpeedReduction.Value, player.orbAgilityReduction.Value, player.orbStunTimer.Value);
         projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(OwnerClientId);
         orbs.Add(projectileObj);
 

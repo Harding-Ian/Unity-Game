@@ -12,20 +12,8 @@ public class PlayerStatsManager : NetworkBehaviour
     {
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        upgrade.UpgradePlayer("playerclusterbomb1", this);
-        upgrade.UpgradePlayer("playerclusterbomb1", this);
-        upgrade.UpgradePlayer("playerclusterbomb1", this);
-        upgrade.UpgradePlayer("playerclusterbomb1", this);
-        upgrade.UpgradePlayer("explosionselfdamage1", this);
         upgrade.UpgradePlayer("slowbullets1", this);
         
-
-        // upgrade.UpgradePlayer("decoy", this);
-        // upgrade.UpgradePlayer("clusterbomb1", this);
-        // upgrade.UpgradePlayer("explosion1", this);
-        // upgrade.UpgradePlayer("explosion1", this);
-        // upgrade.UpgradePlayer("explosion1", this);
-        // upgrade.UpgradePlayer("orbsize1", this);
     }
 
     // ------------------------------- Player Health Stuff -------------------------------
@@ -36,9 +24,11 @@ public class PlayerStatsManager : NetworkBehaviour
     
     [NonSerialized] public NetworkVariable<float> knockbackBuildUp = new NetworkVariable<float>(1f);
 
-    [NonSerialized] public NetworkVariable<float> topspeedreduced = new NetworkVariable<float>(1f);
+    [NonSerialized] public NetworkVariable<float> knockbackMultiplier = new NetworkVariable<float>(1f);
 
-    [NonSerialized] public NetworkVariable<float> agilityreduced = new NetworkVariable<float>(1f);
+    [NonSerialized] public NetworkVariable<float> topSpeedMultiplier = new NetworkVariable<float>(1f);
+
+    [NonSerialized] public NetworkVariable<float> agilityMultiplier = new NetworkVariable<float>(1f);
 
     
 
@@ -141,7 +131,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> orbAgilityReduction = new NetworkVariable<float>(1f);
 
-    [NonSerialized] public NetworkVariable<float> orbStunTimer = new NetworkVariable<float>(1f);
+    [NonSerialized] public NetworkVariable<float> orbStunTimer = new NetworkVariable<float>(0f);
 
 
 }

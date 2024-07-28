@@ -85,7 +85,7 @@ public class UpgradeManager : NetworkBehaviour
 
     { "explosionselfdamage1", $"Friendly Explosions:\n {G} + You're explosions no longer affect you {X}"},
 
-    { "playerclusterbomb1", $"Pulse Cluster:\n {G} + Spawn Cluster bombs when on pulse {X}"},
+    { "playerclusterbomb1", $"Pulse Cluster:\n {G} + Spawn cluster bombs on pulse {X}"},
 
     { "slowbullets1", $"Slowing Bullets:\n {G} + Slows enemies on direct hit {X}"}
 };
@@ -393,5 +393,7 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.orbAgilityReduction.Value -= 0.8f;
         stats.orbSpeedReduction.Value -= 0.8f;
+        stats.orbStunTimer.Value += 1.5f;
     }
+
 }

@@ -32,7 +32,6 @@ public class PlayerClusterBomb : NetworkBehaviour
             projectileObj.transform.localScale = new Vector3(player.orbScale.Value, player.orbScale.Value, player.orbScale.Value);
             projectileObj.GetComponent<Fireball>().SetDamageStats(player.orbDamage.Value, player.orbKnockbackForce.Value, player.orbKnockbackPercentDamage.Value, player.orbPriority.Value);
             projectileObj.GetComponent<Fireball>().SetExplosionStats(player.explosionDamage.Value, player.explosionKnockbackForce.Value, player.explosionKnockbackPercentDamage.Value,  player.explosionRadius.Value, true);
-            projectileObj.GetComponent<Fireball>().SetSpecialStats(0f, 0, 0, 0f, 0f);
             projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(OwnerClientId);
 
             Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), transform.Find("Model/Body").GetComponent<Collider>());

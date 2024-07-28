@@ -52,6 +52,9 @@ public class PlayerMovement : NetworkBehaviour
     Vector3 Velxz;
 
     Rigidbody rb;
+
+    private int stunHitCounter = 0;
+    private int stunInvokeCounter = 1;
     
     private bool playDust  = false;
 
@@ -186,7 +189,7 @@ public class PlayerMovement : NetworkBehaviour
         //check which max speed to apply
         if(grounded) moveSpeed = stats.groundedMoveSpeed.Value;
         else moveSpeed = stats.airMoveSpeed.Value;
-        moveSpeed *= stats.topspeedreduced.Value;
+        moveSpeed *= stats.topSpeedMultiplier.Value;
 
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
         if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)
@@ -200,17 +203,17 @@ public class PlayerMovement : NetworkBehaviour
 
         if(inputDirection.magnitude == 0f && grounded)
         {
-            moveDirection = -antiMovement * Velxz.normalized;
+            moveDirection = -antiMovement * Velxz.normalized * (1/stats.agilityMultiplier.Value);
         }
         
 
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * stats.groundMoveForce.Value * stats.agilityreduced.Value, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * stats.groundMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
         }
         else
-            rb.AddForce(moveDirection * stats.airMoveForce.Value * stats.agilityreduced.Value, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * stats.airMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
     }
 
     private void Jump()
@@ -218,16 +221,16 @@ public class PlayerMovement : NetworkBehaviour
         if(rb.velocity.y < maxDownwardsJumpCancel)
         {
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - maxDownwardsJumpCancel, rb.velocity.z);
-            rb.AddForce(Vector3.up * stats.jumpForce.Value, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
         }
         else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0)
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * stats.jumpForce.Value, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
         }
         else
         {
-            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f - stats.agilityreduced.Value)/2, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
         }
     }
 
@@ -240,7 +243,11 @@ public class PlayerMovement : NetworkBehaviour
     {
 
         if(rb.velocity.magnitude <= stats.airMoveSpeed.Value) rb.velocity = new Vector3(0f, 0f, 0f);
-        else rb.velocity -= rb.velocity.normalized*stats.airMoveSpeed.Value;
+        else 
+        {
+            //rb.velocity -= rb.velocity.normalized*stats.airMoveSpeed.Value;
+            rb.AddForce(-1 * rb.velocity.normalized*stats.airMoveSpeed.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
+        }
 
         
         if(Vector3.Dot(orientation.forward, rb.velocity) > 0)
@@ -251,9 +258,11 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 dashDirComponentOfVelocity = Vector3.Project(rb.velocity, orientation.forward);
             if(dashDirComponentOfVelocity.magnitude > maxForwardCorrection.magnitude) forwardCorrection = maxForwardCorrection;
             else forwardCorrection = dashDirComponentOfVelocity;
-            rb.velocity += forwardCorrection;
+            //rb.velocity += forwardCorrection;
+            rb.AddForce(forwardCorrection * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
         }
-        rb.velocity += orientation.forward * stats.dashForce.Value;
+        //rb.velocity += orientation.forward * stats.dashForce.Value;
+        rb.AddForce(orientation.forward * stats.dashForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
 
     }
     private void ResetJump()
@@ -269,6 +278,30 @@ public class PlayerMovement : NetworkBehaviour
     private void removeGroundedOverride()
     {
         groundedOverride = false;
+    }
+
+    public void ReduceSpeed(float topspeedreducedInput, float agilityreducedInput, float StunTimer)
+    {
+        stunHitCounter++;
+        if(stats.topSpeedMultiplier.Value > topspeedreducedInput) stats.topSpeedMultiplier.Value = topspeedreducedInput;
+        if(stats.agilityMultiplier.Value > agilityreducedInput) stats.agilityMultiplier.Value = agilityreducedInput;
+        Invoke(nameof(CheckToResetSlowValues), StunTimer);
+    }
+
+    private void ResetSlowValues()
+    {
+        stats.topSpeedMultiplier.Value = 1f;
+        stats.agilityMultiplier.Value = 1f;
+
+        stunHitCounter = 0;
+        stunInvokeCounter = 1;
+    }
+
+
+    private void CheckToResetSlowValues()
+    {
+        if(stunHitCounter == stunInvokeCounter) ResetSlowValues();
+        else stunInvokeCounter++;
     }
 
 }
