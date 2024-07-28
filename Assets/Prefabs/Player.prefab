@@ -5229,6 +5229,7 @@ GameObject:
   - component: {fileID: 2588037333218576276}
   - component: {fileID: 4896879886274159136}
   - component: {fileID: 3541557656929216023}
+  - component: {fileID: 5115637407820651981}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -5292,7 +5293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2987591946
+  GlobalObjectIdHash: 2815123942
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -5325,7 +5326,7 @@ MonoBehaviour:
     m_Bits: 64
   groundedOverrideTimer: 0.1
   orientation: {fileID: 8477746912704538161}
-  statsManager: {fileID: 1242329627409332268}
+  stats: {fileID: 1242329627409332268}
   dustParticles: {fileID: 2084134254791634906}
 --- !u!114 &-1777087793297667645
 MonoBehaviour:
@@ -5544,6 +5545,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statsManager: {fileID: 1242329627409332268}
+--- !u!114 &5115637407820651981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5486534364741473120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5c38205cecc85f44b2925899e479867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectile: {fileID: 4900262667132587406, guid: 96b4d6012c216fa4bb1666e39e995501, type: 3}
 --- !u!1 &7833775591222118325
 GameObject:
   m_ObjectHideFlags: 0

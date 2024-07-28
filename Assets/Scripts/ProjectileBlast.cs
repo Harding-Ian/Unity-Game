@@ -6,7 +6,7 @@ using UnityEngine;
 public class ProjectileBlast : NetworkBehaviour
 {
 
-
+    private bool ignoreOwnerDamage = false;
     private ulong playerOwnerId;
     public string playerTag = "Player";
 
@@ -35,12 +35,13 @@ public class ProjectileBlast : NetworkBehaviour
     }
 
 
-    public void SetStats(float explosionRadiusInput, float explosionDamageInput, float explosionKnockbackPercentDamageInput, float explosionKnockbackForceInput)
+    public void SetStats(float explosionRadiusInput, float explosionDamageInput, float explosionKnockbackPercentDamageInput, float explosionKnockbackForceInput, bool ignoreOwnerDamageInput)
     {
         explosionRadius = explosionRadiusInput;
         explosionDamage = explosionDamageInput;
         explosionKnockbackPercentDamage = explosionKnockbackPercentDamageInput;
         explosionKnockbackForce = explosionKnockbackForceInput;
+        ignoreOwnerDamage = ignoreOwnerDamageInput;
     }
 
     public void SetPlayerWhoFired(ulong playerId)
@@ -65,7 +66,12 @@ public class ProjectileBlast : NetworkBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.transform.root.CompareTag(playerTag) && !playersInRange.Contains(hitCollider.transform.root.gameObject)) playersInRange.Add(hitCollider.transform.root.gameObject);
+            GameObject playerObj = hitCollider.transform.root.gameObject;
+            if(playerObj.CompareTag(playerTag) && !playersInRange.Contains(playerObj))
+            {
+                if(ignoreOwnerDamage && playerOwnerId == playerObj.GetComponent<NetworkObject>().OwnerClientId) continue;
+                playersInRange.Add(hitCollider.transform.root.gameObject);
+            }
         }
 
         List<ulong> clientIdsList = new List<ulong>();

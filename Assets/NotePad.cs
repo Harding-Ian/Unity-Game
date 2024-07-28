@@ -78,7 +78,7 @@ Mechanics:
 - /////////////Life Steal
 
 
-- blocks spawns bombs that dont damage you 
+- /////////////blocks spawns bombs that dont damage you
 
 - stun/paralyze/freeze bullets
 

@@ -27,7 +27,7 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("References")]
     public Transform orientation;
-    public PlayerStatsManager statsManager;
+    public PlayerStatsManager stats;
     public ParticleSystem dustParticles;
 
 
@@ -148,7 +148,7 @@ public class PlayerMovement : NetworkBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // when to jump
-        if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < statsManager.numberOfJumps.Value)
+        if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < stats.numberOfJumps.Value)
         {
             readyToJump = false;
             Jump();
@@ -159,11 +159,11 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
-        if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < statsManager.numberOfDashes.Value)
+        if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < stats.numberOfDashes.Value)
         {
             readyToDash = false;
             Dash();
-            Invoke(nameof(ResetDash), statsManager.dashCooldown.Value);
+            Invoke(nameof(ResetDash), stats.dashCooldown.Value);
             dashcount++;
 
             groundedOverride = true;
@@ -184,8 +184,9 @@ public class PlayerMovement : NetworkBehaviour
         inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
 
         //check which max speed to apply
-        if(grounded) moveSpeed = statsManager.groundedMoveSpeed.Value;
-        else moveSpeed = statsManager.airMoveSpeed.Value;
+        if(grounded) moveSpeed = stats.groundedMoveSpeed.Value;
+        else moveSpeed = stats.airMoveSpeed.Value;
+        moveSpeed *= stats.topspeedreduced.Value;
 
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
         if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)
@@ -206,10 +207,10 @@ public class PlayerMovement : NetworkBehaviour
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * statsManager.groundMoveForce.Value, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * stats.groundMoveForce.Value * stats.agilityreduced.Value, ForceMode.Acceleration);
         }
         else
-            rb.AddForce(moveDirection * statsManager.airMoveForce.Value, ForceMode.Acceleration);
+            rb.AddForce(moveDirection * stats.airMoveForce.Value * stats.agilityreduced.Value, ForceMode.Acceleration);
     }
 
     private void Jump()
@@ -217,42 +218,42 @@ public class PlayerMovement : NetworkBehaviour
         if(rb.velocity.y < maxDownwardsJumpCancel)
         {
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - maxDownwardsJumpCancel, rb.velocity.z);
-            rb.AddForce(Vector3.up * statsManager.jumpForce.Value, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value, ForceMode.VelocityChange);
         }
         else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0)
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * statsManager.jumpForce.Value, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value, ForceMode.VelocityChange);
         }
         else
         {
-            rb.AddForce(Vector3.up * statsManager.jumpForce.Value, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f - stats.agilityreduced.Value)/2, ForceMode.VelocityChange);
         }
     }
 
     public void ApplyKnockback(Vector3 dir, float knockback)
     {
-        rb.AddForce(dir.normalized * knockback * statsManager.knockbackBuildUp.Value, ForceMode.VelocityChange);
+        rb.AddForce(dir.normalized * knockback * stats.knockbackBuildUp.Value, ForceMode.VelocityChange);
     }
 
     private void Dash()
     {
 
-        if(rb.velocity.magnitude <= statsManager.airMoveSpeed.Value) rb.velocity = new Vector3(0f, 0f, 0f);
-        else rb.velocity -= rb.velocity.normalized*statsManager.airMoveSpeed.Value;
+        if(rb.velocity.magnitude <= stats.airMoveSpeed.Value) rb.velocity = new Vector3(0f, 0f, 0f);
+        else rb.velocity -= rb.velocity.normalized*stats.airMoveSpeed.Value;
 
         
         if(Vector3.Dot(orientation.forward, rb.velocity) > 0)
         {
             Vector3 forwardCorrection;
             float alignedForwardness = 0.5f * Vector3.Dot(orientation.forward.normalized, rb.velocity.normalized) + 0.5f;
-            Vector3 maxForwardCorrection = orientation.forward * alignedForwardness * statsManager.airMoveSpeed.Value;
+            Vector3 maxForwardCorrection = orientation.forward * alignedForwardness * stats.airMoveSpeed.Value;
             Vector3 dashDirComponentOfVelocity = Vector3.Project(rb.velocity, orientation.forward);
             if(dashDirComponentOfVelocity.magnitude > maxForwardCorrection.magnitude) forwardCorrection = maxForwardCorrection;
             else forwardCorrection = dashDirComponentOfVelocity;
             rb.velocity += forwardCorrection;
         }
-        rb.velocity += orientation.forward * statsManager.dashForce.Value;
+        rb.velocity += orientation.forward * stats.dashForce.Value;
 
     }
     private void ResetJump()

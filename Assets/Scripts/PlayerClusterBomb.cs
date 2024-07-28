@@ -5,7 +5,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ClusterBomb : NetworkBehaviour
+public class PlayerClusterBomb : NetworkBehaviour
 {
     public GameObject projectile;
 
@@ -17,21 +17,28 @@ public class ClusterBomb : NetworkBehaviour
 
         List<GameObject> bombs = new List<GameObject>();
 
-        calculateVectors(GetComponent<Fireball>().clusterBomb, normal);
+        calculateVectors(GetComponent<PlayerStatsManager>().pulseClusterBomb.Value, normal);
 
-        while(GetComponent<Fireball>().clusterBomb > 0)
+        int numClusterBombs = GetComponent<PlayerStatsManager>().pulseClusterBomb.Value;
+
+        while(numClusterBombs > 0)
         {
-            GetComponent<Fireball>().clusterBomb -= 1;
+            numClusterBombs--;
 
             Fireball fireball = GetComponent<Fireball>();
-
-            GameObject projectileObj = Instantiate(projectile, transform.position + normal.normalized * 0.3f, Quaternion.identity);
-            projectileObj.transform.localScale = transform.localScale;
-            projectileObj.GetComponent<Fireball>().SetDamageStats(fireball.orbDamage, fireball.orbKnockbackForce, fireball.orbKnockbackPercentDamage, fireball.orbPriority);
-            projectileObj.GetComponent<Fireball>().SetExplosionStats(fireball.explosionDamage, fireball.explosionKnockbackForce, fireball.explosionKnockbackPercentDamage,  fireball.explosionRadius, fireball.explosionIgnoreOwnerDamage);
+            PlayerStatsManager player = GetComponent<PlayerStatsManager>();
+            
+            GameObject projectileObj = Instantiate(projectile, transform.position, Quaternion.identity);
+            projectileObj.transform.localScale = new Vector3(player.orbScale.Value, player.orbScale.Value, player.orbScale.Value);
+            projectileObj.GetComponent<Fireball>().SetDamageStats(player.orbDamage.Value, player.orbKnockbackForce.Value, player.orbKnockbackPercentDamage.Value, player.orbPriority.Value);
+            projectileObj.GetComponent<Fireball>().SetExplosionStats(player.explosionDamage.Value, player.explosionKnockbackForce.Value, player.explosionKnockbackPercentDamage.Value,  player.explosionRadius.Value, true);
             projectileObj.GetComponent<Fireball>().SetSpecialStats(0f, 0, 0, 0f, 0f);
-            projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(fireball.playerOwnerId);
+            projectileObj.GetComponent<Fireball>().SetPlayerOwnerId(OwnerClientId);
+
+            Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), transform.Find("Model/Body").GetComponent<Collider>());
+            Physics.IgnoreCollision(projectileObj.GetComponent<Collider>(), transform.Find("Model/Head").GetComponent<Collider>());
             projectileObj.GetComponent<NetworkObject>().Spawn(true);
+            IgnorePhysicsRpc(projectileObj.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(OwnerClientId, RpcTargetUse.Temp));
 
             bombs.Add(projectileObj);
 
@@ -51,6 +58,16 @@ public class ClusterBomb : NetworkBehaviour
             bomb.GetComponent<Rigidbody>().velocity = (normal + vectorAngleList[i].normalized * 0.5f).normalized * 10f;
             i++;
         }
+    }
+
+    [Rpc(SendTo.SpecifiedInParams)]
+    private void IgnorePhysicsRpc(ulong projectileId, RpcParams rpcParams)
+    {
+        NetworkObject projectileNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[projectileId];
+        NetworkObject playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+
+        Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Body").GetComponent<Collider>());
+        Physics.IgnoreCollision(projectileNetworkObject.GetComponent<Collider>(), playerNetworkObject.transform.Find("Model/Head").GetComponent<Collider>());
     }
 
     

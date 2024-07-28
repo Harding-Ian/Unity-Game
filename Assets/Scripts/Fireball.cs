@@ -38,6 +38,8 @@ public class Fireball : NetworkBehaviour
 
     [NonSerialized] public float explosionRadius = 4f;
 
+    [NonSerialized] public bool explosionIgnoreOwnerDamage = false;
+
     
 
     // ------------------------------- Altered Mechanics Related Stuff -------------------------------
@@ -48,6 +50,11 @@ public class Fireball : NetworkBehaviour
 
     [NonSerialized] public int clusterBomb = 0;
 
+    [NonSerialized] public float orbSpeedReduction = 0f;
+
+    [NonSerialized] public float orbAgilityReduction = 0f;
+
+
     public void SetDamageStats(float orbDamagePlayer, float orbKnockbackForcePlayer, float orbKnockbackPercentDamagePlayer, int orbPriorityPlayer)
     {
         orbDamage = orbDamagePlayer;
@@ -56,19 +63,22 @@ public class Fireball : NetworkBehaviour
         orbPriority = orbPriorityPlayer;
     }
 
-    public void SetExplosionStats(float explosionDamagePlayer, float explosionKnockbackForcePlayer, float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer)
+    public void SetExplosionStats(float explosionDamagePlayer, float explosionKnockbackForcePlayer, float explosionKnockbackPercentDamagePlayer, float explosionRadiusPlayer, bool explosionIgnoreOwnerDamageInput)
     {
         explosionDamage = explosionDamagePlayer;
         explosionKnockbackForce = explosionKnockbackForcePlayer;
         explosionKnockbackPercentDamage = explosionKnockbackPercentDamagePlayer;
         explosionRadius = explosionRadiusPlayer;
+        explosionIgnoreOwnerDamage = explosionIgnoreOwnerDamageInput;
     }
 
-    public void SetSpecialStats(float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer)
+    public void SetSpecialStats(float homingPlayer, int maxBouncesPlayer, int clusterBombPlayer, float orbSpeedReductionInput, float orbAgilityReductionInput)
     {
         homing = homingPlayer;
         maxBounces = maxBouncesPlayer;
         clusterBomb = clusterBombPlayer;
+        orbSpeedReduction = orbSpeedReductionInput;
+        orbAgilityReduction = orbAgilityReductionInput;
     }
 
     public void SetPlayerOwnerId(ulong playerId)
@@ -157,6 +167,8 @@ public class Fireball : NetworkBehaviour
         }
         else if(otherObject.CompareTag("Player") && playerOwnerId != otherObject.OwnerClientId)
         {
+            otherObject.GetComponent<PlayerStatsManager>().topspeedreduced.Value = orbSpeedReduction;
+            otherObject.GetComponent<PlayerStatsManager>().agilityreduced.Value = orbAgilityReduction;
             gameManager.GetComponent<StatsManager>().ApplyDamage(otherObject.OwnerClientId, orbDamage, playerOwnerId);
             
             otherObject.GetComponent<PlayerKnockback>().ApplyKnockbackRpc(currentVelocity.normalized, orbKnockbackForce, false, RpcTarget.Single(otherObject.OwnerClientId, RpcTargetUse.Temp));
@@ -176,7 +188,7 @@ public class Fireball : NetworkBehaviour
     {
         GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
         blastObj.transform.localScale = new Vector3(explosionRadius, explosionRadius, explosionRadius);
-        blastObj.GetComponent<ProjectileBlast>().SetStats(explosionRadius, explosionDamage, explosionKnockbackPercentDamage, explosionKnockbackForce);
+        blastObj.GetComponent<ProjectileBlast>().SetStats(explosionRadius, explosionDamage, explosionKnockbackPercentDamage, explosionKnockbackForce, explosionIgnoreOwnerDamage);
         blastObj.GetComponent<NetworkObject>().Spawn(true);
         blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
 

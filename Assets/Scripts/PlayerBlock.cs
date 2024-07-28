@@ -48,6 +48,7 @@ public class PlayerBlock : NetworkBehaviour
     {
         //GameObject blockObject = Instantiate(blockWave, GetComponent<Transform>().position, Quaternion.identity);
         if(statsManager.decoy.Value == true) spawnDecoy();
+        if(statsManager.pulseClusterBomb.Value > 0) GetComponent<PlayerClusterBomb>().spawnClusterBombs(Vector3.up);
         SpawnBlockWaveRpc(blockOrigin);
         //blockObject.GetComponent<NetworkObject>().Spawn(true);
 
@@ -119,7 +120,7 @@ public class PlayerBlock : NetworkBehaviour
         GameObject decoy = Instantiate(decoyPrefab, transform.position, transform.rotation);
 
         decoy.GetComponent<DecoyScript>().SetMovementStats(statsManager.groundMoveForce.Value, statsManager.groundedMoveSpeed.Value, transform.forward, GetComponent<Rigidbody>().rotation);
-        decoy.GetComponent<DecoyScript>().SetExplosionStats(player.explosionRadius.Value, player.explosionDamage.Value, player.explosionKnockbackPercentDamage.Value, player.explosionKnockbackForce.Value);
+        decoy.GetComponent<DecoyScript>().SetExplosionStats(player.explosionRadius.Value, player.explosionDamage.Value, player.explosionKnockbackPercentDamage.Value, player.explosionKnockbackForce.Value, player.explosionIgnoreOwnerDamage.Value);
         decoy.GetComponent<DecoyScript>().SetPlayerOwnerId(OwnerClientId);
 
         decoy.transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value = transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value;

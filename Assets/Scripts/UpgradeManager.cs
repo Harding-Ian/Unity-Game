@@ -59,7 +59,7 @@ public class UpgradeManager : NetworkBehaviour
     
     { "pulsecooldown1", $"Melee Cooldown:\n {G} + Huge Pulse Cooldown {X}" },
 
-    { "topspeed1", $"Sanic:\n {G} + Huge top speed {XR} - Modest Agility {X}" },
+    { "topspeed2", $"Sanic:\n {G} + Huge top speed {XR} - Modest Agility {X}" },
     
     { "agility1", $"Dodging:\n {G} + Huge agililty {XR} - small HP {X}" },
 
@@ -81,7 +81,13 @@ public class UpgradeManager : NetworkBehaviour
 
     { "pulseinvertknockback1", $"Invert Pulse Knockback:\n {G} + Invert {XG} + Huge pulse range {XR} - Considerable pulse cooldown {X}"},
 
-    { "decoy1", $"Decoy:\n {G} + 1 Decoy {XR} - Considerable pulse cooldown {X}"}
+    { "decoy1", $"Decoy:\n {G} + 1 Decoy {XR} - Considerable pulse cooldown {X}"},
+
+    { "explosionselfdamage1", $"Friendly Explosions:\n {G} + You're explosions no longer affect you {X}"},
+
+    { "playerclusterbomb1", $"Pulse Cluster:\n {G} + Spawn Cluster bombs when on pulse {X}"},
+
+    { "slowbullets1", $"Slowing Bullets:\n {G} + Slows enemies on direct hit {X}"}
 };
 
 
@@ -283,8 +289,8 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.groundedMoveSpeed.Value += 6f;
         stats.airMoveSpeed.Value += 6f;
-        stats.groundMoveForce.Value = Decrease(stats.groundMoveForce.Value, 0.6f, 25f);
-        stats.airMoveForce.Value = Decrease(stats.groundMoveForce.Value, 0.6f, 25f);
+        stats.groundMoveForce.Value = Decrease(stats.groundMoveForce.Value, 0.75f, 25f);
+        stats.airMoveForce.Value = Decrease(stats.groundMoveForce.Value, 0.75f, 25f);
     }
 
     private void agility1()
@@ -364,17 +370,28 @@ public class UpgradeManager : NetworkBehaviour
     {
         stats.pulseInvertKnockback.Value = true;
         stats.pulseRadius.Value += 2.5f;
-        stats.pulseCooldown.Value += 1f; 
+        stats.pulseCooldown.Value += 1f;
     }
 
-    private void decoy()
+    private void decoy1()
     {
         stats.decoy.Value = true;
         stats.pulseCooldown.Value += 1f;
     }
     
-    
+    private void explosionselfdamage1()
+    {
+        stats.explosionIgnoreOwnerDamage.Value = true;
+    }
 
+    private void playerclusterbomb1()
+    {
+        stats.pulseClusterBomb.Value += 3;
+    }
 
-
+    private void slowbullets1()
+    {
+        stats.orbAgilityReduction.Value -= 0.8f;
+        stats.orbSpeedReduction.Value -= 0.8f;
+    }
 }

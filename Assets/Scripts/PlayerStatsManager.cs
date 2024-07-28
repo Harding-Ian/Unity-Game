@@ -12,6 +12,14 @@ public class PlayerStatsManager : NetworkBehaviour
     {
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
+        upgrade.UpgradePlayer("playerclusterbomb1", this);
+        upgrade.UpgradePlayer("playerclusterbomb1", this);
+        upgrade.UpgradePlayer("playerclusterbomb1", this);
+        upgrade.UpgradePlayer("playerclusterbomb1", this);
+        upgrade.UpgradePlayer("explosionselfdamage1", this);
+        upgrade.UpgradePlayer("slowbullets1", this);
+        
+
         // upgrade.UpgradePlayer("decoy", this);
         // upgrade.UpgradePlayer("clusterbomb1", this);
         // upgrade.UpgradePlayer("explosion1", this);
@@ -27,6 +35,10 @@ public class PlayerStatsManager : NetworkBehaviour
     [NonSerialized] public NetworkVariable<float> maxPlayerHealth = new NetworkVariable<float>(20f);
     
     [NonSerialized] public NetworkVariable<float> knockbackBuildUp = new NetworkVariable<float>(1f);
+
+    [NonSerialized] public NetworkVariable<float> topspeedreduced = new NetworkVariable<float>(1f);
+
+    [NonSerialized] public NetworkVariable<float> agilityreduced = new NetworkVariable<float>(1f);
 
     
 
@@ -86,9 +98,9 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> dashCooldown = new NetworkVariable<float>(1.3f);
 
-    [NonSerialized] public NetworkVariable<float> groundedMoveSpeed = new NetworkVariable<float>(8f);
+    [NonSerialized] public NetworkVariable<float> groundedMoveSpeed = new NetworkVariable<float>(9f);
 
-    [NonSerialized] public NetworkVariable<float> airMoveSpeed = new NetworkVariable<float>(5f);
+    [NonSerialized] public NetworkVariable<float> airMoveSpeed = new NetworkVariable<float>(6f);
 
     [NonSerialized] public NetworkVariable<float> groundMoveForce = new NetworkVariable<float>(80f);
 
@@ -115,11 +127,21 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<int> clusterBomb = new NetworkVariable<int>(0);
 
+    [NonSerialized] public NetworkVariable<int> pulseClusterBomb = new NetworkVariable<int>(0);
+
     [NonSerialized] public NetworkVariable<float> lifeSteal = new NetworkVariable<float>(0f);
 
     [NonSerialized] public NetworkVariable<bool> pulseInvertKnockback = new NetworkVariable<bool>(false);
 
+    [NonSerialized] public NetworkVariable<bool> explosionIgnoreOwnerDamage = new NetworkVariable<bool>(false);
+
     [NonSerialized] public NetworkVariable<bool> decoy = new NetworkVariable<bool>(false);
+
+    [NonSerialized] public NetworkVariable<float> orbSpeedReduction = new NetworkVariable<float>(1f);
+
+    [NonSerialized] public NetworkVariable<float> orbAgilityReduction = new NetworkVariable<float>(1f);
+
+    [NonSerialized] public NetworkVariable<float> orbStunTimer = new NetworkVariable<float>(1f);
 
 
 }

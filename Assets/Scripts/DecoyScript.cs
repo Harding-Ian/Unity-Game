@@ -33,6 +33,8 @@ public class DecoyScript : NetworkBehaviour
 
     [NonSerialized] public float explosionRadius = 4f;
 
+    [NonSerialized] public bool explosionIgnoreOwnerDamage = false;
+
 
 
     public GameObject audioSrcPrefab;
@@ -64,12 +66,13 @@ public class DecoyScript : NetworkBehaviour
         }
     }
     
-    public void SetExplosionStats(float explosionRadiusInput, float explosionDamageInput, float explosionKnockbackPercentDamageInput, float explosionKnockbackForceInput)
+    public void SetExplosionStats(float explosionRadiusInput, float explosionDamageInput, float explosionKnockbackPercentDamageInput, float explosionKnockbackForceInput, bool explosionIgnoreOwnerDamageInput)
     {
         explosionRadius = explosionRadiusInput;
         explosionDamage = explosionDamageInput;
         explosionKnockbackPercentDamage = explosionKnockbackPercentDamageInput;
         explosionKnockbackForce = explosionKnockbackForceInput;
+        explosionIgnoreOwnerDamage = explosionIgnoreOwnerDamageInput;
     }
 
     public void SetMovementStats(float inputForce, float inputSpeed, Vector3 direction, Quaternion inputRotation)
@@ -104,7 +107,7 @@ public class DecoyScript : NetworkBehaviour
     {
         GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
         blastObj.transform.localScale = new Vector3(2 * explosionRadius, 2 * explosionRadius, 2 * explosionRadius);
-        blastObj.GetComponent<ProjectileBlast>().SetStats(explosionRadius, explosionDamage, explosionKnockbackPercentDamage, explosionKnockbackForce);
+        blastObj.GetComponent<ProjectileBlast>().SetStats(explosionRadius, explosionDamage, explosionKnockbackPercentDamage, explosionKnockbackForce, explosionIgnoreOwnerDamage);
         blastObj.GetComponent<NetworkObject>().Spawn(true);
         blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
 
