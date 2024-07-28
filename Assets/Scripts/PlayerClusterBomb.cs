@@ -28,7 +28,7 @@ public class PlayerClusterBomb : NetworkBehaviour
             Fireball fireball = GetComponent<Fireball>();
             PlayerStatsManager player = GetComponent<PlayerStatsManager>();
             
-            GameObject projectileObj = Instantiate(projectile, transform.position, Quaternion.identity);
+            GameObject projectileObj = Instantiate(projectile, transform.position + normal, Quaternion.identity);
             projectileObj.transform.localScale = new Vector3(player.orbScale.Value, player.orbScale.Value, player.orbScale.Value);
             projectileObj.GetComponent<Fireball>().SetDamageStats(player.orbDamage.Value, player.orbKnockbackForce.Value, player.orbKnockbackPercentDamage.Value, player.orbPriority.Value);
             projectileObj.GetComponent<Fireball>().SetExplosionStats(player.explosionDamage.Value, player.explosionKnockbackForce.Value, player.explosionKnockbackPercentDamage.Value,  player.explosionRadius.Value, true);
@@ -54,7 +54,7 @@ public class PlayerClusterBomb : NetworkBehaviour
         int i = 0;
         foreach(GameObject bomb in bombs)
         {
-            bomb.GetComponent<Rigidbody>().velocity = (normal + vectorAngleList[i].normalized * 0.5f).normalized * 10f;
+            bomb.GetComponent<Rigidbody>().velocity = (normal + vectorAngleList[i].normalized * 2f).normalized * 5f;
             i++;
         }
     }

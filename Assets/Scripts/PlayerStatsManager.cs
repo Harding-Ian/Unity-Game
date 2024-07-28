@@ -12,7 +12,7 @@ public class PlayerStatsManager : NetworkBehaviour
     {
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        upgrade.UpgradePlayer("slowbullets1", this);
+        upgrade.UpgradePlayer("playerclusterbomb1", this);
         
     }
 

@@ -87,7 +87,9 @@ public class UpgradeManager : NetworkBehaviour
 
     { "playerclusterbomb1", $"Pulse Cluster:\n {G} + Spawn cluster bombs on pulse {X}"},
 
-    { "slowbullets1", $"Slowing Bullets:\n {G} + Slows enemies on direct hit {X}"}
+    { "slowbullets1", $"Slowing Bullets:\n {G} + Slows enemies on direct hit {X}"},
+
+    { "knockbackresistance1", $"Knockback Resistance:\n {G} + Huge knockback resistance {X}"}
 };
 
 
@@ -391,9 +393,14 @@ public class UpgradeManager : NetworkBehaviour
 
     private void slowbullets1()
     {
-        stats.orbAgilityReduction.Value -= 0.8f;
-        stats.orbSpeedReduction.Value -= 0.8f;
-        stats.orbStunTimer.Value += 1.5f;
+        stats.orbAgilityReduction.Value -= 0.49f;
+        stats.orbSpeedReduction.Value -= 0.49f;
+        stats.orbStunTimer.Value += 2f;
+    }
+
+    private void knockbackresistance1()
+    {
+        stats.knockbackMultiplier.Value -= 0.3f;
     }
 
 }
