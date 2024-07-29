@@ -11,6 +11,7 @@ public class ShockWave : NetworkBehaviour
     private Renderer objectRenderer;
 
     private Color initialColor;
+    private float scaler = 0.55f;
 
     void Start()
     {
@@ -24,7 +25,18 @@ public class ShockWave : NetworkBehaviour
         if (objectRenderer != null) {
             initialColor = objectRenderer.material.color;
         }
-        Destroy(gameObject, 0.5f);
+        Invoke(nameof(PauseShockwave), 0.2f);
+    }
+
+    private void PauseShockwave()
+    {
+        scaler = 0f;
+        Invoke(nameof(DestroyShockwave), 0.15f);
+    }
+
+    private void DestroyShockwave()
+    {
+        Destroy(gameObject);
     }
 
     void FixedUpdate()
@@ -33,8 +45,8 @@ public class ShockWave : NetworkBehaviour
             //IncreaseScale(0.01f, initialScale);  
             //ShockWaveOpacityRpc(0.3f);
         }
-        IncreaseScale(0.85f, initialScale);  
-        DecreaseOpacity(1f);
+        IncreaseScale(scaler, initialScale);  
+        DecreaseOpacity(0f);
     }
 
 
@@ -48,8 +60,10 @@ public class ShockWave : NetworkBehaviour
         GetComponent<Transform>().localScale += scaleFactor * initialeScale;
     }
 
-    private void DecreaseOpacity(float fadeAmount) {
-        if (objectRenderer != null) {
+    private void DecreaseOpacity(float fadeAmount) 
+    {
+        if (objectRenderer != null) 
+        {
             Color color = objectRenderer.material.color;
             color.a -= fadeAmount * Time.deltaTime;
             color.a = Mathf.Clamp(color.a, 0f, initialColor.a); // Ensure alpha doesn't go below 0

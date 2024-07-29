@@ -12,7 +12,7 @@ public class PlayerStatsManager : NetworkBehaviour
     {
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        upgrade.UpgradePlayer("playerclusterbomb1", this);
+        //upgrade.UpgradePlayer("playerclusterbomb1", this);
         
     }
 
@@ -70,7 +70,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> pulseKnockbackPercentDamage = new NetworkVariable<float>(0.05f);
 
-    [NonSerialized] public NetworkVariable<float> pulseRadius = new NetworkVariable<float>(5f);
+    [NonSerialized] public NetworkVariable<float> pulseRadius = new NetworkVariable<float>(6f);
 
     [NonSerialized] public NetworkVariable<float> pulseCooldown = new NetworkVariable<float>(2.5f);
 

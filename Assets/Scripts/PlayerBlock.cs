@@ -91,7 +91,8 @@ public class PlayerBlock : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    private void SpawnBlockWaveRpc(Vector3 blockOrigin){
+    private void SpawnBlockWaveRpc(Vector3 blockOrigin)
+    {
         GameObject blockObject = Instantiate(blockWave, blockOrigin, Quaternion.identity);
     }
 

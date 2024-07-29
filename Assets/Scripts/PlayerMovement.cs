@@ -204,7 +204,10 @@ public class PlayerMovement : NetworkBehaviour
         if(inputDirection.magnitude == 0f && grounded)
         {
             moveDirection = -antiMovement * Velxz.normalized * (1/stats.agilityMultiplier.Value);
+            if(rb.velocity.magnitude < 0.1f && rb.velocity.magnitude > 0f) rb.velocity -= new Vector3(0.01f, 0.01f, 0.01f);
         }
+
+        
         
 
         // add force
