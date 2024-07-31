@@ -4,16 +4,23 @@ using Unity.Netcode;
 using UnityEngine;
 using Unity.Collections;
 using System;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class PlayerStatsManager : NetworkBehaviour
 {
 
     void Start()
     {
+        numberOfOrbs.OnValueChanged += OnnumberOfOrbsChanged;
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        //upgrade.UpgradePlayer("playerclusterbomb1", this);
+        upgrade.UpgradePlayer("homing1", this);
         
+    }
+
+    private void OnnumberOfOrbsChanged(int oldNumberOfOrbs, int newNumberOfOrbs)
+    {
+        if (newNumberOfOrbs <= 0) numberOfOrbs.Value = 0;
     }
 
     // ------------------------------- Player Health Stuff -------------------------------

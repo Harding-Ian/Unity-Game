@@ -105,6 +105,7 @@ public class Projectile : NetworkBehaviour
 
     void ShootProjectile(float pressTime)
     {
+        if(GetComponent<PlayerStatsManager>().numberOfOrbs.Value <= 0) return;
         
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
@@ -159,7 +160,6 @@ public class Projectile : NetworkBehaviour
         GameObject projectileObj = Instantiate(projectile, firepoint, Quaternion.identity);
         PlayerStatsManager player = GetComponent<PlayerStatsManager>();
         projectileObj.transform.localScale = new Vector3(player.orbScale.Value, player.orbScale.Value, player.orbScale.Value);
-        projectileObj.GetComponent<Homing>().SetHomingStats(firepoint, (destination - firepoint).normalized);
         projectileObj.GetComponent<Fireball>().SetDamageStats(player.orbDamage.Value, player.orbKnockbackForce.Value, player.orbKnockbackPercentDamage.Value, player.orbPriority.Value);
         projectileObj.GetComponent<Fireball>().SetExplosionStats(player.explosionDamage.Value, player.explosionKnockbackForce.Value, player.explosionKnockbackPercentDamage.Value,  player.explosionRadius.Value, player.explosionIgnoreOwnerDamage.Value);
         projectileObj.GetComponent<Fireball>().SetSpecialStats(player.homing.Value, player.maxBounces.Value, player.clusterBomb.Value);
