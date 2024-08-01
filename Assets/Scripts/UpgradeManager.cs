@@ -163,10 +163,11 @@ public class UpgradeManager : NetworkBehaviour
 
     private void homing1()
     {
-        stats.homing.Value += 30f;
+        stats.homing.Value = Increase(stats.homing.Value, 0.5f, 50f);
         stats.orbMinSpeed.Value -= 10f;
         stats.orbMaxSpeed.Value -= 20f;
         stats.orbDamage.Value -= 0.5f;
+        Debug.Log("homing value is now" + stats.homing.Value);
     }
 
     private void bounceshot1()

@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Maps/Main.unity
     guid: 2d2692ff97a1cdb47bb8eba5a922af5c
   - enabled: 1
+    path: Assets/Scenes/Maps/Main2.unity
+    guid: a6b2f643c1321bf4aa93b604faf5a35c
+  - enabled: 1
     path: Assets/Scenes/NetworkMenu.unity
     guid: a968f83a048390541b9fb4b0d5dbc42a
   - enabled: 1
@@ -23,9 +26,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Scenes/Maps/Main2.unity
-    guid: 3f88ef771e38c964fb2cd603128dc354
   - enabled: 1
     path: Assets/Scenes/Maps/UpgradeMap.unity
     guid: 230ee7c0f80ab9a48ba890f908868594

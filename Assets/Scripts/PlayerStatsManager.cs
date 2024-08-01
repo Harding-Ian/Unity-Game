@@ -14,13 +14,20 @@ public class PlayerStatsManager : NetworkBehaviour
         numberOfOrbs.OnValueChanged += OnnumberOfOrbsChanged;
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
-        upgrade.UpgradePlayer("homing1", this);
+
+        //upgrade.UpgradePlayer("homing1", this);
+        //if(OwnerClientId == 0) upgrade.UpgradePlayer("homing1", this);
         
     }
 
     private void OnnumberOfOrbsChanged(int oldNumberOfOrbs, int newNumberOfOrbs)
     {
         if (newNumberOfOrbs <= 0) numberOfOrbs.Value = 0;
+    }
+
+    void Update()
+    {
+        
     }
 
     // ------------------------------- Player Health Stuff -------------------------------

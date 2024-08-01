@@ -28,9 +28,27 @@ public class Homing : NetworkBehaviour
             return;
         }
 
+        
+
+        Vector3 orbToPlayer = nearestPlayer.transform.position - transform.position;
+        float orbToPlayerDistance = orbToPlayer.magnitude;
+        float orbToPlayerTime = orbToPlayerDistance / GetComponent<Rigidbody>().velocity.magnitude;
+        Vector3 playerVelocity = nearestPlayer.GetComponent<Rigidbody>().velocity;
+        Vector3 newLocation = nearestPlayer.transform.position + playerVelocity * orbToPlayerTime;
+
+
+
         float distance = (nearestPlayer.transform.position - transform.position).magnitude;
-        Vector3 dir = -1f * FindPointToRay(nearestPlayer.transform.position, transform.position, GetComponent<Rigidbody>().velocity.normalized).normalized;
-        GetComponent<Rigidbody>().AddForce(dir*homingStrength*(1/distance)*5f, ForceMode.Acceleration);
+        Vector3 projDistance = FindPointToRay(newLocation, transform.position, GetComponent<Rigidbody>().velocity.normalized);//
+
+        // float DistanceToPlayerPlane = (nearestPlayer.transform.position + projDistance - transform.position).magnitude;
+        // float TimetoPlayerPlane = DistanceToPlayerPlane/GetComponent<Rigidbody>().velocity.magnitude;
+        // Vector3 projDistance2 = -1*FindPointToRay(nearestPlayer.transform.position, transform.position, GetComponent<Rigidbody>().velocity.normalized);
+        
+        Vector3 dir = -1*projDistance.normalized;
+        float forceMod = (100f/distance + 10f) * 0.01f;
+        if(forceMod > 2f) forceMod = 1.5f;
+        GetComponent<Rigidbody>().AddForce(dir*homingStrength*forceMod, ForceMode.Acceleration);
     }
 
     private void findNearestPlayer()
@@ -43,7 +61,7 @@ public class Homing : NetworkBehaviour
         {
             if(instance.GetComponent<NetworkObject>().OwnerClientId != playerWhoShot.GetComponent<NetworkObject>().OwnerClientId)
             {
-                Debug.Log("player " + instance.GetComponent<NetworkObject>().OwnerClientId + " distance to ray is" + FindPointToRay(instance.transform.position, origin, direction).magnitude);
+                //Debug.Log("player " + instance.GetComponent<NetworkObject>().OwnerClientId + " distance to ray is" + FindPointToRay(instance.transform.position, origin, direction).magnitude);
                 if(FindPointToRay(instance.transform.position, origin, direction).magnitude < minDistance)
                 {
                     if(Vector3.Dot(direction, instance.transform.position - origin) > 0) 
