@@ -53,7 +53,7 @@ public class NetworkRelay : MonoBehaviour
 
     public async void CreateRelayAndGameMenu(UISceneManager uISceneManager) {
         try {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(5);
 
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
             Debug.Log("join code: " + joinCode);
