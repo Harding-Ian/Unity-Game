@@ -75,6 +75,11 @@ public class Projectile : NetworkBehaviour
         }
     }
 
+    public void resetSliders(){
+        chargeUISlider.value = 0f;
+        accumulatedTime = 0f;
+    }
+
     private IEnumerator UpdateReloadUI(){
         float elapsedTime = 0f;
 

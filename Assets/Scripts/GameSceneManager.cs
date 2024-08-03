@@ -44,6 +44,7 @@ public class GameSceneManager : NetworkBehaviour
     
     [SerializeField]
     private TextMeshProUGUI victoryName;
+    public bool spectatingBool = true;
 
    // private Scene mapScene;
 
@@ -114,6 +115,7 @@ public class GameSceneManager : NetworkBehaviour
     public void RoundCompleted(GameObject winner)
     {
         Debug.Log("Round Completed Run");
+        spectatingBool = false;
         if (IsHost)
         {
             GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
@@ -214,6 +216,7 @@ public class GameSceneManager : NetworkBehaviour
         {
             if (instance.upgraded.Value == false) return;
         }
+        spectatingBool = true;
         NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         StartCoroutine(NextMap());
     }

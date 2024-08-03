@@ -99,17 +99,4 @@ public class PlayerSpawner : NetworkBehaviour
         }
     }
 
-
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Y))
-        {
-            List<ulong> PlayerList = new List<ulong>();
-            foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
-            {
-                PlayerList.Add(instance.clientId.Value);
-            }
-            teleportPlayers(PlayerList, false);
-        }
-    }
 }

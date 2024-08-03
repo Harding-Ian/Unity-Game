@@ -56,11 +56,33 @@ public class PlayerDeath : NetworkBehaviour
 
 
         List<PlayerScript> AlivePlayersList = new List<PlayerScript>();
+
+        ulong playerToSpectateId = NetworkManager.Singleton.ConnectedClients[playerToDieId].PlayerObject.GetComponent<PlayerScript>().lastDamagingPlayerId.Value;
+
+        if(NetworkManager.Singleton.ConnectedClients[playerToSpectateId].PlayerObject.GetComponent<PlayerScript>().dead.Value)
+        {
+            foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+            {
+                if (instance.GetComponent<PlayerScript>().dead.Value == false)
+                {
+                    playerToSpectateId = instance.GetComponent<NetworkObject>().OwnerClientId;
+                    break;
+                }
+            }
+            
+        }
+        
+        if(NetworkManager.Singleton.ConnectedClients[playerToSpectateId].PlayerObject.GetComponent<PlayerScript>().dead.Value)
+        {
+            playerToSpectateId = playerToDieId;
+        }
+
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
+            
             if (instance.GetComponent<PlayerDeath>().playerSpectatingId.Value == playerToDieId)
             {
-                instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = NetworkManager.Singleton.ConnectedClients[playerToDieId].PlayerObject.GetComponent<PlayerScript>().lastDamagingPlayerId.Value;
+                instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = playerToSpectateId;
             }
 
             if (instance.GetComponent<PlayerScript>().dead.Value == false)
@@ -148,6 +170,8 @@ public class PlayerDeath : NetworkBehaviour
         playerToDisable.GetComponent<Projectile>().enabled = false;
         playerToDisable.GetComponent<PlayerBlock>().enabled = false;
 
+        playerToDisable.GetComponent<Projectile>().resetSliders();
+
     }
 
 
@@ -157,12 +181,12 @@ public class PlayerDeath : NetworkBehaviour
 
         if(GetComponent<PlayerScript>().dead.Value == false) return;
         
-        if(Input.GetKeyDown(KeyCode.Q))
+        if(Input.GetKeyDown(KeyCode.Q) && GameManager.GetComponent<GameSceneManager>().spectatingBool)
         {
             ChangeplayerSpectatingIdRpc(FindPlayerToSpectateId(-1));
         }
         
-        if(Input.GetKeyDown(KeyCode.E))
+        if(Input.GetKeyDown(KeyCode.E) && GameManager.GetComponent<GameSceneManager>().spectatingBool)
         {
             ChangeplayerSpectatingIdRpc(FindPlayerToSpectateId(1));
         }
