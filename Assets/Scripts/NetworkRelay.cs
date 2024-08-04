@@ -14,6 +14,8 @@ public class NetworkRelay : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    public bool AllowConnections = true;
+
     public static NetworkRelay Instance { get; private set; }
 	    
 	private void Awake() {
@@ -23,12 +25,16 @@ public class NetworkRelay : MonoBehaviour
     private async void Start() {
         await UnityServices.InitializeAsync();
 
-
         AuthenticationService.Instance.SignedIn += () => {
             Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
         };
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
+
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
 
         //CreateRelay();
     }
@@ -74,9 +80,10 @@ public class NetworkRelay : MonoBehaviour
     public async void JoinRelay(string joinCode, UISceneManager uISceneManager){
         Debug.Log("-------------------------------------------------------------------------------------------------------------------------------");
         Debug.Log("code received: " + joinCode);
+        string editedJoinCode = joinCode.Replace(" ", string.Empty);
         // return;
         try {
-            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(editedJoinCode);
 
             RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);

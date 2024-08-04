@@ -28,7 +28,7 @@ public class GameSceneManager : NetworkBehaviour
     private string[] maps;
 
     [NonSerialized]
-    private int winCondition = 5;
+    private int winCondition = 1;
 
     [SerializeField]
     private string[] victoryString;
@@ -90,6 +90,7 @@ public class GameSceneManager : NetworkBehaviour
             instance.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value = 1f;
             if (instance.GetComponent<PlayerScript>().clientId.Value == GetComponent<PlayerSpawner>().lastPlayerToWinId){
                 instance.GetComponent<PlayerScript>().upgraded.Value = true;
+                instance.GetComponent<Projectile>().resetSliders();
             }
             else{
                 instance.GetComponent<PlayerScript>().upgraded.Value = false;
@@ -145,6 +146,23 @@ public class GameSceneManager : NetworkBehaviour
         victoryUI.SetActive(true);
 
         StartCoroutine(ChangeVictoryTextsAfterDelay(bm1, bm2, bm3));
+        if (IsHost)
+        {
+            Invoke(nameof(EndGame), 8);
+        }
+    }
+
+    private void EndGame(){
+        NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+
+        StartCoroutine(LoadEndGameScreen());
+    }
+
+    private IEnumerator LoadEndGameScreen()
+    {
+        //disable players
+        yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
+        NetworkManager.SceneManager.LoadScene("EndMenu", LoadSceneMode.Additive);
     }
 
     private IEnumerator ChangeVictoryTextsAfterDelay(string bm1, string bm2, string bm3)

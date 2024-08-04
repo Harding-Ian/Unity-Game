@@ -6,10 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class UISceneManager : NetworkBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
     }
 
 
