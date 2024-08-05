@@ -104,7 +104,7 @@ public class PlayerStatsManager : NetworkBehaviour
 
     [NonSerialized] public NetworkVariable<float> groundedMoveSpeed = new NetworkVariable<float>(9f);
 
-    [NonSerialized] public NetworkVariable<float> airMoveSpeed = new NetworkVariable<float>(6f);
+    [NonSerialized] public NetworkVariable<float> airMoveSpeed = new NetworkVariable<float>(9f);
 
     [NonSerialized] public NetworkVariable<float> groundMoveForce = new NetworkVariable<float>(80f);
 

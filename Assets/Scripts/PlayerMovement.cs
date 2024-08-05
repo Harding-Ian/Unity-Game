@@ -14,6 +14,8 @@ public class PlayerMovement : NetworkBehaviour
     public float slowDrag;
     public float fastDrag;
     public float idleAirDrag;
+    public float yUpDrag;
+    public float yDownDrag;
 
     [Header("Jump")]
     public float jumpCooldown;
@@ -216,23 +218,30 @@ public class PlayerMovement : NetworkBehaviour
 
     private void ApplyDrag()
     {
-        float force;
+        float xzForce;
+        float yForce;
         float topspeed;
+
 
         if(grounded) topspeed = stats.groundedMoveSpeed.Value;
         else topspeed = stats.airMoveSpeed.Value;
 
-        if(!grounded && verticalInput == 0 && horizontalInput == 0 && Velxz.magnitude < topspeed) force = idleAirDrag;
-        else if(Velxz.magnitude < 0.2f) force = (100f/(0.2f*0.2f)) * Velxz.magnitude*Velxz.magnitude;
-        else if(Velxz.magnitude < topspeed) force = slowDrag;
-        else force = (1/4.5f)*(Velxz.magnitude - topspeed) + fastDrag;
+        if(!grounded && verticalInput == 0f && horizontalInput == 0f && Velxz.magnitude < topspeed) xzForce = idleAirDrag;
+        else if(Velxz.magnitude < 0.2f && grounded) xzForce = slowDrag/(0.2f*0.2f) * Velxz.magnitude*Velxz.magnitude;
+        else if(Velxz.magnitude < 0.2f && !grounded) xzForce = fastDrag/(0.2f*0.2f) * Velxz.magnitude*Velxz.magnitude;
+        else if(Velxz.magnitude < topspeed && grounded) xzForce = slowDrag;
+        else xzForce = (1f/4.5f)*(Velxz.magnitude - topspeed) + fastDrag;
 
-        rb.AddForce(-Velxz.normalized * force, ForceMode.Acceleration);
+        //rb.AddForce(-Velxz.normalized * xzForce, ForceMode.Acceleration);
 
         //rb.AddForce(-dragCoefficient * Velxz.normalized * (float)Math.Sqrt(Velxz.magnitude), ForceMode.Acceleration);
         //rb.velocity += -1 * rb.velocity * Time.fixedDeltaTime;
 
+        if(rb.velocity.y > 0) yForce = yUpDrag * Vely.magnitude;
+        else yForce = yDownDrag * Vely.magnitude;
+        
 
+        rb.AddForce(-Velxz.normalized * xzForce + -Vely.normalized * yForce, ForceMode.Acceleration);
 
     }
 

@@ -76,6 +76,8 @@ public class Projectile : NetworkBehaviour
     }
 
     public void resetSliders(){
+        chargeSliderHolder = GameObject.Find("ChargeUI");
+        chargeUISlider = chargeSliderHolder.GetComponent<Slider>();
         chargeUISlider.value = 0f;
         accumulatedTime = 0f;
     }

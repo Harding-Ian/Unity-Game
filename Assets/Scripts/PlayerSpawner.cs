@@ -26,8 +26,9 @@ public class PlayerSpawner : NetworkBehaviour
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
-        if (sceneName == "PlayerScene") return;
+        // if (sceneName == "PlayerScene") return;
         
+        if (!sceneName.EndsWith("Map")) return;
         
         if(playersSpawned == false)
         {

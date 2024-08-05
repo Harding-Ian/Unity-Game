@@ -188,8 +188,6 @@ public class GameSceneManager : NetworkBehaviour
     {
         if (IsHost)
         {
-            //check for game winner here if enough points
-            //if not go to upgrades
             NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
 
             StartCoroutine(LoadUpgradeScene());

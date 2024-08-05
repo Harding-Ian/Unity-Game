@@ -1304,8 +1304,8 @@ MonoBehaviour:
   roundWinnerText: {fileID: 2137924255}
   roundWinnerUI: {fileID: 1159867687}
   maps:
-  - Main
-  - Main2
+  - MainMap
+  - Main2Map
   victoryString:
   - "\U0001F609\U0001F609\U0001F609"
   - EASY CLAP
@@ -1347,6 +1347,7 @@ MonoBehaviour:
   victoryUI: {fileID: 145626515}
   victoryText: {fileID: 2111623046}
   victoryName: {fileID: 990782871}
+  spectatingBool: 1
 --- !u!114 &1052776579
 MonoBehaviour:
   m_ObjectHideFlags: 0
