@@ -9,8 +9,11 @@ using System;
 public class PlayerMovement : NetworkBehaviour
 {
     [Header("Drag")]
-    public float constantDrag;
-    public float antiMovement;
+    public float slowMultiplierHeight;
+    public float slowMultiplierWidth;
+    public float slowDrag;
+    public float fastDrag;
+    public float idleAirDrag;
 
     [Header("Jump")]
     public float jumpCooldown;
@@ -50,6 +53,7 @@ public class PlayerMovement : NetworkBehaviour
     Vector3 forwardxzDir;
     Vector3 rightxzDir;
     Vector3 Velxz;
+    Vector3 Vely;
 
     Rigidbody rb;
 
@@ -62,13 +66,14 @@ public class PlayerMovement : NetworkBehaviour
 
     private bool PlayDust
     {
-        get { return playDust;}
-        set {
-            if(playDust != value)
-            {
-                playDust = value;
-                HandleDustUpdate(value);
-            }
+        get { return playDust; }
+        set 
+        {
+            if(playDust == value) return;
+            playDust = value;
+
+            if (value) playDustParticlesRpc();
+            else stopDustParticlesRpc();
         }
     }
 
@@ -87,48 +92,28 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsLocalPlayer) return;
 
-        // ground check
-        
         grounded = Physics.Raycast(transform.Find("GroundCheck").position, Vector3.down, groundRayLength, GroundLayer);
-
-        
-
         if(groundedOverride) grounded = false;
 
         // handle drag
         if (grounded)
         {
-            if (rb.velocity.magnitude > 0.5f){
-                PlayDust = true;
-            }
-            else{
-                PlayDust = false;
-            }
+            if (rb.velocity.magnitude > 0.5f) PlayDust = true;
+            else PlayDust = false;
 
-            rb.drag = constantDrag;
-            if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)) rb.drag = constantDrag;
+
             jumpcount = 0;
             dashcount = 0;
         }
-        else{
-            rb.drag = constantDrag;
+        else
+        {
             PlayDust = false;
         }
 
         MyInput();
     }
 
-    private void HandleDustUpdate(bool condition)
-    {
-        if (condition)
-        {
-            playDustParticlesRpc();
-        }
-        else
-        {
-            stopDustParticlesRpc();
-        }
-    }
+
 
     [Rpc(SendTo.Everyone)]
     private void playDustParticlesRpc(){
@@ -142,7 +127,9 @@ public class PlayerMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        VelComponents();
         MovePlayer();
+        ApplyDrag();
     }
 
     private void MyInput()
@@ -175,11 +162,14 @@ public class PlayerMovement : NetworkBehaviour
 
     }
 
+    private void VelComponents()
+    {
+        Velxz = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        Vely = new Vector3(0f, rb.velocity.y, 0f);
+    }
+
     private void MovePlayer()
     {
-
-        Velxz = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
         // calculate input direction
         forwardxzDir = new Vector3(orientation.forward.x, 0f, orientation.forward.z).normalized;
         rightxzDir   = new Vector3(orientation.right.x,   0f, orientation.right.z  ).normalized;
@@ -192,7 +182,7 @@ public class PlayerMovement : NetworkBehaviour
         moveSpeed *= stats.topSpeedMultiplier.Value;
 
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
-        if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0)
+        if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0f)
         {
             moveDirection = inputDirection - Vector3.Project(inputDirection, Velxz);
         }
@@ -201,22 +191,49 @@ public class PlayerMovement : NetworkBehaviour
             moveDirection = inputDirection;
         }
 
-        if(inputDirection.magnitude == 0f && grounded)
-        {
-            moveDirection = -antiMovement * Velxz.normalized * (1/stats.agilityMultiplier.Value);
-            if(rb.velocity.magnitude < 0.1f && rb.velocity.magnitude > 0f) rb.velocity -= new Vector3(0.01f, 0.01f, 0.01f);
-        }
+        // if(inputDirection.magnitude == 0f && grounded)
+        // {
+        //     moveDirection = -antiMovement * Velxz * (1f/stats.agilityMultiplier.Value);
+        //     //if(rb.velocity.magnitude < 0.1f && rb.velocity.magnitude > 0f) rb.velocity -= new Vector3(0.01f, 0.01f, 0.01f);
+        // }
 
-        
+        float a = moveSpeed * (slowMultiplierHeight/9f);
+        float b = slowMultiplierWidth;
+
+        float slowmultiplier = (float)(a * (Math.Exp(-(b/a)*(b/a)*Velxz.magnitude*Velxz.magnitude) + 1f/a));
+        //float slowmultiplier = 1f;
         
 
         // add force
         if(grounded)
         {
-            rb.AddForce(moveDirection * stats.groundMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
+            rb.AddForce(slowmultiplier * moveDirection * stats.groundMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
         }
         else
-            rb.AddForce(moveDirection * stats.airMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
+            rb.AddForce(slowmultiplier * moveDirection * stats.airMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
+    }
+
+
+    private void ApplyDrag()
+    {
+        float force;
+        float topspeed;
+
+        if(grounded) topspeed = stats.groundedMoveSpeed.Value;
+        else topspeed = stats.airMoveSpeed.Value;
+
+        if(!grounded && verticalInput == 0 && horizontalInput == 0 && Velxz.magnitude < topspeed) force = idleAirDrag;
+        else if(Velxz.magnitude < 0.2f) force = (100f/(0.2f*0.2f)) * Velxz.magnitude*Velxz.magnitude;
+        else if(Velxz.magnitude < topspeed) force = slowDrag;
+        else force = (1/4.5f)*(Velxz.magnitude - topspeed) + fastDrag;
+
+        rb.AddForce(-Velxz.normalized * force, ForceMode.Acceleration);
+
+        //rb.AddForce(-dragCoefficient * Velxz.normalized * (float)Math.Sqrt(Velxz.magnitude), ForceMode.Acceleration);
+        //rb.velocity += -1 * rb.velocity * Time.fixedDeltaTime;
+
+
+
     }
 
     private void Jump()
@@ -224,16 +241,16 @@ public class PlayerMovement : NetworkBehaviour
         if(rb.velocity.y < maxDownwardsJumpCancel)
         {
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - maxDownwardsJumpCancel, rb.velocity.z);
-            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2f, ForceMode.VelocityChange);
         }
-        else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0)
+        else if(maxDownwardsJumpCancel < rb.velocity.y && rb.velocity.y < 0f)
         {
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2f, ForceMode.VelocityChange);
         }
         else
         {
-            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2f, ForceMode.VelocityChange);
         }
     }
 
@@ -265,6 +282,7 @@ public class PlayerMovement : NetworkBehaviour
             rb.AddForce(forwardCorrection * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
         }
         //rb.velocity += orientation.forward * stats.dashForce.Value;
+
         rb.AddForce(orientation.forward * stats.dashForce.Value * (1f + stats.agilityMultiplier.Value)/2, ForceMode.VelocityChange);
 
     }
