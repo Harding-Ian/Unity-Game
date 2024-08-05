@@ -115,7 +115,6 @@ public class GameSceneManager : NetworkBehaviour
 
     public void RoundCompleted(GameObject winner)
     {
-        Debug.Log("Round Completed Run");
         spectatingBool = false;
         if (IsHost)
         {
@@ -130,6 +129,7 @@ public class GameSceneManager : NetworkBehaviour
                 randomBM = victoryList2.OrderBy(x => UnityEngine.Random.value).ToList();
                 
                 GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString(), randomBM[0], randomBM[1],randomBM[2]);
+                Invoke(nameof(EndGame), 8);
             }
             else
             {
@@ -146,13 +146,10 @@ public class GameSceneManager : NetworkBehaviour
         victoryUI.SetActive(true);
 
         StartCoroutine(ChangeVictoryTextsAfterDelay(bm1, bm2, bm3));
-        if (IsHost)
-        {
-            Invoke(nameof(EndGame), 8);
-        }
     }
 
     private void EndGame(){
+        EndRoundRpc();
         NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
 
         StartCoroutine(LoadEndGameScreen());
@@ -212,6 +209,7 @@ public class GameSceneManager : NetworkBehaviour
     private void EndRoundRpc()
     {
         roundWinnerUI.SetActive(false);
+        victoryUI.SetActive(false);
     }
 
     public IEnumerator StartCountdown(int countdown)
@@ -237,6 +235,11 @@ public class GameSceneManager : NetworkBehaviour
         spectatingBool = true;
         NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
         StartCoroutine(NextMap());
+    }
+
+    public void ExtendWinCondition(int increment){
+        winCondition += increment;
+        EndRound();
     }
 
 }

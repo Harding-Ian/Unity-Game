@@ -58,7 +58,6 @@ public class GameMenuUIScript : NetworkBehaviour
     }
 
     private void shutdownAndReturn(){
-        Debug.Log("Buster Bugs");
         NetworkManager.Singleton.Shutdown();
         Destroy(GameObject.Find("NetworkManager"));
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
@@ -67,6 +66,19 @@ public class GameMenuUIScript : NetworkBehaviour
     [Rpc(SendTo.NotServer)]
     private void disconnectClientsRpc(){
         shutdownAndReturn();
+    }
+
+    public void ContinueGame(){
+        if (NetworkManager.IsHost){
+            int increment = 2;
+            if (NetworkManager.Singleton.ConnectedClientsList.Count < 3){
+                increment = 4;
+            }
+            else if (NetworkManager.Singleton.ConnectedClientsList.Count < 5){
+                increment = 3;
+            }
+            GameObject.Find("GameManager").GetComponent<GameSceneManager>().ExtendWinCondition(increment);
+        }
     }
 
 }
