@@ -42,8 +42,6 @@ public class PlayerMovement : NetworkBehaviour
     private int jumpcount;
     private int dashcount;
 
-    private float moveSpeed;
-
     private bool grounded;
     private bool groundedOverride;
 
@@ -97,7 +95,6 @@ public class PlayerMovement : NetworkBehaviour
         grounded = Physics.Raycast(transform.Find("GroundCheck").position, Vector3.down, groundRayLength, GroundLayer);
         if(groundedOverride) grounded = false;
 
-        // handle drag
         if (grounded)
         {
             if (rb.velocity.magnitude > 0.5f) PlayDust = true;
@@ -115,6 +112,12 @@ public class PlayerMovement : NetworkBehaviour
         MyInput();
     }
 
+    private void FixedUpdate()
+    {
+        VelComponents();
+        MovePlayer();
+        ApplyDrag();
+    }
 
 
     [Rpc(SendTo.Everyone)]
@@ -127,19 +130,13 @@ public class PlayerMovement : NetworkBehaviour
         dustParticles.Stop();
     }
 
-    private void FixedUpdate()
-    {
-        VelComponents();
-        MovePlayer();
-        ApplyDrag();
-    }
 
     private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // when to jump
+
         if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < stats.numberOfJumps.Value)
         {
             readyToJump = false;
@@ -151,6 +148,7 @@ public class PlayerMovement : NetworkBehaviour
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
 
+
         if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < stats.numberOfDashes.Value)
         {
             readyToDash = false;
@@ -161,7 +159,6 @@ public class PlayerMovement : NetworkBehaviour
             groundedOverride = true;
             Invoke(nameof(removeGroundedOverride), groundedOverrideTimer);
         }
-
     }
 
     private void VelComponents()
@@ -172,16 +169,28 @@ public class PlayerMovement : NetworkBehaviour
 
     private void MovePlayer()
     {
+        float moveSpeed;
+        float moveForce;
         // calculate input direction
         forwardxzDir = new Vector3(orientation.forward.x, 0f, orientation.forward.z).normalized;
         rightxzDir   = new Vector3(orientation.right.x,   0f, orientation.right.z  ).normalized;
 
         inputDirection = (forwardxzDir * verticalInput + rightxzDir * horizontalInput).normalized;
 
+
         //check which max speed to apply
-        if(grounded) moveSpeed = stats.groundedMoveSpeed.Value;
-        else moveSpeed = stats.airMoveSpeed.Value;
+        if(grounded) 
+        {
+            moveSpeed = stats.groundedMoveSpeed.Value;
+            moveForce = stats.groundMoveForce.Value;
+        }
+        else 
+        {
+            moveSpeed = stats.airMoveSpeed.Value;
+            moveForce = stats.airMoveForce.Value;
+        }
         moveSpeed *= stats.topSpeedMultiplier.Value;
+
 
         //remove input component aligned with velocity if exceeding xz max speed and input is same direction as velocity
         if(Velxz.magnitude > moveSpeed && Vector3.Dot(inputDirection, Velxz) > 0f)
@@ -193,26 +202,13 @@ public class PlayerMovement : NetworkBehaviour
             moveDirection = inputDirection;
         }
 
-        // if(inputDirection.magnitude == 0f && grounded)
-        // {
-        //     moveDirection = -antiMovement * Velxz * (1f/stats.agilityMultiplier.Value);
-        //     //if(rb.velocity.magnitude < 0.1f && rb.velocity.magnitude > 0f) rb.velocity -= new Vector3(0.01f, 0.01f, 0.01f);
-        // }
 
         float a = moveSpeed * (slowMultiplierHeight/9f);
         float b = slowMultiplierWidth;
-
         float slowmultiplier = (float)(a * (Math.Exp(-(b/a)*(b/a)*Velxz.magnitude*Velxz.magnitude) + 1f/a));
-        //float slowmultiplier = 1f;
         
 
-        // add force
-        if(grounded)
-        {
-            rb.AddForce(slowmultiplier * moveDirection * stats.groundMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
-        }
-        else
-            rb.AddForce(slowmultiplier * moveDirection * stats.airMoveForce.Value * stats.agilityMultiplier.Value, ForceMode.Acceleration);
+        rb.AddForce(slowmultiplier * moveDirection * moveForce * stats.agilityMultiplier.Value, ForceMode.Acceleration);
     }
 
 
@@ -222,27 +218,22 @@ public class PlayerMovement : NetworkBehaviour
         float yForce;
         float topspeed;
 
-
         if(grounded) topspeed = stats.groundedMoveSpeed.Value;
         else topspeed = stats.airMoveSpeed.Value;
 
+        //xzVel
         if(!grounded && verticalInput == 0f && horizontalInput == 0f && Velxz.magnitude < topspeed) xzForce = idleAirDrag;
         else if(Velxz.magnitude < 0.2f && grounded) xzForce = slowDrag/(0.2f*0.2f) * Velxz.magnitude*Velxz.magnitude;
         else if(Velxz.magnitude < 0.2f && !grounded) xzForce = fastDrag/(0.2f*0.2f) * Velxz.magnitude*Velxz.magnitude;
         else if(Velxz.magnitude < topspeed && grounded) xzForce = slowDrag;
         else xzForce = (1f/4.5f)*(Velxz.magnitude - topspeed) + fastDrag;
 
-        //rb.AddForce(-Velxz.normalized * xzForce, ForceMode.Acceleration);
-
-        //rb.AddForce(-dragCoefficient * Velxz.normalized * (float)Math.Sqrt(Velxz.magnitude), ForceMode.Acceleration);
-        //rb.velocity += -1 * rb.velocity * Time.fixedDeltaTime;
-
+        //yVel
         if(rb.velocity.y > 0) yForce = yUpDrag * Vely.magnitude;
         else yForce = yDownDrag * Vely.magnitude;
         
 
         rb.AddForce(-Velxz.normalized * xzForce + -Vely.normalized * yForce, ForceMode.Acceleration);
-
     }
 
     private void Jump()
@@ -261,11 +252,6 @@ public class PlayerMovement : NetworkBehaviour
         {
             rb.AddForce(Vector3.up * stats.jumpForce.Value * (1f + stats.agilityMultiplier.Value)/2f, ForceMode.VelocityChange);
         }
-    }
-
-    public void ApplyKnockback(Vector3 dir, float knockback)
-    {
-        rb.AddForce(dir.normalized * knockback * stats.knockbackBuildUp.Value, ForceMode.VelocityChange);
     }
 
     private void Dash()
@@ -326,7 +312,6 @@ public class PlayerMovement : NetworkBehaviour
         stunHitCounter = 0;
         stunInvokeCounter = 1;
     }
-
 
     private void CheckToResetSlowValues()
     {
