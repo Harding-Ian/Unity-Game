@@ -205,10 +205,11 @@ public class PlayerMovement : NetworkBehaviour
 
         float a = moveSpeed * (slowMultiplierHeight/9f);
         float b = slowMultiplierWidth;
-        float slowmultiplier = (float)(a * (Math.Exp(-(b/a)*(b/a)*Velxz.magnitude*Velxz.magnitude) + 1f/a));
+        float slowMultiplier = (float)(a * (Math.Exp(-(b/a)*(b/a)*Velxz.magnitude*Velxz.magnitude) + 1f/a));
+        if(!grounded) slowMultiplier = 1f;
         
 
-        rb.AddForce(slowmultiplier * moveDirection * moveForce * stats.agilityMultiplier.Value, ForceMode.Acceleration);
+        rb.AddForce(slowMultiplier * moveDirection * moveForce * stats.agilityMultiplier.Value, ForceMode.Acceleration);
     }
 
 

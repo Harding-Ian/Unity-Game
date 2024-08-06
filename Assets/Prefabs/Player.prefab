@@ -5318,7 +5318,7 @@ MonoBehaviour:
   slowMultiplierWidth: 1
   slowDrag: 150
   fastDrag: 25
-  idleAirDrag: 3
+  idleAirDrag: 5
   yUpDrag: 1
   yDownDrag: 0.1
   jumpCooldown: 0.5

@@ -15,7 +15,10 @@ public class PlayerStatsManager : NetworkBehaviour
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
 
-        //upgrade.UpgradePlayer("homing1", this);
+        // upgrade.UpgradePlayer("movement1", this);
+        // upgrade.UpgradePlayer("movement1", this);
+        // upgrade.UpgradePlayer("movement1", this);
+        // upgrade.UpgradePlayer("movement1", this);
         //if(OwnerClientId == 0) upgrade.UpgradePlayer("homing1", this);
         
     }
