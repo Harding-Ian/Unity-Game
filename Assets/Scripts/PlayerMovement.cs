@@ -11,6 +11,8 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Drag")]
     public float slowMultiplierHeight;
     public float slowMultiplierWidth;
+    public float airSlowMultiplierHeight;
+    public float airSlowMultiplierWidth;
     public float slowDrag;
     public float fastDrag;
     public float idleAirDrag;
@@ -205,8 +207,11 @@ public class PlayerMovement : NetworkBehaviour
 
         float a = moveSpeed * (slowMultiplierHeight/9f);
         float b = slowMultiplierWidth;
+
+        float a1 = moveSpeed * (airSlowMultiplierHeight/9f);
+        float b1 = airSlowMultiplierWidth;
         float slowMultiplier = (float)(a * (Math.Exp(-(b/a)*(b/a)*Velxz.magnitude*Velxz.magnitude) + 1f/a));
-        if(!grounded) slowMultiplier = 1f;
+        if(!grounded) slowMultiplier = (float)(a1 * (Math.Exp(-(b1/a1)*(b1/a1)*Velxz.magnitude*Velxz.magnitude) + 1f/a1));
         
 
         rb.AddForce(slowMultiplier * moveDirection * moveForce * stats.agilityMultiplier.Value, ForceMode.Acceleration);

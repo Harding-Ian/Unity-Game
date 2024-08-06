@@ -5316,6 +5316,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slowMultiplierHeight: 10
   slowMultiplierWidth: 1
+  airSlowMultiplierHeight: 2
+  airSlowMultiplierWidth: 2
   slowDrag: 150
   fastDrag: 25
   idleAirDrag: 5
