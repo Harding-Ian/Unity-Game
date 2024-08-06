@@ -18,7 +18,11 @@ public class PlayerStatsManager : NetworkBehaviour
         // upgrade.UpgradePlayer("movement1", this);
         // upgrade.UpgradePlayer("movement1", this);
         // upgrade.UpgradePlayer("movement1", this);
-        // upgrade.UpgradePlayer("movement1", this);
+        //upgrade.UpgradePlayer("bounceshot1", this);
+        upgrade.UpgradePlayer("decoy1", this);
+        upgrade.UpgradePlayer("homing1", this);
+        upgrade.UpgradePlayer("homing1", this);
+        upgrade.UpgradePlayer("homing1", this);
         //if(OwnerClientId == 0) upgrade.UpgradePlayer("homing1", this);
         
     }
@@ -40,6 +44,7 @@ public class PlayerStatsManager : NetworkBehaviour
     [NonSerialized] public NetworkVariable<float> maxPlayerHealth = new NetworkVariable<float>(20f);
     
     [NonSerialized] public NetworkVariable<float> knockbackBuildUp = new NetworkVariable<float>(1f);
+    public float knockbackBuildUpPercent = 0f;
 
     [NonSerialized] public NetworkVariable<float> knockbackMultiplier = new NetworkVariable<float>(1f);
 

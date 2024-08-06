@@ -21,7 +21,7 @@ public class DecoyScript : NetworkBehaviour
     public float groundDrag;
     public float airDrag;
     public quaternion rotation;
-    private ulong playerOwnerId;
+    public ulong playerOwnerId;
 
 
     // ------------------------------- Explosion Related Stuff -------------------------------
@@ -91,12 +91,12 @@ public class DecoyScript : NetworkBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Invoke(nameof(destroyDecoy), 5);
+        Invoke(nameof(DestroyDecoy), 5);
         rb.drag = groundDrag;
     }
 
 
-    private void destroyDecoy()
+    public void DestroyDecoy()
     {
         NetworkObject.Despawn();
         CreateBlast();
@@ -106,7 +106,7 @@ public class DecoyScript : NetworkBehaviour
     private void CreateBlast()
     {
         GameObject blastObj = Instantiate(blast, GetComponent<Transform>().position, Quaternion.identity);
-        blastObj.transform.localScale = new Vector3(2 * explosionRadius, 2 * explosionRadius, 2 * explosionRadius);
+        blastObj.transform.localScale = new Vector3(2f * explosionRadius, 2f * explosionRadius, 2f * explosionRadius);
         blastObj.GetComponent<ProjectileBlast>().SetStats(explosionRadius, explosionDamage, explosionKnockbackPercentDamage, explosionKnockbackForce, explosionIgnoreOwnerDamage);
         blastObj.GetComponent<NetworkObject>().Spawn(true);
         blastObj.GetComponent<ProjectileBlast>().SetPlayerWhoFired(playerOwnerId);
@@ -167,7 +167,7 @@ public class DecoyScript : NetworkBehaviour
 
             SoundEffectPlayer soundPlayer = audioSrcInstance.GetComponent<SoundEffectPlayer>();
             soundPlayer.PlayDecoySound(collision.gameObject.GetComponent<NetworkObject>().OwnerClientId);
-            destroyDecoy();
+            DestroyDecoy();
         }
     }
     

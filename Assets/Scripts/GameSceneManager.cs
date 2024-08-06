@@ -90,7 +90,7 @@ public class GameSceneManager : NetworkBehaviour
             instance.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value = 1f;
             if (instance.GetComponent<PlayerScript>().clientId.Value == GetComponent<PlayerSpawner>().lastPlayerToWinId){
                 instance.GetComponent<PlayerScript>().upgraded.Value = true;
-                instance.GetComponent<Projectile>().resetSliders();
+                instance.GetComponent<Projectile>().resetSlidersRpc();
             }
             else{
                 instance.GetComponent<PlayerScript>().upgraded.Value = false;

@@ -47,7 +47,7 @@ public class PlayerBlock : NetworkBehaviour
     private void BlockRpc(ulong id, Vector3 blockOrigin, float radius)
     {
         //GameObject blockObject = Instantiate(blockWave, GetComponent<Transform>().position, Quaternion.identity);
-        if(statsManager.decoy.Value == true) spawnDecoy();
+        if(statsManager.decoy.Value == true) spawnDecoy(id, transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value, transform.Find("VisibleHealthBarCanvas/VisibleKnockbackBar").GetComponent<Slider>().value);
         if(statsManager.pulseClusterBomb.Value > 0) GetComponent<PlayerClusterBomb>().spawnClusterBombs(Vector3.up);
         SpawnBlockWaveRpc(blockOrigin);
         //blockObject.GetComponent<NetworkObject>().Spawn(true);
@@ -57,16 +57,23 @@ public class PlayerBlock : NetworkBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(blockOrigin, radius);
 
         List<GameObject> playersInRange = new List<GameObject>();
-
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.transform.root.CompareTag("Player") && hitCollider.transform.root.GetComponent<NetworkObject>().OwnerClientId != id)
-            {
-                if (!playersInRange.Contains(hitCollider.transform.root.gameObject))
-                {
-                    playersInRange.Add(hitCollider.transform.root.gameObject);
-                }
-            }
+            // if ((hitCollider.transform.root.CompareTag("Player") || hitCollider.transform.root.CompareTag("decoy")) && hitCollider.transform.root.GetComponent<NetworkObject>().OwnerClientId != id)
+            // {
+            //     if (!playersInRange.Contains(hitCollider.transform.root.gameObject))
+            //     {
+            //         playersInRange.Add(hitCollider.transform.root.gameObject);
+            //     }
+            // }
+
+            GameObject rootObj = hitCollider.transform.root.gameObject;
+            if(!rootObj.CompareTag("Player") && !rootObj.CompareTag("decoy")) continue;
+            if(rootObj.CompareTag("Player") && rootObj.GetComponent<NetworkObject>().OwnerClientId == id) continue;
+            if(playersInRange.Contains(rootObj)) continue;
+
+            playersInRange.Add(rootObj);
+
         }
 
         foreach (var player in playersInRange)
@@ -81,8 +88,13 @@ public class PlayerBlock : NetworkBehaviour
                 {
                     gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseDamage.Value, id);
                     
-                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.transform.position - transform.position).normalized, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value, GetComponent<PlayerStatsManager>().pulseInvertKnockback.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.transform.position - transform.position).normalized, GetComponent<PlayerStatsManager>().pulseKnockbackForce.Value, 
+                    GetComponent<PlayerStatsManager>().pulseInvertKnockback.Value, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+
                     gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, GetComponent<PlayerStatsManager>().pulseKnockbackPercentDamage.Value);
+                }
+                else if (objectHit.CompareTag("decoy")){
+                    objectHit.GetComponent<DecoyScript>().DestroyDecoy();
                 }
             }
 
@@ -115,30 +127,31 @@ public class PlayerBlock : NetworkBehaviour
     }
 
 
-    private void spawnDecoy()
+    private void spawnDecoy(ulong id, float sliderValue, float sliderValue2)
     {
         PlayerStatsManager player = GetComponent<PlayerStatsManager>();
         GameObject decoy = Instantiate(decoyPrefab, transform.position, transform.rotation);
 
         decoy.GetComponent<DecoyScript>().SetMovementStats(statsManager.groundMoveForce.Value, statsManager.groundedMoveSpeed.Value, transform.forward, GetComponent<Rigidbody>().rotation);
         decoy.GetComponent<DecoyScript>().SetExplosionStats(player.explosionRadius.Value, player.explosionDamage.Value, player.explosionKnockbackPercentDamage.Value, player.explosionKnockbackForce.Value, player.explosionIgnoreOwnerDamage.Value);
-        decoy.GetComponent<DecoyScript>().SetPlayerOwnerId(OwnerClientId);
-
-        decoy.transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value = transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value;
+        decoy.GetComponent<DecoyScript>().SetPlayerOwnerId(id);
 
         ignorePhysics(decoy, this.gameObject);
         decoy.GetComponent<NetworkObject>().Spawn(true);
 
         ignorePhysicsDecoyRpc(decoy.GetComponent<NetworkObject>().NetworkObjectId, RpcTarget.Single(OwnerClientId, RpcTargetUse.Temp));
-        setDecoyColourRpc(transform.Find("Model/Body").GetComponent<Renderer>().materials[0].color, transform.Find("Model/Body").GetComponent<Renderer>().materials[2].color, decoy.GetComponent<NetworkObject>().NetworkObjectId);
+        setDecoyAttributesRpc(transform.Find("Model/Body").GetComponent<Renderer>().materials[0].color, transform.Find("Model/Body").GetComponent<Renderer>().materials[2].color, decoy.GetComponent<NetworkObject>().NetworkObjectId, sliderValue, sliderValue2);
     }
 
     [Rpc(SendTo.Everyone)]
-    public void setDecoyColourRpc(Color colour1, Color colour2, ulong decoyNetworkId)
+    public void setDecoyAttributesRpc(Color colour1, Color colour2, ulong decoyNetworkId, float sliderValue, float sliderValue2)
     {
         GameObject decoy = NetworkManager.Singleton.SpawnManager.SpawnedObjects[decoyNetworkId].gameObject;
         Renderer renderer = decoy.transform.Find("Model/Body").GetComponent<Renderer>();
         Renderer renderer2 = decoy.transform.Find("Model/Hat").GetComponent<Renderer>();
+
+        decoy.transform.Find("VisibleHealthBarCanvas/VisibleHealthBar").GetComponent<Slider>().value = sliderValue;
+        decoy.transform.Find("VisibleHealthBarCanvas/VisibleKnockbackBar").GetComponent<Slider>().value = sliderValue2;
         
         renderer.materials[0].color = colour1;
         renderer.materials[2].color = colour2;

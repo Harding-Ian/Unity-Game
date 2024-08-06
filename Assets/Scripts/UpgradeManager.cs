@@ -330,7 +330,7 @@ public class UpgradeManager : NetworkBehaviour
     private void charge1()
     {
         stats.orbMaxSpeed.Value += 60f;
-        stats.orbChargeTime.Value += 1.5f;
+        stats.orbChargeTime.Value += 1f;
         stats.orbPriority.Value += 1;
     }
 
@@ -341,7 +341,7 @@ public class UpgradeManager : NetworkBehaviour
 
     private void lifesteal1()
     {
-        stats.lifeSteal.Value += 0.4f;
+        stats.lifeSteal.Value = Increase(stats.lifeSteal.Value, 0.65f, 1.5f); 
         stats.maxPlayerHealth.Value -= 2f;
         stats.orbDamage.Value -= 0.2f;
     }   
@@ -372,7 +372,7 @@ public class UpgradeManager : NetworkBehaviour
     private void pulseinvertknockback1()
     {
         stats.pulseInvertKnockback.Value = true;
-        stats.pulseRadius.Value += 2.5f;
+        stats.pulseRadius.Value += 12f;
         stats.pulseCooldown.Value += 1f;
     }
 

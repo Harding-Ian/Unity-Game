@@ -66,12 +66,12 @@ public class ProjectileBlast : NetworkBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            GameObject playerObj = hitCollider.transform.root.gameObject;
-            if(playerObj.CompareTag(playerTag) && !playersInRange.Contains(playerObj))
-            {
-                if(ignoreOwnerDamage && playerOwnerId == playerObj.GetComponent<NetworkObject>().OwnerClientId) continue;
-                playersInRange.Add(hitCollider.transform.root.gameObject);
-            }
+            GameObject rootObj = hitCollider.transform.root.gameObject;
+            if(playersInRange.Contains(rootObj)) continue;
+            if(!rootObj.CompareTag(playerTag) && !rootObj.CompareTag("decoy")) continue;
+            if(rootObj.CompareTag(playerTag) && ignoreOwnerDamage && playerOwnerId == rootObj.GetComponent<NetworkObject>().OwnerClientId) continue;    
+
+            playersInRange.Add(rootObj);
         }
 
         List<ulong> clientIdsList = new List<ulong>();
@@ -81,24 +81,20 @@ public class ProjectileBlast : NetworkBehaviour
             var ray = new Ray(transform.position, player.transform.position - transform.position);
             RaycastHit hit;
 
-            if (player.GetComponent<Collider>().bounds.Contains(ray.origin)) 
+            if(!Physics.Raycast(ray, out hit)) continue;
+
+            if (hit.collider.transform.root.gameObject.CompareTag("Player"))
             {
                 gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, explosionDamage, playerOwnerId);
                 gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, explosionKnockbackPercentDamage);
+                
                 player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, explosionKnockbackForce, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
+
+                if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId) clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
             }
-
-            else if (Physics.Raycast(ray, out hit)) 
+            else if(hit.collider.transform.root.gameObject.CompareTag("decoy"))
             {
-                if (hit.collider.transform.root.gameObject.CompareTag("Player"))
-                {
-                    gameManager.GetComponent<StatsManager>().ApplyDamage(player.GetComponent<NetworkObject>().OwnerClientId, explosionDamage, playerOwnerId);
-                    gameManager.GetComponent<StatsManager>().UpdateKnockback(player.GetComponent<NetworkObject>().OwnerClientId, explosionKnockbackPercentDamage);
-                    
-                    player.GetComponent<PlayerKnockback>().ApplyKnockbackRpc((player.GetComponent<Transform>().position - GetComponent<Transform>().position).normalized, explosionKnockbackForce, false, RpcTarget.Single(player.GetComponent<NetworkObject>().OwnerClientId, RpcTargetUse.Temp));
-
-                    if (playerOwnerId != player.GetComponent<NetworkObject>().OwnerClientId) clientIdsList.Add(player.GetComponent<NetworkObject>().OwnerClientId);
-                }
+                hit.collider.transform.root.gameObject.GetComponent<DecoyScript>().DestroyDecoy();
             }
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -25,6 +26,9 @@ public class HealthBar : NetworkBehaviour
     public Renderer eyeRenderer;
     public Renderer hatRenderer;
 
+    [SerializeField]
+    private Slider visibleKnockbackSlider;
+
     public PlayerStatsManager statsManager;
 
     public GameObject knockbackPercentObject;
@@ -43,6 +47,7 @@ public class HealthBar : NetworkBehaviour
             visibleHealthBarCanvas.enabled = false;
             knockbackPercentObject = GameObject.Find("KnockbackPercent");
             knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = statsManager.knockbackBuildUp.Value.ToString();
+
         }
         statsManager.knockbackBuildUp.OnValueChanged += OnKnockbackChanged;
         SetKnockback(statsManager.knockbackBuildUp.Value);
@@ -73,10 +78,14 @@ public class HealthBar : NetworkBehaviour
 
     private void SetKnockback(float value)
     {
-        if (IsLocalPlayer){
-            knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = value.ToString();
+        if (IsLocalPlayer)
+        {
+            knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = ((value - 1f)*(150f/(5f-1f))).ToString() + "%";
         }
+        visibleKnockbackSlider.value = (value - 1f)*(150f/(5f-1f));
     }
+
+
 
     public void OnHealthChanged(float oldValue, float newValue)
     {
@@ -85,7 +94,7 @@ public class HealthBar : NetworkBehaviour
 
     public void OnKnockbackChanged(float oldValue, float newValue)
     {
-        SetKnockback(newValue);
+        SetKnockback(newValue);  
     }
 
 }

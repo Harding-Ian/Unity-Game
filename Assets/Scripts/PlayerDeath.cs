@@ -170,7 +170,7 @@ public class PlayerDeath : NetworkBehaviour
         playerToDisable.GetComponent<Projectile>().enabled = false;
         playerToDisable.GetComponent<PlayerBlock>().enabled = false;
 
-        playerToDisable.GetComponent<Projectile>().resetSliders();
+        playerToDisable.GetComponent<Projectile>().resetSlidersRpc();
 
     }
 

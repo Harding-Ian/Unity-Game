@@ -57,21 +57,34 @@ public class Homing : NetworkBehaviour
         origin = transform.position;
         Debug.DrawRay(origin, direction*1000f, Color.white, 1000f);
         float minDistance = 1000f;
+
+        // var players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
+        // var decoys = FindObjectsByType<DecoyScript>(FindObjectsSortMode.None);
+
+        // var combinedInstances = new NetworkBehaviour[players.Length + decoys.Length];
+        // players.CopyTo(combinedInstances, 0);
+        // decoys.CopyTo(combinedInstances, players.Length);
+
         foreach (var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
         {
-            if(instance.GetComponent<NetworkObject>().OwnerClientId != playerWhoShot.GetComponent<NetworkObject>().OwnerClientId)
-            {
-                //Debug.Log("player " + instance.GetComponent<NetworkObject>().OwnerClientId + " distance to ray is" + FindPointToRay(instance.transform.position, origin, direction).magnitude);
-                if(FindPointToRay(instance.transform.position, origin, direction).magnitude < minDistance)
-                {
-                    if(Vector3.Dot(direction, instance.transform.position - origin) > 0) 
-                    {
-                        nearestPlayer = instance.gameObject;
-                        minDistance = FindPointToRay(instance.transform.position, origin, direction).magnitude;
-                    }
-                }
-            }
+            if(instance.GetComponent<NetworkObject>().OwnerClientId == playerWhoShot.GetComponent<NetworkObject>().OwnerClientId) continue;
+            if(FindPointToRay(instance.transform.position, origin, direction).magnitude > minDistance) continue;
+            if(Vector3.Dot(direction, instance.transform.position - origin) < 0 ) continue;
+
+            nearestPlayer = instance.gameObject;
+            minDistance = FindPointToRay(instance.transform.position, origin, direction).magnitude;
         }
+
+        foreach (var instance in FindObjectsByType<DecoyScript>(FindObjectsSortMode.None))
+        {
+            if(instance.GetComponent<DecoyScript>().playerOwnerId == playerWhoShot.GetComponent<NetworkObject>().OwnerClientId) continue;
+            if(FindPointToRay(instance.transform.position, origin, direction).magnitude > minDistance) continue;
+            if(Vector3.Dot(direction, instance.transform.position - origin) < 0 ) continue;
+
+            nearestPlayer = instance.gameObject;
+            minDistance = FindPointToRay(instance.transform.position, origin, direction).magnitude;
+        }
+        
     }
 
     private Vector3 FindPointToRay(Vector3 point, Vector3 origin, Vector3 direction)
