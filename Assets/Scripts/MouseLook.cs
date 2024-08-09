@@ -6,6 +6,7 @@ using System.Threading;
 using UnityEngine;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using System;
 
 public class MouseLook : NetworkBehaviour
 {
@@ -19,30 +20,25 @@ public class MouseLook : NetworkBehaviour
     public float yRotation = 0f;
 
     Rigidbody rb;
+    GameObject ScreenUI;
 
-    // Start is called before the first frame update
+
     
     void Start()
-    {   
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+    {
+        if(!IsLocalPlayer) playerCamera.GetComponent<Camera>().enabled = false;
+        if(!IsLocalPlayer) return;
+        ScreenUI = GameObject.Find("ScreenUI");
         rb = GetComponent<Rigidbody>();
-        if(!IsLocalPlayer)
-        {
-            playerCamera.GetComponent<Camera>().enabled = false;
-        }
-        playerCamera.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(!IsLocalPlayer) return;
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ToggleCursorLock();
-        }
+        if(InESCMenu()) return;
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
@@ -55,26 +51,11 @@ public class MouseLook : NetworkBehaviour
         cameraHolder.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         rb.MoveRotation(Quaternion.Euler(0f, yRotation, 0f));
         //local rotation moves relative to parent --> rotation moves relative to world
-        
-
     }
 
-
-    void ToggleCursorLock()
+    public bool InESCMenu()
     {
-        
-        Cursor.lockState = (Cursor.lockState == CursorLockMode.Locked) ?
-                           CursorLockMode.None : CursorLockMode.Locked;
-
-        Cursor.visible = (Cursor.lockState == CursorLockMode.Locked) ? false : true;
+        return ScreenUI.GetComponent<ESCMenuScript>().inESCMenu;
     }
 
-    // public void ToggleSpectateOn(){
-    //     if(IsLocalPlayer){
-    //         cameraHolder.SetActive(false);
-    //     }
-    //     else{
-    //         cameraHolder.SetActive(true);
-    //     }
-    // }
 }

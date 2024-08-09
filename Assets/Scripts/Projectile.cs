@@ -50,30 +50,46 @@ public class Projectile : NetworkBehaviour
     }
     void Update()
     {
-
         if (!IsLocalPlayer) return;
+        if (!readyToFire) return;
 
-        if (readyToFire == true){
-            if (Input.GetKey(fireKey))
-            {
-                accumulatedTime += Time.deltaTime;
+        if(GetComponent<MouseLook>().InESCMenu() && chargeUISlider.value <= 0.1f)
+        {
+            chargeUISlider.value = 0f;
+            return;
+        }
+        if(GetComponent<MouseLook>().InESCMenu() && chargeUISlider.value > 0.1f)
+        {
+            Debug.Log(chargeUISlider.value);
+            Shoot();
+        }
 
-                chargeUISlider.value = Mathf.Min(0.4f, 0.4f * Mathf.Clamp01(accumulatedTime / statsManager.orbChargeTime.Value));
-            }
 
-            if(Input.GetKeyUp(fireKey))
-            {
-                chargeUISlider.value = 0f;
-                accumulatedTimeBurst = accumulatedTime;
-                readyToFire = false;
-                ShootProjectile(accumulatedTime);
-                Invoke(nameof(burstshot), GetComponent<PlayerStatsManager>().orbBurstDelay.Value);
-                Invoke(nameof(ResetFire), statsManager.orbCooldown.Value);
-                StartCoroutine(UpdateReloadUI());
-                accumulatedTime = 0f;
-            }
+
+        if (Input.GetKey(fireKey))
+        {
+            accumulatedTime += Time.deltaTime;
+            chargeUISlider.value = Mathf.Min(0.4f, 0.4f * Mathf.Clamp01(accumulatedTime / statsManager.orbChargeTime.Value));
+        }
+
+        if(Input.GetKeyUp(fireKey))
+        {
+            Shoot();
         }
     }
+
+    private void Shoot()
+    {
+        chargeUISlider.value = 0;
+        accumulatedTimeBurst = accumulatedTime;
+        readyToFire = false;
+        ShootProjectile(accumulatedTime);
+        Invoke(nameof(burstshot), GetComponent<PlayerStatsManager>().orbBurstDelay.Value);
+        Invoke(nameof(ResetFire), statsManager.orbCooldown.Value);
+        StartCoroutine(UpdateReloadUI());
+        accumulatedTime = 0f;
+    }
+
 
    [Rpc(SendTo.Everyone)]
     public void resetSlidersRpc(){

@@ -24,6 +24,7 @@ public class PlayerBlock : NetworkBehaviour
     void Update()
     {
         if (!IsLocalPlayer) return;
+        if(GetComponent<MouseLook>().InESCMenu()) return;
         if(Input.GetKeyDown(blockKey))
         {
             if (readyToBlock == true)
