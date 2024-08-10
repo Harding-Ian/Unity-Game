@@ -4,27 +4,28 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class ESCMenuScript : MonoBehaviour
+public class ESCMenuScript : NetworkBehaviour
 {
-
     [NonSerialized]
     public bool inESCMenu = false;
-
     GameObject ESCMenuUI;
+    GameObject SettingsUI;
     GameObject Crosshair;
     GameObject ReloadUI;
     GameObject ChargeUI;
+    GameObject GameManager;
     
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        GameObject ScreenUI = GameObject.Find("ScreenUI");
-        ESCMenuUI = ScreenUI.transform.Find("ESCMenuUI").gameObject;
-        Crosshair = ScreenUI.transform.Find("Crosshair").gameObject;
-        ReloadUI = ScreenUI.transform.Find("ReloadUI").gameObject;
-        ChargeUI = ScreenUI.transform.Find("ChargeUI").gameObject;
+        GameManager = GameObject.Find("GameManager");
+        ESCMenuUI = transform.Find("ESCMenuUI").gameObject;
+        SettingsUI = transform.Find("SettingsUI").gameObject;
+        Crosshair = transform.Find("Crosshair").gameObject;
+        ReloadUI = transform.Find("ReloadUI").gameObject;
+        ChargeUI = transform.Find("ChargeUI").gameObject;
     }
 
     void Update()
@@ -61,5 +62,31 @@ public class ESCMenuScript : MonoBehaviour
     {
         Invoke(nameof(ToggleCursorLock), 0.1f);
     }
+
+    public void Quit()
+    {
+        if(IsServer)
+        {
+            GetComponent<DisconnectPlayers>().ExitLobby();
+        }
+        else
+        {
+            NetworkManager.Singleton.Shutdown();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+        }
+    }
+
+    public void Settings()
+    {
+        ESCMenuUI.SetActive(false);
+        SettingsUI.SetActive(true);
+    }
+
+    public void BackToMainUI()
+    {
+        ESCMenuUI.SetActive(true);
+        SettingsUI.SetActive(false);
+    }
+
 }
 

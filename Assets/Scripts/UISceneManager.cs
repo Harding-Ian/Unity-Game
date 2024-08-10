@@ -6,9 +6,23 @@ using UnityEngine.SceneManagement;
 
 public class UISceneManager : NetworkBehaviour
 {
+
+    GameObject MainMenuUI;
+    GameObject MainUI;
+    GameObject SettingsUI;
+
+
     void Start()
     {
         //DontDestroyOnLoad(this.gameObject);
+        MainMenuUI = GameObject.Find("MainMenuUI");
+        MainUI = MainMenuUI.transform.Find("MainUI").gameObject;
+        SettingsUI = MainMenuUI.transform.Find("SettingsUI").gameObject;
+
+
+        if(!PlayerPrefs.HasKey("sensitivity")) PlayerPrefs.SetFloat("sensitivity", 2f);
+        if(!PlayerPrefs.HasKey("FOV")) PlayerPrefs.SetFloat("FOV", 85f);
+        if(!PlayerPrefs.HasKey("volume")) PlayerPrefs.SetFloat("volume", 0.5f);
     }
 
 
@@ -42,4 +56,25 @@ public class UISceneManager : NetworkBehaviour
         SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("NetworkMenu"));
         networkMenuSpawned = false;
     }
+
+    public void Settings()
+    {
+        if(networkMenuSpawned) UnloadNetworkMenu();
+        MainUI.SetActive(false);
+        SettingsUI.SetActive(true);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    public void BackToMainUI()
+    {
+        MainUI.SetActive(true);
+        SettingsUI.SetActive(false);
+    }
+
+
+    
 }

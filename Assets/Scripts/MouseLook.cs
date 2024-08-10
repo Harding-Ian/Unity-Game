@@ -19,6 +19,8 @@ public class MouseLook : NetworkBehaviour
     public float xRotation = 0f;
     public float yRotation = 0f;
 
+    private float sens = 2f;
+
     Rigidbody rb;
     GameObject ScreenUI;
 
@@ -30,7 +32,6 @@ public class MouseLook : NetworkBehaviour
         if(!IsLocalPlayer) return;
         ScreenUI = GameObject.Find("ScreenUI");
         rb = GetComponent<Rigidbody>();
-
     }
 
     void Update()
@@ -39,8 +40,10 @@ public class MouseLook : NetworkBehaviour
 
         if(InESCMenu()) return;
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        sens = PlayerPrefs.GetFloat("sensitivity");
+
+        float mouseX = Input.GetAxis("Mouse X") * sens;
+        float mouseY = Input.GetAxis("Mouse Y") * sens;
 
         xRotation -= mouseY;
         yRotation += mouseX;

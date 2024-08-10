@@ -80,7 +80,7 @@ public class HealthBar : NetworkBehaviour
     {
         if (IsLocalPlayer)
         {
-            knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = ((value - 1f)*(150f/(5f-1f))).ToString() + "%";
+            knockbackPercentObject.GetComponent<TextMeshProUGUI>().text = Mathf.Round(((value - 1f)*(150f/(5f-1f)))).ToString() + "%";
         }
         visibleKnockbackSlider.value = (value - 1f)*(150f/(5f-1f));
     }
