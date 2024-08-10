@@ -30,7 +30,18 @@ public class ESCMenuScript : NetworkBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) ToggleCursorLock();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(SettingsUI.activeSelf)
+            {
+                SettingsUI.SetActive(false);
+                ESCMenuUI.SetActive(true);
+            }
+            else
+            {
+                ToggleCursorLock();
+            }
+        }
     }
 
 

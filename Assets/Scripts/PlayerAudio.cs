@@ -28,4 +28,9 @@ public class PlayerAudio : NetworkBehaviour
             audioListener.enabled = true;
         }
     }
+
+    void Update()
+    {
+        AudioListener.volume = PlayerPrefs.GetFloat("volume");
+    }
 }
