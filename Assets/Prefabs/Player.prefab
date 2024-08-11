@@ -5383,7 +5383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2987591946
+  GlobalObjectIdHash: 2815123942
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -5669,10 +5669,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d402ea07a1671409e9ddb362239780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jump: 0
-  dash: 0
-  horizontalInput: 0
-  verticalInput: 0
 --- !u!1 &5774790139296748095
 GameObject:
   m_ObjectHideFlags: 0

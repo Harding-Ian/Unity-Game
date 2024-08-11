@@ -16,7 +16,6 @@ public class PlayerScript : NetworkBehaviour
     [NonSerialized] public NetworkVariable<int> wins = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [NonSerialized] public List<string> UpgradeList = new List<string>();
 
-    private float FOV = 85f;
     private Camera Camera;
 
     private void Start()
@@ -40,6 +39,7 @@ public class PlayerScript : NetworkBehaviour
 
     void Update()
     {
+        if(!IsLocalPlayer) return;
         Camera.fieldOfView = PlayerPrefs.GetFloat("FOV");
     }
 

@@ -68,17 +68,16 @@ public class GameMenuUIScript : NetworkBehaviour
         shutdownAndReturn();
     }
 
-    public void ContinueGame(){
-        if (NetworkManager.IsHost){
-            int increment = 2;
-            if (NetworkManager.Singleton.ConnectedClientsList.Count < 3){
-                increment = 4;
-            }
-            else if (NetworkManager.Singleton.ConnectedClientsList.Count < 5){
-                increment = 3;
-            }
-            GameObject.Find("GameManager").GetComponent<GameSceneManager>().ExtendWinCondition(increment);
-        }
+    public void ContinueGame()
+    {
+        if (!NetworkManager.IsHost) return;
+
+        int increment = 2;
+
+        if (NetworkManager.Singleton.ConnectedClientsList.Count < 3) increment = 4;
+        else if (NetworkManager.Singleton.ConnectedClientsList.Count < 5) increment = 3;
+
+        GameObject.Find("GameManager").GetComponent<GameSceneManager>().ExtendWinCondition(increment);
     }
 
 }

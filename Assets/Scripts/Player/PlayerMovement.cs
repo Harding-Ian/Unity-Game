@@ -87,6 +87,8 @@ public class PlayerMovement : NetworkBehaviour
 
         readyToJump = true;
         readyToDash = true;
+
+        rb.drag = 0.02f;
     }
     
 
@@ -236,8 +238,8 @@ public class PlayerMovement : NetworkBehaviour
 
         //xzVel
         if(!grounded && verticalInput == 0f && horizontalInput == 0f && Velxz.magnitude < topspeed) xzForce = idleAirDrag;
-        else if(Velxz.magnitude < 0.2f && grounded) xzForce = slowDrag/(0.2f*0.2f) * Velxz.magnitude*Velxz.magnitude;
-        else if(Velxz.magnitude < 0.2f && !grounded) xzForce = fastDrag/(0.2f*0.2f) * Velxz.magnitude*Velxz.magnitude;
+        else if(Velxz.magnitude < 0.4f && grounded) xzForce = slowDrag/(0.4f*0.4f) * Velxz.magnitude*Velxz.magnitude;
+        else if(Velxz.magnitude < 0.4f && !grounded) xzForce = fastDrag/(0.4f*0.4f) * Velxz.magnitude*Velxz.magnitude;
         else if(Velxz.magnitude < topspeed && grounded) xzForce = slowDrag;
         else xzForce = (1f/4.5f)*(Velxz.magnitude - topspeed) + fastDrag;
 

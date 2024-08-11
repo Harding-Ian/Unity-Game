@@ -28,7 +28,7 @@ public class GameSceneManager : NetworkBehaviour
     private string[] maps;
 
     [NonSerialized]
-    private int winCondition = 10;
+    private int winCondition = 1;
 
     [SerializeField]
     private string[] victoryString;
@@ -235,7 +235,8 @@ public class GameSceneManager : NetworkBehaviour
         StartCoroutine(NextMap());
     }
 
-    public void ExtendWinCondition(int increment){
+    public void ExtendWinCondition(int increment)
+    {
         winCondition += increment;
         EndRound();
     }
