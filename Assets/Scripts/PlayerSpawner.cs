@@ -91,7 +91,7 @@ public class PlayerSpawner : NetworkBehaviour
         
         if(!UpgradeMap)
         {
-            player.GetComponent<PlayerMovement>().enabled = false;
+            player.GetComponent<PlayerInput>().enabled = false;
             player.GetComponent<Projectile>().enabled = false;
             player.GetComponent<PlayerBlock>().enabled = false;
             

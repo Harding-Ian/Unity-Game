@@ -69,7 +69,7 @@ public class GameSceneManager : NetworkBehaviour
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
 
         CountDownUI.SetActive(false);
-        player.GetComponent<PlayerMovement>().enabled = true;
+        player.GetComponent<PlayerInput>().enabled = true;
         player.GetComponent<Projectile>().enabled = true;
         player.GetComponent<PlayerBlock>().enabled = true;
     }
@@ -105,7 +105,7 @@ public class GameSceneManager : NetworkBehaviour
     private void UpgradeMapPlayerStateRpc()
     {
         NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        player.GetComponent<PlayerMovement>().enabled = true;
+        player.GetComponent<PlayerInput>().enabled = true;
         player.GetComponent<MouseLook>().enabled = true;
         player.GetComponent<Projectile>().enabled = false;
         player.GetComponent<PlayerBlock>().enabled = false;

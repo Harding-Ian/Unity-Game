@@ -165,7 +165,7 @@ public class PlayerDeath : NetworkBehaviour
     {
         NetworkObject playerToDisable = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
 
-        playerToDisable.GetComponent<PlayerMovement>().enabled = false;
+        playerToDisable.GetComponent<PlayerInput>().enabled = false;
         playerToDisable.GetComponent<MouseLook>().enabled = false;
         playerToDisable.GetComponent<Projectile>().enabled = false;
         playerToDisable.GetComponent<PlayerBlock>().enabled = false;

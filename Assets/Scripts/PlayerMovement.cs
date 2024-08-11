@@ -111,6 +111,13 @@ public class PlayerMovement : NetworkBehaviour
             PlayDust = false;
         }
 
+        if(!GetComponent<PlayerInput>().isActiveAndEnabled)
+        {
+            horizontalInput = 0f;
+            verticalInput = 0f;
+            return;
+        }
+        
         MyInput();
     }
 
@@ -135,11 +142,11 @@ public class PlayerMovement : NetworkBehaviour
 
     private void MyInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        horizontalInput = GetComponent<PlayerInput>().horizontalInput;
+        verticalInput = GetComponent<PlayerInput>().verticalInput;
 
 
-        if(Input.GetKeyDown(jumpKey) && readyToJump && jumpcount < stats.numberOfJumps.Value)
+        if(GetComponent<PlayerInput>().jump && readyToJump && jumpcount < stats.numberOfJumps.Value)
         {
             readyToJump = false;
             Jump();
@@ -151,7 +158,7 @@ public class PlayerMovement : NetworkBehaviour
         }
 
 
-        if(Input.GetKeyDown(dashKey) && readyToDash && dashcount < stats.numberOfDashes.Value)
+        if(GetComponent<PlayerInput>().dash && readyToDash && dashcount < stats.numberOfDashes.Value)
         {
             readyToDash = false;
             Dash();

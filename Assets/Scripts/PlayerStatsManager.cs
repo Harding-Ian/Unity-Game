@@ -11,7 +11,8 @@ public class PlayerStatsManager : NetworkBehaviour
 
     void Start()
     {
-        numberOfOrbs.OnValueChanged += OnnumberOfOrbsChanged;
+        numberOfOrbs.OnValueChanged += OnNumberOfOrbsChanged;
+        maxPlayerHealth.OnValueChanged += OnMaxPlayerHealthChanged;
         UpgradeManager upgrade = GameObject.Find("GameManager").GetComponent<UpgradeManager>();
 
 
@@ -19,17 +20,24 @@ public class PlayerStatsManager : NetworkBehaviour
         // upgrade.UpgradePlayer("movement1", this);
         // upgrade.UpgradePlayer("movement1", this);
         //upgrade.UpgradePlayer("bounceshot1", this);
-        upgrade.UpgradePlayer("decoy1", this);
-        upgrade.UpgradePlayer("homing1", this);
-        upgrade.UpgradePlayer("homing1", this);
-        upgrade.UpgradePlayer("homing1", this);
+        // upgrade.UpgradePlayer("decoy1", this);
+        // upgrade.UpgradePlayer("homing1", this);
+        // upgrade.UpgradePlayer("homing1", this);
+        // upgrade.UpgradePlayer("homing1", this);
         //if(OwnerClientId == 0) upgrade.UpgradePlayer("homing1", this);
+        upgrade.UpgradePlayer("glasscannon1", this);
         
     }
 
-    private void OnnumberOfOrbsChanged(int oldNumberOfOrbs, int newNumberOfOrbs)
+    private void OnNumberOfOrbsChanged(int oldNumberOfOrbs, int newNumberOfOrbs)
     {
         if (newNumberOfOrbs <= 0) numberOfOrbs.Value = 0;
+    }
+
+    private void OnMaxPlayerHealthChanged(float oldMaxPlayerHealth, float newMaxPlayerHealth)
+    {
+        if(IsServer) playerHealth.Value = newMaxPlayerHealth;
+        GetComponent<HealthBar>().SetMaxHealth(newMaxPlayerHealth);
     }
 
     void Update()
