@@ -27,6 +27,7 @@ public class UISceneManager : NetworkBehaviour
 
 
     public NetworkRelay networkRelay;
+    public LobbyManager lobbymanager;
     public bool networkMenuSpawned = false;
     public bool hostButtonClickable = true;
 

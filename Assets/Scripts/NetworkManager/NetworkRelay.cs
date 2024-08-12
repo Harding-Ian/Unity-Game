@@ -16,47 +16,6 @@ public class NetworkRelay : MonoBehaviour
 
     public bool AllowConnections = true;
 
-    public static NetworkRelay Instance { get; private set; }
-	    
-	private void Awake() {
-        Instance = this;
-    }
-
-    private async void Start() {
-        await UnityServices.InitializeAsync();
-
-        AuthenticationService.Instance.SignedIn += () => {
-            Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-        };
-        //await AuthenticationService.Instance.SignInAnonymouslyAsync();
-
-
-        if (!AuthenticationService.Instance.IsSignedIn)
-        {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
-
-        //CreateRelay();
-    }
-
-
-    public async void CreateRelay() {
-        try {
-            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(3);
-
-            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            Debug.Log("join code: " + joinCode); 
-
-            RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
-
-            NetworkManager.Singleton.StartHost();
-
-        } catch (RelayServiceException e){
-            Debug.Log(e);
-        }
-    }
-
     public async void CreateRelayAndGameMenu(UISceneManager uISceneManager) {
         try {
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(5);
@@ -74,7 +33,6 @@ public class NetworkRelay : MonoBehaviour
             uISceneManager.hostButtonClickable = true;
         }
         uISceneManager.LoadGameMenu();
-
     }
 
     public async void JoinRelay(string joinCode, UISceneManager uISceneManager){

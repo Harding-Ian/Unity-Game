@@ -76,7 +76,6 @@ public class PlayerDeath : NetworkBehaviour
                     break;
                 }
             }
-            
         }
         
         if(NetworkManager.Singleton.ConnectedClients[playerToSpectateId].PlayerObject.GetComponent<PlayerScript>().dead.Value)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -9,20 +10,9 @@ using UnityEngine;
 public class LobbyManager : MonoBehaviour
 {
 
-    public GameObject uISceneManager;
-    private async void Start() 
-    {
-        await UnityServices.InitializeAsync();
+    private GameObject uISceneManager;
+    private Lobby lobby;
 
-        AuthenticationService.Instance.SignedIn += OnSignedIn;
-
-        if (!AuthenticationService.Instance.IsSignedIn) await AuthenticationService.Instance.SignInAnonymouslyAsync();
-    }
-
-    void OnSignedIn()
-    {
-        Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-    }
 
     public async void CreateLobby()
     {
@@ -30,11 +20,16 @@ public class LobbyManager : MonoBehaviour
         {
             string lobbyName = "MyLobby";
             int maxPlayers = 6;
-            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers);
+            lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers);
             Debug.Log(lobby.LobbyCode);
         }
-        catch (LobbyServiceException e) {Debug.Log(e);}
-        uISceneManager.GetComponent<UISceneManager>().LoadGameMenu();
+        catch (LobbyServiceException e) { Debug.Log(e); }
+    }
+
+    public void CheckLobby()
+    {
+        Debug.Log("amount of players in lobby is " + lobby.Players.Count);
+        foreach (var player in lobby.Players) Debug.Log(player.ConnectionInfo + " " + player.AllocationId + " " + player.Id + " " + player.Profile);
     }
 
 
@@ -43,6 +38,16 @@ public class LobbyManager : MonoBehaviour
         try
         {
             await Lobbies.Instance.JoinLobbyByCodeAsync(LobbyCode);
+        }
+        catch (LobbyServiceException e) {Debug.Log(e);} 
+    }
+
+    public async void JoinLobby()
+    {
+        try
+        {
+            QueryResponse queryResponse = await Lobbies.Instance.QueryLobbiesAsync();
+            await Lobbies.Instance.JoinLobbyByIdAsync(queryResponse.Results[0].Id);
         }
         catch (LobbyServiceException e) {Debug.Log(e);} 
     }
