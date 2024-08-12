@@ -17,6 +17,10 @@ public class PlayerDeath : NetworkBehaviour
     public GameObject ScreenUI;
     TextMeshProUGUI SpectatingText;
 
+    public ParticleSystem deathParticles;
+
+    public GameObject hatPrefab;
+
 
     private void Start()
     {
@@ -49,12 +53,15 @@ public class PlayerDeath : NetworkBehaviour
 
     public void InitiatePlayerDeath()
     {
+
+        playDeathParticlesRpc();
+        spawnHatRpc(transform.position);
+
         ulong playerToDieId = OwnerClientId;
         GetComponent<PlayerScript>().dead.Value = true;
         DisablePlayerRpc(RpcTarget.Single(playerToDieId, RpcTargetUse.Temp));
 
-
-
+        
         List<PlayerScript> AlivePlayersList = new List<PlayerScript>();
 
         ulong playerToSpectateId = NetworkManager.Singleton.ConnectedClients[playerToDieId].PlayerObject.GetComponent<PlayerScript>().lastDamagingPlayerId.Value;
@@ -95,6 +102,24 @@ public class PlayerDeath : NetworkBehaviour
         {
             GameManager.GetComponent<GameSceneManager>().RoundCompleted(AlivePlayersList[0].GameObject());
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void playDeathParticlesRpc(){
+        deathParticles.Play();
+    }
+
+    [Rpc(SendTo.Server)]
+    private void spawnHatRpc(Vector3 pos){
+
+
+        GameObject hat = Instantiate(hatPrefab, pos, Quaternion.identity);
+
+        GameObject anchor = GameObject.Find("ObjectAnchor");
+
+        hat.transform.parent = anchor.transform;
+
+        hat.GetComponent<NetworkObject>().Spawn(true);
     }
 
 
