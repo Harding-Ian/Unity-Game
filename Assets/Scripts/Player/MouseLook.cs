@@ -22,7 +22,7 @@ public class MouseLook : NetworkBehaviour
     private float sens = 2f;
 
     Rigidbody rb;
-    GameObject ScreenUI;
+    GameObject ESCMenuUI;
 
 
     
@@ -30,7 +30,7 @@ public class MouseLook : NetworkBehaviour
     {
         if(!IsLocalPlayer) playerCamera.GetComponent<Camera>().enabled = false;
         if(!IsLocalPlayer) return;
-        ScreenUI = GameObject.Find("ScreenUI");
+        ESCMenuUI = GameObject.Find("ESCMenuUI");
         rb = GetComponent<Rigidbody>();
     }
 
@@ -58,7 +58,7 @@ public class MouseLook : NetworkBehaviour
 
     public bool InESCMenu()
     {
-        return ScreenUI.GetComponent<ESCMenuScript>().inESCMenu;
+        return ESCMenuUI.GetComponent<ESCMenuScript>().inESCMenu;
     }
 
 }

@@ -652,9 +652,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1542240561}
-        m_TargetAssemblyTypeName: UISceneManager, Assembly-CSharp
-        m_MethodName: Host
+      - m_Target: {fileID: 1564367855}
+        m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
+        m_MethodName: CreateLobby
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2580,7 +2580,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64aabdb75f66dcc40bba744992f3d103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameCamera: {fileID: 0}
 --- !u!1 &876580362
 GameObject:
   m_ObjectHideFlags: 0
@@ -4347,6 +4346,7 @@ GameObject:
   - component: {fileID: 1564367851}
   - component: {fileID: 1564367850}
   - component: {fileID: 1564367854}
+  - component: {fileID: 1564367855}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -4446,6 +4446,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AllowConnections: 1
+--- !u!114 &1564367855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564367849}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 589ba02de3f2ea9428812e0b611d889b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uISceneManager: {fileID: 1542240558}
 --- !u!1 &1581393053
 GameObject:
   m_ObjectHideFlags: 0

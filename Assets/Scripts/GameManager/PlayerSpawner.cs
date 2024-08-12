@@ -12,6 +12,9 @@ using UnityEngine.SceneManagement;
 public class PlayerSpawner : NetworkBehaviour
 {
 
+    [SerializeField]
+    private GameObject CountDownUI;
+
     public GameObject playerPrefab;
     public bool playersSpawned = false;
     
@@ -96,7 +99,7 @@ public class PlayerSpawner : NetworkBehaviour
             player.GetComponent<PlayerBlock>().enabled = false;
             
             StartCoroutine(GetComponent<GameSceneManager>().StartCountdown(3));
-            GetComponent<GameSceneManager>().EnableCountDownUI();
+            CountDownUI.SetActive(true);
         }
     }
 

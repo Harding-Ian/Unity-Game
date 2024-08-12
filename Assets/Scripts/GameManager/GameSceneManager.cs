@@ -27,8 +27,7 @@ public class GameSceneManager : NetworkBehaviour
     [SerializeField]
     private string[] maps;
 
-    [NonSerialized]
-    private int winCondition = 1;
+    [NonSerialized] public NetworkVariable<int> winCondition = new NetworkVariable<int>(5, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [SerializeField]
     private string[] victoryString;
@@ -36,14 +35,7 @@ public class GameSceneManager : NetworkBehaviour
     [SerializeField]
     private List<string> victoryList2 = new List<string>();
 
-    [SerializeField]
-    private GameObject victoryUI;
 
-    [SerializeField]
-    private TextMeshProUGUI victoryText;
-    
-    [SerializeField]
-    private TextMeshProUGUI victoryName;
     public bool spectatingBool = true;
 
    // private Scene mapScene;
@@ -56,6 +48,91 @@ public class GameSceneManager : NetworkBehaviour
             NetworkManager.SceneManager.LoadScene(maps[UnityEngine.Random.Range(0, maps.Length)], LoadSceneMode.Additive);
         }
     }
+
+    public void InitiateGameCompletion(GameObject winner)
+    {
+        List<string> randomBM = new List<string>();
+        randomBM = victoryList2.OrderBy(x => UnityEngine.Random.value).ToList();
+        
+        GetComponent<EndGameManager>().GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString(), randomBM[0], randomBM[1],randomBM[2]);
+    }
+
+    public void RoundCompleted(GameObject winner)
+    {
+        spectatingBool = false;
+        if (!IsHost) return;
+
+        GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
+        winner.GetComponent<PlayerScript>().wins.Value++;
+
+        if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition.Value) 
+        {
+            InitiateGameCompletion(winner);
+        }
+        else 
+        {
+            EnableRoundWinUIRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString());
+            Invoke(nameof(LoadUpgradeMap), 5);
+        }
+    }
+
+
+    [Rpc(SendTo.Everyone)]
+    private void EnableRoundWinUIRpc(string winner)
+    {
+        roundWinnerText.text = winner + " Wins The Round";
+        roundWinnerUI.SetActive(true);
+    }
+
+    private void LoadUpgradeMap()
+    {
+        NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
+
+        StartCoroutine(LoadUpgradeScene());
+        DisableRoundWinUIRpc();
+        ResetPlayers();
+    }
+
+    private IEnumerator LoadUpgradeScene()
+    {
+        // Ensure the unload has completed
+        yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
+        NetworkManager.SceneManager.LoadScene("UpgradeMap", LoadSceneMode.Additive);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void DisableRoundWinUIRpc()
+    {
+        roundWinnerUI.SetActive(false);
+    }
+
+    private void ResetPlayers()
+    {
+        //List<ulong> PlayerList = new List<ulong>();
+        foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
+        {
+            instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = instance.GetComponent<PlayerScript>().clientId.Value;
+            instance.GetComponent<PlayerScript>().dead.Value = false;
+            instance.GetComponent<PlayerStatsManager>().playerHealth.Value = instance.GetComponent<PlayerStatsManager>().maxPlayerHealth.Value;
+            instance.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value = 1f;
+            instance.GetComponent<PlayerScript>().upgraded.Value = false;
+            if (instance.GetComponent<PlayerScript>().clientId.Value == GetComponent<PlayerSpawner>().lastPlayerToWinId) instance.GetComponent<PlayerScript>().upgraded.Value = true;
+        }
+
+        NetworkManager.LocalClient.PlayerObject.GetComponent<Projectile>().resetSlidersRpc();
+        UpgradeMapPlayerStateRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpgradeMapPlayerStateRpc()
+    {
+        NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+        player.GetComponent<PlayerInput>().enabled = true;
+        player.GetComponent<MouseLook>().enabled = true;
+        player.GetComponent<Projectile>().enabled = false;
+        player.GetComponent<PlayerBlock>().enabled = false;
+    }
+
 
     private IEnumerator NextMap()
     {
@@ -77,137 +154,6 @@ public class GameSceneManager : NetworkBehaviour
     public void EnableCountDownUI()
     {
         CountDownUI.SetActive(true);
-    }
-
-    private void ResetPlayers()
-    {
-        //List<ulong> PlayerList = new List<ulong>();
-        foreach(var instance in FindObjectsByType<PlayerScript>(FindObjectsSortMode.None))
-        {
-            instance.GetComponent<PlayerDeath>().playerSpectatingId.Value = instance.GetComponent<PlayerScript>().clientId.Value;
-            instance.GetComponent<PlayerScript>().dead.Value = false;
-            instance.GetComponent<PlayerStatsManager>().playerHealth.Value = instance.GetComponent<PlayerStatsManager>().maxPlayerHealth.Value;
-            instance.GetComponent<PlayerStatsManager>().knockbackBuildUp.Value = 1f;
-            if (instance.GetComponent<PlayerScript>().clientId.Value == GetComponent<PlayerSpawner>().lastPlayerToWinId){
-                instance.GetComponent<PlayerScript>().upgraded.Value = true;
-                instance.GetComponent<Projectile>().resetSlidersRpc();
-            }
-            else{
-                instance.GetComponent<PlayerScript>().upgraded.Value = false;
-            }
-            //PlayerList.Add(instance.clientId.Value);
-        }
-        //GetComponent<PlayerSpawner>().teleportPlayers(PlayerList);
-        UpgradeMapPlayerStateRpc();
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void UpgradeMapPlayerStateRpc()
-    {
-        NetworkObject player = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-        player.GetComponent<PlayerInput>().enabled = true;
-        player.GetComponent<MouseLook>().enabled = true;
-        player.GetComponent<Projectile>().enabled = false;
-        player.GetComponent<PlayerBlock>().enabled = false;
-        
-        
-    }
-
-    public void RoundCompleted(GameObject winner)
-    {
-        spectatingBool = false;
-        if (IsHost)
-        {
-            GetComponent<PlayerSpawner>().lastPlayerToWinId = winner.GetComponent<PlayerScript>().clientId.Value;
-            winner.GetComponent<PlayerScript>().wins.Value++;
-            Debug.Log("Number of wins = " + winner.GetComponent<PlayerScript>().wins.Value);
-            Debug.Log("Winner = " + winner);
-            if(winner.GetComponent<PlayerScript>().wins.Value >= winCondition)
-            {
-
-                List<string> randomBM = new List<string>();
-                randomBM = victoryList2.OrderBy(x => UnityEngine.Random.value).ToList();
-                
-                GameCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString(), randomBM[0], randomBM[1],randomBM[2]);
-                Invoke(nameof(EndGame), 8);
-            }
-            else
-            {
-                RoundCompletedRpc(winner.GetComponent<PlayerScript>().clientId.Value.ToString());
-            }
-        }
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void GameCompletedRpc(string winner, string bm1, string bm2, string bm3)
-    {
-        victoryText.text = bm1;
-        victoryName.text = winner + " Wins";
-        victoryUI.SetActive(true);
-
-        StartCoroutine(ChangeVictoryTextsAfterDelay(bm1, bm2, bm3));
-    }
-
-    private void EndGame(){
-        EndRoundRpc();
-        NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
-
-        StartCoroutine(LoadEndGameScreen());
-    }
-
-    private IEnumerator LoadEndGameScreen()
-    {
-        //disable players
-        yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
-        NetworkManager.SceneManager.LoadScene("EndMenu", LoadSceneMode.Additive);
-    }
-
-    private IEnumerator ChangeVictoryTextsAfterDelay(string bm1, string bm2, string bm3)
-    {
-        yield return new WaitForSeconds(2f);
-
-        victoryText.text = bm2;
-
-        yield return new WaitForSeconds(2f);
-
-        victoryText.text = bm3;
-    }
-    
-    [Rpc(SendTo.Everyone)]
-    private void RoundCompletedRpc(string winner)
-    {
-        roundWinnerText.text = winner + " Wins The Round";
-        roundWinnerUI.SetActive(true);
-        if (IsHost)
-        {
-            Invoke(nameof(EndRound), 5);
-        }
-    }
-
-    private void EndRound()
-    {
-        if (IsHost)
-        {
-            NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneAt(SceneManager.sceneCount - 1));
-
-            StartCoroutine(LoadUpgradeScene());
-            EndRoundRpc();
-            ResetPlayers();
-        }
-    }
-
-    private IEnumerator LoadUpgradeScene()
-    {
-        // Ensure the unload has completed
-        yield return new WaitUntil(() => !SceneManager.GetSceneAt(SceneManager.sceneCount - 1).isLoaded);
-        NetworkManager.SceneManager.LoadScene("UpgradeMap", LoadSceneMode.Additive);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void EndRoundRpc()
-    {
-        roundWinnerUI.SetActive(false);
-        victoryUI.SetActive(false);
     }
 
     public IEnumerator StartCountdown(int countdown)
@@ -237,8 +183,9 @@ public class GameSceneManager : NetworkBehaviour
 
     public void ExtendWinCondition(int increment)
     {
-        winCondition += increment;
-        EndRound();
+        winCondition.Value += increment;
+        LoadUpgradeMap();
+        GetComponent<EndGameManager>().ExitEndGameScreenRpc();
     }
 
 }
