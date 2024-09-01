@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class InitializeLobbyServices : MonoBehaviour
 {
-    private async void Start() 
+    private async void Start()
     {
         await UnityServices.InitializeAsync();
 
@@ -14,12 +14,11 @@ public class InitializeLobbyServices : MonoBehaviour
 
         if (!AuthenticationService.Instance.IsSignedIn)
         {
-            Debug.Log("Old = " + AuthenticationService.Instance.PlayerId);
             AuthenticationService.Instance.ClearSessionToken();
-            AuthenticationService.Instance.
+
             string profilename = Random.Range(0, 100000).ToString();
-            Debug.Log(profilename);
             AuthenticationService.Instance.SwitchProfile(profilename);
+
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
     }
@@ -27,11 +26,6 @@ public class InitializeLobbyServices : MonoBehaviour
     void OnSignedIn()
     {
         Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-    }
-
-    public void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Q)) Debug.Log(AuthenticationService.Instance.PlayerId);
     }
 
 }

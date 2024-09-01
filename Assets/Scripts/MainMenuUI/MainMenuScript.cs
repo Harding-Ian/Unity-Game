@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class MainMenuScript : MonoBehaviour
 {
-    public GameObject MainUI;//
+    public GameObject MainUI;
     public GameObject SettingsUI;
     public GameObject LobbyUI;
+    public GameObject LobbyGameMenu;
     public void LobbyUIToMainUI()
     {
         LobbyUI.SetActive(false);
@@ -19,6 +20,21 @@ public class MainMenuScript : MonoBehaviour
         LobbyUI.SetActive(true);
     }
 
+    public void MainUIToLobbyGameMenu()
+    {
+        MainUI.SetActive(false);
+        LobbyGameMenu.SetActive(true);
+    }
 
+    public void LobbyGameMenuToMainUI()
+    {
+        LobbyGameMenu.SetActive(false);
+        MainUI.SetActive(true);
+    }
 
+    public void LobbyUIToLobbyGameMenu()
+    {
+        LobbyUI.SetActive(false);
+        LobbyGameMenu.SetActive(true);
+    }
 }

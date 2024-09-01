@@ -76,6 +76,12 @@ public class UISceneManager : NetworkBehaviour
         SettingsUI.SetActive(false);
     }
 
+    public void CallPlayerScene()
+    {
+        if(IsHost == false) return;
+        NetworkManager.SceneManager.LoadScene("PlayerScene", LoadSceneMode.Single);
+    }
+
 
     
 }
